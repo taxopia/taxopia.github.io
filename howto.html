@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TAXOPIA - คู่มือการเล่นเกม</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800;900&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #020617;
+            font-family: Kanit, sans-serif;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .bg-cyber-grid {
+            background-size: 50px 50px;
+            background-image:
+                linear-gradient(to right, rgba(16, 185, 129, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+            animation: pan-bg 60s linear infinite;
+            transform-origin: center;
+        }
+
+        @keyframes pan-bg {
+            0% { background-position: 0 0; }
+            100% { background-position: 500px 500px; }
+        }
+
+        .data-stream {
+            position: absolute;
+            top: -100%;
+            width: 2px;
+            height: 200px;
+            background: linear-gradient(to bottom, transparent, #10b981, transparent);
+            opacity: 0.4;
+            animation: data-fall linear infinite;
+        }
+
+        @keyframes data-fall {
+            0% { transform: translateY(-100px); }
+            100% { transform: translateY(2000px); }
+        }
+
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(2, 6, 23, 0.95) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.05);
+        }
+
+        .nav-item {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @media (min-width: 768px) {
+            .nav-item { border-left: 4px solid transparent; }
+            .nav-item.active {
+                background: linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, transparent 100%);
+                border-left: 4px solid #34d399;
+                padding-left: 1.5rem;
+                color: #34d399;
+                font-weight: 700;
+                text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+            }
+            .nav-item:hover:not(.active) {
+                padding-left: 1rem;
+                color: #a7f3d0;
+                border-left: 4px solid #059669;
+            }
+            .content-section { padding: 2rem 3rem; }
+        }
+
+        @media (max-width: 767px) {
+            .nav-item { border-bottom: 4px solid transparent; white-space: nowrap; }
+            .nav-item.active {
+                background: linear-gradient(0deg, rgba(16, 185, 129, 0.2) 0%, transparent 100%);
+                border-bottom: 4px solid #34d399;
+                color: #34d399;
+                font-weight: 700;
+                text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+            }
+            .nav-item:hover:not(.active) {
+                color: #a7f3d0;
+                border-bottom: 4px solid #059669;
+            }
+            .content-section { padding: 1.5rem 1.25rem; }
+        }
+
+        .content-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow-y: auto;
+        }
+
+        .content-section.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .text-glow-emerald {
+            color: #34d399;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+        }
+
+        .text-glow-gold {
+            color: #eab308;
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.6);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(2, 6, 23, 0.8); }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #34d399; }
+
+        .card-data {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card-data:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #34d399;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(16, 185, 129, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .glow-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-button::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .glow-button:hover::after { opacity: 1; }
+
+        .tile-sample {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            border-radius: 12px;
+            border-top: 6px solid transparent;
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        .tile-sample-family { border-top-color: #3b82f6; }
+        .tile-sample-insurance { border-top-color: #ec4899; }
+        .tile-sample-fund { border-top-color: #10b981; }
+        .tile-sample-donation { border-top-color: #fb7185; }
+        .tile-sample-expense { border-top-color: #ef4444; }
+        .tile-sample-hr { border-top-color: #f97316; }
+        .tile-sample-event { border-top-color: #a855f7; }
+        .tile-sample-payday { border-top-color: #f59e0b; background: linear-gradient(135deg, rgba(30,41,59,1) 0%, rgba(0,0,0,1) 100%); border: 2px solid #fbbf24; }
+
+    </style>
+</head>
+<body class="w-[100dvw] h-[100dvh] flex flex-col md:flex-row overflow-hidden">
+
+    <div class="absolute inset-0 bg-cyber-grid z-0"></div>
+    <div id="data-streams-container" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
+
+    <aside class="w-full md:w-80 h-auto md:h-full glass-panel z-20 flex flex-col border-b md:border-b-0 md:border-r border-slate-700/50 relative shrink-0">
+        <div class="p-4 md:p-8 border-b border-slate-700/50 relative overflow-hidden flex justify-between items-center md:block">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
+            <div>
+                <h1 class="text-xl md:text-3xl font-bold text-glow-gold tracking-wide uppercase mb-1 md:mb-2">TAXOPIA</h1>
+                <p class="text-slate-400 text-xs md:text-sm font-medium">คู่มือการเล่นเกม</p>
+            </div>
+            <button onclick="location.href='index.html'" class="md:hidden px-5 py-2 rounded-xl bg-slate-800 border border-slate-600 text-slate-300 font-bold text-sm shadow-md active:scale-95 transition-transform">ออก</button>
+        </div>
+        
+        <nav class="flex-none md:flex-1 overflow-x-auto md:overflow-y-auto py-3 md:py-6 flex flex-row md:flex-col gap-2 px-4 scrollbar-hide" id="nav-menu">
+            <button onclick="SystemArchive.switchSection('sec-objective', this)" class="nav-item active w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">เป้าหมายของเกม</button>
+            <button onclick="SystemArchive.switchSection('sec-economy', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">กติกาพื้นฐานและการเงิน</button>
+            <button onclick="SystemArchive.switchSection('sec-board', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">ช่องต่างๆ บนกระดาน</button>
+            <button onclick="SystemArchive.switchSection('sec-cards', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">การ์ดสิทธิลดหย่อนภาษี</button>
+            <button onclick="SystemArchive.switchSection('sec-hazards', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">เหตุฉุกเฉินและการป้องกัน</button>
+            <button onclick="SystemArchive.switchSection('sec-endgame', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">การคำนวณภาษีตอนจบเกม</button>
+        </nav>
+
+        <div class="hidden md:block p-6 border-t border-slate-700/50">
+            <button onclick="location.href='index.html'" class="w-full py-4 rounded-xl bg-slate-800 border-2 border-slate-600 text-slate-300 font-bold tracking-wide hover:border-emerald-400 hover:text-white transition-all shadow-lg glow-button">กลับสู่หน้าแรกเริ่ม</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 relative z-10 overflow-hidden bg-black/40 backdrop-blur-sm">
+        
+        <section id="sec-objective" class="content-section active">
+            <div class="max-w-4xl mx-auto pb-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 1</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">เป้าหมายของเกมและคณะผู้จัดทำ</h2>
+                
+                <div class="prose prose-invert max-w-none">
+                    <div class="card-data mb-6 md:mb-8">
+                        <h3 class="text-xl md:text-2xl font-bold text-emerald-300 mb-4">เป้าหมายหลักในการเล่น</h3>
+                        <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-4">
+                            ผู้เล่นทุกคนจะได้รับบทบาทเป็นประชาชนคนทำงานที่มีรายได้ ซึ่งจะต้องทอยลูกเต๋าเพื่อเดินไปตามช่องต่างๆ บนกระดาน โดยมีเป้าหมายที่สำคัญที่สุดคือการบริหารจัดการเงินสดในมือ ควบคู่ไปกับการตัดสินใจเลือกซื้อการ์ดลดหย่อนภาษีที่เหมาะสมกับการเงินของตนเอง เกมจะดำเนินไปอย่างต่อเนื่องจนกว่าผู้เล่นทุกคนจะเดินผ่านจุดเริ่มต้นครบจำนวน 3 รอบกระดาน
+                        </p>
+                        <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-4">
+                            หลังจากที่ทุกคนเดินครบกำหนดแล้ว ระบบจะทำการปิดเกมและคำนวณภาษีเงินได้บุคคลธรรมดาของแต่ละคนโดยอัตโนมัติ ผู้เล่นที่สามารถวางแผนการเงินและใช้สิทธิลดหย่อนได้ดีที่สุด จนทำให้ตนเองเสียภาษีน้อยที่สุด หรือได้รับเงินคืนภาษีจากรัฐบาลมากที่สุด จะถือเป็นผู้ชนะในบอร์ดเกมนี้
+                        </p>
+                    </div>
+
+                    <div class="card-data border-t-4 border-t-emerald-500 relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.15)]">
+                        <div class="absolute right-0 top-0 w-64 h-full bg-gradient-to-l from-emerald-500/10 to-transparent pointer-events-none"></div>
+                        <h3 class="text-2xl md:text-3xl font-bold text-emerald-400 mb-3 relative z-10">คณะผู้จัดทำ</h3>
+                        <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 relative z-10 font-medium">
+                            บอร์ดเกมชุดนี้ถูกออกแบบและพัฒนาขึ้นโดยคณะนักศึกษาชั้นปีที่ 1 แห่งมหาวิทยาลัยธรรมศาสตร์ ซึ่งเป็นส่วนหนึ่งของการประเมินผลในรายวิชา TU242 โดยได้รับความกรุณาจาก อาจารย์รุ่งนภา เทพภาพ เป็นอาจารย์ที่ปรึกษาโครงงาน ทั้งนี้โครงงานสำเร็จลุล่วงได้จากความร่วมมือของสมาชิกดังต่อไปนี้
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">เมนี่ ไพศาลพนา</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ณนน อินทชาติ</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ชวัลนุช พฤกษจำรูญ</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ลิเดีย ดวงปัญญา</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ซีรีน ปาทาน</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ฐิติวัสส์ พยัฆบุตร</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">อุกฤษณ์ คำวิงวร</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ปริยากร จารุประวิทย์</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ปพนธีร์ ชัยมา</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ถูริชญา กุหลาบ</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">มัตติกา สุนทรวิทย์</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                                <span class="text-white font-bold text-lg">ปุณณาสา ถนอมสิน</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-economy" class="content-section">
+            <div class="max-w-4xl mx-auto pb-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 2</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">กติกาพื้นฐานและการเงิน</h2>
+                
+                <p class="text-lg md:text-xl text-slate-300 leading-relaxed mb-6 md:mb-8">เพื่อให้การแข่งขันมีความยุติธรรม ผู้เล่นทุกคนจะเริ่มต้นด้วยกฎเกณฑ์และสถานะทางการเงินที่เท่าเทียมกันทั้งหมด</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div class="card-data border-t-4 border-t-amber-500">
+                        <h4 class="text-xl md:text-2xl font-bold text-amber-400 mb-2">เงินทุนเริ่มต้น</h4>
+                        <p class="text-base md:text-lg text-slate-300 mb-4">เมื่อกดเริ่มเกม ผู้เล่นทุกคนจะได้รับเงินสดตั้งต้นจำนวน <strong>27,000 บาท</strong> ซึ่งเปรียบเสมือนฐานเงินเดือนประจำที่ได้รับในแต่ละเดือน</p>
+                    </div>
+                    
+                    <div class="card-data border-t-4 border-t-amber-500">
+                        <h4 class="text-xl md:text-2xl font-bold text-amber-400 mb-2">ช่องวันรับเงินเดือน</h4>
+                        <p class="text-base md:text-lg text-slate-300 mb-4">ทุกครั้งที่ผู้เล่นทอยลูกเต๋าแล้วเดินวนกลับมาผ่านช่องจุดเริ่มต้น หรือที่เรียกว่าช่องวันรับเงินเดือน ระบบจะทำการเพิ่มเงินสดให้ผู้เล่นอีก <strong>27,000 บาท</strong> ทันที เพื่อใช้เป็นทุนสำหรับเดินจับจ่ายใช้สอยในรอบถัดไป</p>
+                    </div>
+
+                    <div class="card-data border-t-4 border-t-cyan-500 md:col-span-2">
+                        <h4 class="text-xl md:text-2xl font-bold text-cyan-400 mb-2">ฐานรายได้รวมประจำปีเพื่อคิดภาษี</h4>
+                        <p class="text-base md:text-lg text-slate-300 mb-4">
+                            ในส่วนของการคำนวณภาษีตอนจบเกมนั้น ระบบได้ตั้งค่ารายได้จากเงินเดือนตลอดทั้งปีแบบคงที่ไว้ที่ <strong>336,000 บาท</strong> สำหรับผู้เล่นทุกคน แต่ในระหว่างการเล่น หากผู้เล่นตกไปในช่องโชคชะตาหรือฝ่ายบุคคลที่ทำให้ได้รับเงินพิเศษเพิ่มเติม รายได้ส่วนนั้นจะถูกบวกเพิ่มเข้าไปในฐานรายได้รวมนี้ด้วย ซึ่งหมายความว่ายิ่งคุณได้รับเงินพิเศษมากเท่าไหร่ ฐานภาษีที่คุณจะต้องนำไปคำนวณตอนจบเกมก็จะยิ่งสูงขึ้นตามไปด้วยอย่างหลีกเลี่ยงไม่ได้
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-board" class="content-section">
+            <div class="max-w-4xl mx-auto pb-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 3</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">วิธีการทำงานของช่องต่างๆ บนกระดาน</h2>
+                
+                <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
+                    กระดานเกมประกอบด้วยช่องสำหรับเดินทั้งหมด 40 ช่อง ซึ่งแต่ละช่องจะมีเงื่อนไขและผลลัพธ์ที่แตกต่างกันออกไป โดยผู้เล่นสามารถสังเกตประเภทของการกระทำได้จากแถบสีที่ปรากฏอยู่ด้านบนของแต่ละช่อง ดังนี้
+                </p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="tile-sample tile-sample-payday group">
+                        <div class="font-bold text-white text-lg tracking-wide">วันรับเงินเดือน</div>
+                        <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="tile-sample tile-sample-family group">
+                        <div class="font-bold text-white text-lg tracking-wide">สิทธิครอบครัว</div>
+                        <div class="absolute inset-0 bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="tile-sample tile-sample-insurance group">
+                        <div class="font-bold text-white text-lg tracking-wide">หมวดประกันภัย</div>
+                        <div class="absolute inset-0 bg-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="tile-sample tile-sample-fund group">
+                        <div class="font-bold text-white text-lg tracking-wide">หมวดกองทุน</div>
+                        <div class="absolute inset-0 bg-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="tile-sample tile-sample-donation group">
+                        <div class="font-bold text-white text-lg tracking-wide">หมวดการกุศล</div>
+                        <div class="absolute inset-0 bg-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="tile-sample tile-sample-expense group">
+                        <div class="font-bold text-white text-lg tracking-wide">ภาระค่าใช้จ่าย</div>
+                        <div class="absolute inset-0 bg-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="tile-sample tile-sample-hr group">
+                        <div class="font-bold text-white text-lg tracking-wide">ฝ่ายบุคคล</div>
+                        <div class="absolute inset-0 bg-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="tile-sample tile-sample-event group">
+                        <div class="font-bold text-white text-lg tracking-wide">โชคชะตา</div>
+                        <div class="absolute inset-0 bg-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                </div>
+
+                <div class="mt-8 card-data">
+                    <h3 class="text-2xl font-bold text-emerald-400 mb-4">ผลลัพธ์เมื่อเดินไปตกที่ช่องต่างๆ</h3>
+                    <ul class="space-y-4 text-slate-300 text-sm md:text-base">
+                        <li><strong class="text-blue-400">ช่องสิทธิลดหย่อน ครอบครัว ประกันภัย กองทุน การกุศล:</strong> เป็นช่องที่เปิดโอกาสให้ผู้เล่นสามารถตัดสินใจเลือกซื้อการ์ดเพื่อนำไปลดหย่อนภาษีได้ หากผู้เล่นมีเงินสดในมือเพียงพอ ระบบจะถามความสมัครใจว่าต้องการซื้อหรือไม่ หากตอบตกลง เงินสดจะถูกหักออกและการ์ดจะเข้าไปอยู่ในคลังเก็บของทันที</li>
+                        <li><strong class="text-red-400">ช่องภาระค่าใช้จ่าย:</strong> เป็นช่องบังคับที่ผู้เล่นจะต้องเสียเงินสดออกจากตัวทันทีตามจำนวนที่ป้ายระบุไว้ โดยไม่สามารถหลีกเลี่ยงหรือปฏิเสธได้</li>
+                        <li><strong class="text-orange-400">ช่องฝ่ายบุคคล และ ช่องโชคชะตา:</strong> คือช่องสุ่มเหตุการณ์ ซึ่งระบบจะทำการจั่วไพ่โชคชะตาให้โดยอัตโนมัติ ผลลัพธ์อาจมีทั้งเหตุการณ์ที่ทำให้ได้รับเงินก้อนโต เหตุการณ์ที่ทำให้ต้องเสียเงินฟรีๆ เหตุการณ์ที่บังคับให้ย้ายตำแหน่งบนกระดาน หรือแม้กระทั่งเหตุการณ์ที่ทำให้ผู้เล่นต้องงดเดินในรอบต่อไป</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-cards" class="content-section">
+            <div class="max-w-4xl mx-auto pb-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 4</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">การ์ดสิทธิลดหย่อนภาษี</h2>
+                
+                <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
+                    การ์ดลดหย่อนภาษีคือไอเทมชิ้นสำคัญที่จะช่วยให้ผู้เล่นประหยัดเงินค่าภาษีในตอนจบเกมได้มหาศาล เมื่อผู้เล่นตัดสินใจซื้อการ์ดสำเร็จ การ์ดจะถูกเก็บรวบรวมไว้ในคลังของผู้เล่น ซึ่งสามารถกดปุ่มตรวจสอบคลังเพื่อดูว่าตนเองมีการ์ดอะไรอยู่บ้างได้ตลอดเวลา โดยการ์ดจะแบ่งออกเป็น 4 หมวดหมู่หลัก ดังนี้
+                </p>
+
+                <div class="space-y-6">
+                    <div class="card-data border-l-[6px] border-l-blue-500">
+                        <h4 class="text-2xl font-bold text-blue-400 mb-2">หมวดครอบครัว</h4>
+                        <p class="text-slate-300 mb-4">ประกอบด้วยสิทธิประโยชน์ต่างๆ เช่น การจดทะเบียนสมรส การมีบุตร การดูแลคุณพ่อคุณแม่ และการดูแลผู้พิการ การซื้อการ์ดในหมวดนี้จะให้ยอดลดหย่อนภาษีที่ค่อนข้างสูงมาก แต่กฎของเกมกำหนดไว้ว่า ผู้เล่นจะสามารถครอบครองการ์ดแต่ละชนิดในหมวดนี้ได้เพียง <strong>1 ใบ</strong> เท่านั้น ไม่สามารถซื้อใบเดิมซ้ำเพื่อเพิ่มยอดได้อีก</p>
+                    </div>
+
+                    <div class="card-data border-l-[6px] border-l-pink-500">
+                        <h4 class="text-2xl font-bold text-pink-400 mb-2">หมวดประกันภัย</h4>
+                        <p class="text-slate-300 mb-4">ครอบคลุมการ์ดประกันสุขภาพตนเอง ประกันสุขภาพมารดา และประกันสะสมทรัพย์ ความพิเศษของการ์ดประกันสุขภาพคือ นอกเหนือจากจะใช้ลดหย่อนภาษีแล้ว มันยังสามารถนำมาใช้ป้องกันเหตุฉุกเฉินตอนที่ตกช่องอุบัติเหตุได้อีกด้วย ส่วนการ์ดประกันสะสมทรัพย์นั้นจะเน้นไปที่การออมเงินเพื่อลดหย่อนภาษีล้วนๆ ผู้เล่นจึงสามารถซื้อสะสมกี่ใบก็ได้ไม่มีจำกัด</p>
+                    </div>
+
+                    <div class="card-data border-l-[6px] border-l-emerald-500">
+                        <h4 class="text-2xl font-bold text-emerald-400 mb-2">หมวดกองทุน</h4>
+                        <p class="text-slate-300 mb-4">รวมถึงการ์ดกองทุนประเภทต่างๆ เช่น กองทุน PVD กองทุน SSF กองทุน Thai ESG และ กองทุน RMF เพื่อให้เกมมีความสมดุลและสมจริงตามข้อกฎหมาย ระบบจึงจำกัดสิทธิให้ผู้เล่นสามารถซื้อการ์ดกองทุนแต่ละประเภทได้สูงสุดเพียง <strong>3 ใบ</strong> เท่านั้น</p>
+                    </div>
+
+                    <div class="card-data border-l-[6px] border-l-rose-500">
+                        <h4 class="text-2xl font-bold text-rose-400 mb-2">หมวดการกุศล</h4>
+                        <p class="text-slate-300 mb-4">การ์ดในหมวดนี้คือการบริจาคเงินเพื่อช่วยเหลือสังคม หากผู้เล่นซื้อการ์ดบริจาคให้แก่โรงพยาบาลของรัฐหรือสถานศึกษา จะได้รับสิทธิพิเศษในการหักลดหย่อนภาษีเป็น <strong>2 เท่า</strong> ของเงินสดที่จ่ายไปจริง แต่หากเป็นการบริจาคให้แก่มูลนิธิทั่วไป จะสามารถนำมาลดหย่อนได้เท่ากับจำนวนเงินที่จ่ายไปเท่านั้น</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-hazards" class="content-section">
+            <div class="max-w-4xl mx-auto pb-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 5</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">เหตุฉุกเฉินและการป้องกัน</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6">
+                            บนกระดานเกมจะมีช่องสีแดงที่เขียนว่า <strong>อุบัติเหตุฉุกเฉิน</strong> ซึ่งเป็นช่องที่สร้างความเสียหายทางการเงินอย่างหนักหน่วง หากผู้เล่นคนใดโชคร้ายเดินมาตกที่ช่องนี้ จะต้องถูกบังคับให้เสียเงินสดก้อนใหญ่ทันทีโดยไม่มีข้อแม้
+                        </p>
+                        <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6">
+                            แต่หากผู้เล่นคนนั้นได้เตรียมตัวมาเป็นอย่างดี โดยการซื้อการ์ด <strong>ประกันสุขภาพ</strong> ที่ตรงกับประเภทของอุบัติเหตุนั้นๆ เก็บเอาไว้ในคลังล่วงหน้า ระบบจะเปิดทางเลือกให้ผู้เล่นสามารถตัดสินใจแก้ไขสถานการณ์ได้ 2 ทางเลือก ดังนี้
+                        </p>
+                    </div>
+                    <div class="card-data bg-red-950/40 border-red-500/50">
+                        <h4 class="text-2xl font-bold text-red-400 mb-4 text-center">ทางเลือกเมื่อเผชิญเหตุฉุกเฉิน</h4>
+                        <div class="space-y-4">
+                            <div class="bg-black/60 p-4 rounded-xl border border-red-900/50">
+                                <span class="text-emerald-400 font-bold tracking-wide block mb-1">เลือกที่จะใช้สิทธิคุ้มครอง</span>
+                                <span class="text-slate-300 text-sm">ผู้เล่นจะรอดพ้นจากการเสียเงินสดอย่างสมบูรณ์ แต่จะต้องยอมฉีกการ์ดประกันสุขภาพใบนั้นทิ้งไป ทำให้สูญเสียสิทธิในการนำยอดการ์ดใบนั้นไปลดหย่อนภาษีในตอนจบเกม</span>
+                            </div>
+                            <div class="bg-black/60 p-4 rounded-xl border border-red-900/50">
+                                <span class="text-rose-400 font-bold tracking-wide block mb-1">เลือกที่จะสละสิทธิคุ้มครอง</span>
+                                <span class="text-slate-300 text-sm">ผู้เล่นจะต้องยอมเสียเงินสดจ่ายค่าอุบัติเหตุตามปกติเต็มจำนวน แต่จะยังคงเก็บรักษาการ์ดประกันสุขภาพใบนั้นไว้ในคลัง เพื่อใช้เป็นสิทธิลดหย่อนภาษีในตอนจบเกมได้</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-endgame" class="content-section">
+            <div class="max-w-4xl mx-auto pb-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 6</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">การคำนวณภาษีตอนจบเกม</h2>
+                
+                <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
+                    เมื่อผู้เล่นทุกคนบนกระดานเดินผ่านจุดเริ่มต้นจนครบ 3 รอบ เกมจะจบลงและเข้าสู่ขั้นตอนการคำนวณภาษีเงินได้บุคคลธรรมดาโดยอัตโนมัติ ระบบจะทำหน้าที่สรุปผลอย่างรวดเร็วและแม่นยำตามขั้นตอนดังต่อไปนี้
+                </p>
+
+                <div class="space-y-4 font-medium text-slate-300">
+                    <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <div class="w-10 h-10 rounded-full bg-cyan-900/50 text-cyan-400 flex items-center justify-center font-bold text-xl border border-cyan-500">1</div>
+                        <div class="flex-1 text-lg">ประเมินรายได้รวม โดยนำฐานเงินเดือนประจำ 336,000 บาท มารวมกับรายได้เสริมทั้งหมดที่ผู้เล่นแต่ละคนเก็บสะสมมาได้ระหว่างการเล่น</div>
+                    </div>
+                    <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <div class="w-10 h-10 rounded-full bg-cyan-900/50 text-cyan-400 flex items-center justify-center font-bold text-xl border border-cyan-500">2</div>
+                        <div class="flex-1 text-lg">ทำการหักลบด้วยค่าใช้จ่ายส่วนตัวและสิทธิลดหย่อนพื้นฐาน ที่ประชาชนทุกคนมีสิทธิได้รับตามกฎหมาย</div>
+                    </div>
+                    <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <div class="w-10 h-10 rounded-full bg-amber-900/50 text-amber-400 flex items-center justify-center font-bold text-xl border border-amber-500">3</div>
+                        <div class="flex-1 text-lg">คำนวณสิทธิลดหย่อนเพิ่มเติม โดยรวบรวมมูลค่าของการ์ดลดหย่อนทั้งหมดที่ผู้เล่นได้ซื้อและเก็บไว้ในคลัง</div>
+                    </div>
+                    <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <div class="w-10 h-10 rounded-full bg-amber-900/50 text-amber-400 flex items-center justify-center font-bold text-xl border border-amber-500">4</div>
+                        <div class="flex-1 text-lg">หาเงินได้สุทธิ โดยการนำรายได้ทั้งหมดจากข้อแรก มาหักลบกับค่าใช้จ่ายและค่าลดหย่อนทั้งหมดที่มี</div>
+                    </div>
+                    <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <div class="w-10 h-10 rounded-full bg-purple-900/50 text-purple-400 flex items-center justify-center font-bold text-xl border border-purple-500">5</div>
+                        <div class="flex-1 text-lg">นำเงินได้สุทธิที่เหลืออยู่ ไปคำนวณภาษีที่ต้องจ่ายตามระบบภาษีแบบขั้นบันได</div>
+                    </div>
+                    <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <div class="w-10 h-10 rounded-full bg-rose-900/50 text-rose-400 flex items-center justify-center font-bold text-xl border border-rose-500">6</div>
+                        <div class="flex-1 text-lg">ขั้นตอนสุดท้าย ระบบจะนำภาษีที่คำนวณได้ไปเปรียบเทียบกับภาษีที่ถูกหักไว้ล่วงหน้า 3,000 บาท หากคำนวณแล้วน้อยกว่า 3,000 บาท ผู้เล่นจะได้รับเงินคืนภาษี แต่หากคำนวณแล้วเกิน 3,000 บาท ผู้เล่นจะต้องจ่ายเงินส่วนต่างเพิ่ม</div>
+                    </div>
+                </div>
+
+                <div class="mt-10 text-center">
+                    <p class="text-xl font-bold text-emerald-400 drop-shadow-md tracking-wide uppercase">
+                        ผู้ที่มียอดเงินคืนสูงสุด หรือเสียภาษีเพิ่มน้อยที่สุด จะเป็นผู้ชนะในเกมนี้
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const SystemArchive = {
+            createDataStreams() {
+                const container = document.getElementById('data-streams-container');
+                for (let i = 0; i < 30; i++) {
+                    const stream = document.createElement('div');
+                    stream.className = 'data-stream';
+                    stream.style.left = `${Math.random() * 100}%`;
+                    stream.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                    stream.style.animationDelay = `${Math.random() * 5}s`;
+                    container.appendChild(stream);
+                }
+            },
+            switchSection(sectionId, btnElement) {
+                document.querySelectorAll('.content-section').forEach(sec => {
+                    sec.classList.remove('active');
+                });
+                document.querySelectorAll('.nav-item').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const target = document.getElementById(sectionId);
+                if (target) {
+                    target.classList.add('active');
+                    target.scrollTop = 0;
+                }
+                if (btnElement) {
+                    btnElement.classList.add('active');
+                    btnElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            SystemArchive.createDataStreams();
+        });
+    </script>
+</body>
+</html>
