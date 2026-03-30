@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TAXOPIA - หน้าแรกเริ่ม</title>
+    <title>TAXOPIA - หน้าแรก</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800;900&display=swap');
@@ -18,9 +18,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* --- PRO-LEVEL DYNAMIC BACKGROUND --- */
         .bg-cyber-grid {
             background-size: 80px 80px;
             background-image:
+                radial-gradient(circle at center, rgba(56, 189, 248, 0.1) 1px, transparent 2px), /* Added pulsing intersections */
                 linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
         }
@@ -70,6 +72,49 @@
             100% { transform: translateY(-120px) scale(1); opacity: 0.2; }
         }
 
+        /* Added Holographic Rings for depth */
+        .holo-ring-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotateX(60deg);
+            width: 200vmin; height: 200vmin;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+        }
+        
+        .holo-ring-inner {
+            position: absolute; inset: 0; border-radius: 50%;
+            border: 2px dashed #38bdf8;
+            animation: spin 60s linear infinite;
+        }
+
+        .holo-ring-outer {
+            position: absolute; inset: -20vmin; border-radius: 50%;
+            border: 1px solid #c084fc;
+            animation: spin-reverse 90s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+
+        /* Added Data Streams (Matrix effect) */
+        .data-stream {
+            position: absolute;
+            top: -100%;
+            width: 1px;
+            height: 150px;
+            background: linear-gradient(to bottom, transparent, rgba(251, 191, 36, 0.8), transparent);
+            animation: data-fall linear infinite;
+        }
+
+        @keyframes data-fall {
+            0% { transform: translateY(-100px); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(150vh); opacity: 0; }
+        }
+        /* --- END PRO-LEVEL DYNAMIC BACKGROUND --- */
+
         .glass-panel {
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(0, 0, 0, 0.95) 100%);
             backdrop-filter: blur(30px);
@@ -106,16 +151,22 @@
         
         <div class="absolute inset-0 aurora-bg mix-blend-screen pointer-events-none"></div>
         
-        <div class="absolute inset-0 perspective-container pointer-events-none opacity-40">
+        <div class="holo-ring-container">
+            <div class="holo-ring-inner"></div>
+            <div class="holo-ring-outer"></div>
+        </div>
+        <div id="data-streams-wrapper" class="absolute inset-0 pointer-events-none z-0 opacity-40"></div>
+
+        <div class="absolute inset-0 perspective-container pointer-events-none opacity-40 z-0">
             <div class="absolute w-[200%] h-[200%] left-[-50%] top-[-20%] bg-cyber-grid perspective-grid"></div>
         </div>
         
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vmin] h-[80vmin] border-[3px] border-amber-500/15 rounded-full animate-[spin_45s_linear_infinite] pointer-events-none shadow-[0_0_80px_rgba(245,158,11,0.1)]"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65vmin] h-[65vmin] border-[2px] border-dashed border-cyan-500/20 rounded-full animate-[spin_35s_linear_infinite_reverse] pointer-events-none"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vmin] h-[100vmin] border-[2px] border-emerald-500/10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vmin] h-[80vmin] border-[3px] border-amber-500/15 rounded-full animate-[spin_45s_linear_infinite] pointer-events-none shadow-[0_0_80px_rgba(245,158,11,0.1)] z-0"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65vmin] h-[65vmin] border-[2px] border-dashed border-cyan-500/20 rounded-full animate-[spin_35s_linear_infinite_reverse] pointer-events-none z-0"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vmin] h-[100vmin] border-[2px] border-emerald-500/10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none z-0"></div>
 
-        <div class="ambient-particles pointer-events-none"></div>
-        <div class="ambient-particles pointer-events-none" style="animation-duration: 35s; background-size: 160px 160px; opacity: 0.15;"></div>
+        <div class="ambient-particles pointer-events-none z-0"></div>
+        <div class="ambient-particles pointer-events-none z-0" style="animation-duration: 35s; background-size: 160px 160px; opacity: 0.15;"></div>
         
         <div class="relative z-10 text-center flex flex-col items-center w-full max-w-7xl px-4">
             <h1 class="text-6xl md:text-[8rem] lg:text-[10rem] font-black text-glow-gold mb-4 md:mb-6 tracking-wide drop-shadow-[0_20px_50px_rgba(0,0,0,1)]">TAXOPIA</h1>
@@ -123,7 +174,7 @@
             
             <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 w-full px-4">
                 
-                <button onclick="location.href='information.html'" class="px-8 py-4 md:px-10 md:py-5 rounded-[2rem] border-2 border-slate-300 text-slate-100 bg-slate-800/60 font-bold text-lg md:text-2xl tracking-wide hover:bg-slate-700/80 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] backdrop-blur-xl glow-button w-full md:w-auto">
+                <button onclick="location.href='information.html'" class="px-6 py-3 md:px-8 md:py-4 rounded-[1.5rem] border-2 border-slate-300 text-slate-100 bg-slate-800/60 font-bold text-base md:text-xl tracking-wide hover:bg-slate-700/80 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] backdrop-blur-xl glow-button w-full md:w-auto">
                     อ่านความรู้เรื่องภาษี
                 </button>
 
@@ -132,12 +183,17 @@
                     เริ่มเกม
                 </button>
 
-                <button onclick="location.href='howto.html'" class="px-8 py-4 md:px-10 md:py-5 rounded-[2rem] border-2 border-slate-300 text-slate-100 bg-slate-800/60 font-bold text-lg md:text-2xl tracking-wide hover:bg-slate-700/80 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] backdrop-blur-xl glow-button w-full md:w-auto">
+                <button onclick="location.href='howto.html'" class="px-6 py-3 md:px-8 md:py-4 rounded-[1.5rem] border-2 border-slate-300 text-slate-100 bg-slate-800/60 font-bold text-base md:text-xl tracking-wide hover:bg-slate-700/80 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] backdrop-blur-xl glow-button w-full md:w-auto">
                     คู่มือการเล่นเกม
                 </button>
 
             </div>
         </div>
+
+        <footer class="fixed bottom-4 right-4 text-right z-50 select-text drop-shadow-md">
+            <div class="font-bold text-slate-400 text-xs md:text-sm tracking-wide">© WEBSITE DEVELOPED BY NANON</div>
+            <div class="text-slate-500 text-[10px] md:text-xs">FOR TU242 PROJECT | วิทยาลัยสหวิทยาการ มหาวิทยาลัยธรรมศาสตร์</div>
+        </footer>
     </div>
 
     <div id="screen-setup" class="absolute inset-0 z-[150] hidden flex flex-col items-center justify-center bg-black/95 backdrop-blur-3xl transition-opacity duration-1000 overflow-hidden p-4 md:p-8">
@@ -200,8 +256,27 @@
             startGame(num) {
                 localStorage.setItem('taxopia_players', num);
                 window.location.href = 'game.html';
+            },
+            initDynamicBackground() {
+                const wrapper = document.getElementById('data-streams-wrapper');
+                if(!wrapper) return;
+                
+                // Generate data streams
+                for(let i=0; i<20; i++) {
+                    const stream = document.createElement('div');
+                    stream.className = 'data-stream';
+                    stream.style.left = `${Math.random() * 100}%`;
+                    stream.style.animationDuration = `${Math.random() * 4 + 3}s`;
+                    stream.style.animationDelay = `${Math.random() * 5}s`;
+                    wrapper.appendChild(stream);
+                }
             }
         };
+
+        // Initialize dynamic elements on load
+        window.addEventListener('DOMContentLoaded', () => {
+            SystemController.initDynamicBackground();
+        });
     </script>
 </body>
 </html>
