@@ -143,6 +143,14 @@
         }
         
         .glow-button:hover::after { opacity: 1; }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 <body class="w-[100dvw] h-[100dvh] flex flex-col relative select-none bg-slate-950 overflow-hidden">
@@ -199,60 +207,60 @@
 
     <div id="screen-setup" class="absolute inset-0 z-[150] hidden flex flex-col items-center justify-center bg-black/95 backdrop-blur-3xl transition-opacity duration-1000 overflow-hidden p-4 md:p-8">
         
-        <div class="glass-panel w-full max-w-7xl h-auto max-h-[95dvh] md:max-h-full p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] flex flex-col items-center border-amber-500/60 relative overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,1)]">
+        <div class="glass-panel w-full max-w-7xl h-auto max-h-[95dvh] p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] flex flex-col items-center border-amber-500/60 relative overflow-y-auto overflow-x-hidden scrollbar-hide shadow-[0_30px_80px_rgba(0,0,0,1)]">
             <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
             
-            <h2 class="text-2xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-8 tracking-wide text-center drop-shadow-2xl shrink-0">กำหนดการตั้งค่าห้อง</h2>
+            <h2 class="text-2xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-8 tracking-wide text-center drop-shadow-2xl shrink-0 mt-4">กำหนดการตั้งค่าห้อง</h2>
 
-            <div class="w-full max-w-2xl mb-6 md:mb-10">
+            <div class="w-full max-w-2xl mb-6 md:mb-10 shrink-0">
                 <label class="text-slate-300 font-bold text-sm md:text-xl mb-2 block text-center">กรุณาตั้งชื่อประจำตัวของคุณก่อนเข้าสู่ระบบ</label>
                 <input type="text" id="player-name-input" placeholder="ระบุชื่อผู้เล่น..." class="w-full bg-slate-900/80 border-2 border-slate-600 rounded-xl md:rounded-2xl px-6 py-4 text-center text-white font-bold text-xl md:text-3xl focus:border-amber-400 outline-none shadow-inner transition-colors">
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 w-full mb-6 md:mb-10 overflow-hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8 w-full mb-6 md:mb-10 shrink-0">
                 
-                <button onclick="SystemController.createRoom(1)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-blue-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
-                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[3px] border-blue-400 flex items-center justify-center text-xl md:text-4xl font-bold mb-2 md:mb-6 group-hover:scale-110 transition-transform shadow-[0_0_30px_#60a5fa]">1</div>
-                    <span class="font-bold text-lg md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นหนึ่งคน</span>
+                <button onclick="SystemController.createRoom(1)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-blue-500 hover:bg-slate-800 p-4 md:p-6 lg:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[140px] md:min-h-[180px]">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[3px] border-blue-400 flex items-center justify-center text-xl md:text-4xl font-bold mb-3 md:mb-5 group-hover:scale-110 transition-transform shadow-[0_0_30px_#60a5fa] shrink-0">1</div>
+                    <span class="font-bold text-sm md:text-xl lg:text-2xl text-slate-300 group-hover:text-white tracking-wide text-center leading-tight">สร้างห้องเล่นหนึ่งคน</span>
                 </button>
                 
-                <button onclick="SystemController.createRoom(2)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-rose-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
-                    <div class="flex -space-x-3 md:-space-x-3 mb-2 md:mb-6 group-hover:scale-110 transition-transform">
+                <button onclick="SystemController.createRoom(2)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-rose-500 hover:bg-slate-800 p-4 md:p-6 lg:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[140px] md:min-h-[180px]">
+                    <div class="flex -space-x-3 md:-space-x-3 mb-3 md:mb-5 group-hover:scale-110 transition-transform shrink-0">
                         <div class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[3px] border-slate-800 flex items-center justify-center text-lg md:text-3xl font-bold z-20 shadow-[0_0_20px_#60a5fa]">1</div>
                         <div class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[3px] border-slate-800 flex items-center justify-center text-lg md:text-3xl font-bold z-10 shadow-[0_0_20px_#fb7185]">2</div>
                     </div>
-                    <span class="font-bold text-base md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นสองคน</span>
+                    <span class="font-bold text-sm md:text-xl lg:text-2xl text-slate-300 group-hover:text-white tracking-wide text-center leading-tight">สร้างห้องเล่นสองคน</span>
                 </button>
                 
-                <button onclick="SystemController.createRoom(3)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-emerald-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
-                    <div class="flex -space-x-3 md:-space-x-2.5 mb-2 md:mb-6 group-hover:scale-110 transition-transform">
-                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] md:border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-30 shadow-[0_0_15px_#60a5fa]">1</div>
-                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] md:border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-20 shadow-[0_0_15px_#fb7185]">2</div>
-                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] md:border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-10 shadow-[0_0_15px_#34d399]">3</div>
+                <button onclick="SystemController.createRoom(3)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-emerald-500 hover:bg-slate-800 p-4 md:p-6 lg:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[140px] md:min-h-[180px]">
+                    <div class="flex -space-x-3 md:-space-x-2.5 mb-3 md:mb-5 group-hover:scale-110 transition-transform shrink-0">
+                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-30 shadow-[0_0_15px_#60a5fa]">1</div>
+                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-20 shadow-[0_0_15px_#fb7185]">2</div>
+                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-10 shadow-[0_0_15px_#34d399]">3</div>
                     </div>
-                    <span class="font-bold text-base md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นสามคน</span>
+                    <span class="font-bold text-sm md:text-xl lg:text-2xl text-slate-300 group-hover:text-white tracking-wide text-center leading-tight">สร้างห้องเล่นสามคน</span>
                 </button>
                 
-                <button onclick="SystemController.createRoom(4)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-amber-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
-                    <div class="flex -space-x-2 md:-space-x-1.5 mb-2 md:mb-6 group-hover:scale-110 transition-transform">
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-40 shadow-[0_0_15px_#60a5fa]">1</div>
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-30 shadow-[0_0_15px_#fb7185]">2</div>
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-20 shadow-[0_0_15px_#34d399]">3</div>
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-10 shadow-[0_0_15px_#fbbf24]">4</div>
+                <button onclick="SystemController.createRoom(4)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-amber-500 hover:bg-slate-800 p-4 md:p-6 lg:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[140px] md:min-h-[180px]">
+                    <div class="flex -space-x-2 md:-space-x-1.5 mb-3 md:mb-5 group-hover:scale-110 transition-transform shrink-0">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-40 shadow-[0_0_15px_#60a5fa]">1</div>
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-30 shadow-[0_0_15px_#fb7185]">2</div>
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-20 shadow-[0_0_15px_#34d399]">3</div>
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 border-[2px] border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-10 shadow-[0_0_15px_#fbbf24]">4</div>
                     </div>
-                    <span class="font-bold text-base md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นสี่คน</span>
+                    <span class="font-bold text-sm md:text-xl lg:text-2xl text-slate-300 group-hover:text-white tracking-wide text-center leading-tight">สร้างห้องเล่นสี่คน</span>
                 </button>
             </div>
             
-            <div class="w-full max-w-2xl bg-black/60 border-2 border-slate-700 p-4 md:p-8 rounded-2xl md:rounded-[2rem] flex flex-col items-center mb-4 shadow-inner">
+            <div class="w-full max-w-2xl bg-black/60 border-2 border-slate-700 p-4 md:p-8 rounded-2xl md:rounded-[2rem] flex flex-col items-center mb-4 shadow-inner shrink-0">
                 <h3 class="text-base md:text-2xl font-bold text-cyan-400 mb-2 md:mb-4 tracking-wide">เข้าร่วมห้องที่มีอยู่แล้ว</h3>
                 <div class="flex flex-col md:flex-row gap-3 w-full justify-center">
                     <input type="number" id="join-room-id" placeholder="กรอกรหัสห้อง 6 หลัก" class="bg-slate-900 border-2 border-slate-600 rounded-xl px-4 py-3 md:py-4 text-center text-white font-mono text-lg md:text-2xl focus:border-cyan-400 outline-none w-full md:w-2/3 shadow-inner">
-                    <button onclick="SystemController.joinRoom()" class="bg-gradient-to-b from-cyan-600 to-cyan-800 hover:from-cyan-500 hover:to-cyan-700 text-white font-bold px-6 py-3 md:py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(8,145,178,0.5)] w-full md:w-1/3 text-lg md:text-2xl">เข้าร่วม</button>
+                    <button onclick="SystemController.joinRoom()" class="bg-gradient-to-b from-cyan-600 to-cyan-800 hover:from-cyan-500 hover:to-cyan-700 text-white font-bold px-6 py-3 md:py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(8,145,178,0.5)] w-full md:w-1/3 text-lg md:text-2xl shrink-0">เข้าร่วม</button>
                 </div>
             </div>
 
-            <button onclick="location.reload()" class="text-slate-400 text-sm md:text-xl font-bold underline hover:text-white transition-colors tracking-wide shrink-0 mt-4">ยกเลิกคำสั่งและย้อนกลับสู่หน้าหลัก</button>
+            <button onclick="location.reload()" class="text-slate-400 text-sm md:text-xl font-bold underline hover:text-white transition-colors tracking-wide shrink-0 mt-4 pb-4">ยกเลิกคำสั่งและย้อนกลับสู่หน้าหลัก</button>
         </div>
     </div>
 
