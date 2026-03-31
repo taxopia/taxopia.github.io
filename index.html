@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TAXOPIA - หน้าแรก</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800;900&display=swap');
 
@@ -18,11 +22,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- PRO-LEVEL DYNAMIC BACKGROUND --- */
         .bg-cyber-grid {
             background-size: 80px 80px;
             background-image:
-                radial-gradient(circle at center, rgba(56, 189, 248, 0.1) 1px, transparent 2px), /* Added pulsing intersections */
+                radial-gradient(circle at center, rgba(56, 189, 248, 0.1) 1px, transparent 2px),
                 linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
         }
@@ -72,7 +75,6 @@
             100% { transform: translateY(-120px) scale(1); opacity: 0.2; }
         }
 
-        /* Added Holographic Rings for depth */
         .holo-ring-container {
             position: absolute;
             top: 50%; left: 50%;
@@ -98,7 +100,6 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 
-        /* Added Data Streams (Matrix effect) */
         .data-stream {
             position: absolute;
             top: -100%;
@@ -113,7 +114,6 @@
             50% { opacity: 0.5; }
             100% { transform: translateY(150vh); opacity: 0; }
         }
-        /* --- END PRO-LEVEL DYNAMIC BACKGROUND --- */
 
         .glass-panel {
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(0, 0, 0, 0.95) 100%);
@@ -169,8 +169,8 @@
         <div class="ambient-particles pointer-events-none z-0" style="animation-duration: 35s; background-size: 160px 160px; opacity: 0.15;"></div>
         
         <div class="relative z-10 text-center flex flex-col items-center w-full max-w-7xl px-4">
-            <h1 class="text-6xl md:text-[8rem] lg:text-[10rem] font-black text-glow-gold mb-4 md:mb-6 tracking-wide drop-shadow-[0_20px_50px_rgba(0,0,0,1)]">TAXOPIA</h1>
-            <p class="text-xl md:text-4xl lg:text-5xl text-amber-200 font-bold tracking-wide mb-16 md:mb-24 drop-shadow-2xl bg-black/50 px-6 py-3 md:px-10 md:py-4 rounded-full border-2 border-amber-500/40 backdrop-blur-md shadow-[0_0_40px_rgba(245,158,11,0.2)]">เกมเศรษฐี ภาษีมหัศจรรย์</p>
+            <h1 class="text-5xl md:text-[7rem] lg:text-[9rem] font-black text-glow-gold mb-4 md:mb-6 tracking-wide drop-shadow-[0_20px_50px_rgba(0,0,0,1)]">TAXOPIA</h1>
+            <p class="text-lg md:text-3xl lg:text-4xl text-amber-200 font-bold tracking-wide mb-16 md:mb-24 drop-shadow-2xl bg-black/50 px-6 py-3 md:px-10 md:py-4 rounded-full border-2 border-amber-500/40 backdrop-blur-md shadow-[0_0_40px_rgba(245,158,11,0.2)]">เกมเศรษฐี ภาษีมหัศจรรย์</p>
             
             <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 w-full px-4">
                 
@@ -191,58 +191,86 @@
         </div>
 
         <footer class="fixed bottom-4 right-4 text-right z-50 select-text drop-shadow-md">
-            <div class="font-bold text-slate-400 text-xs md:text-sm tracking-wide">© WEBSITE DEVELOPED BY NANON</div>
-            <div class="text-slate-500 text-[10px] md:text-xs">FOR TU242 PROJECT | วิทยาลัยสหวิทยาการ มหาวิทยาลัยธรรมศาสตร์</div>
+            <div class="font-bold text-slate-400 text-xs md:text-sm tracking-wide">Developed by Nanon</div>
+            <div class="text-slate-500 text-[10px] md:text-xs mt-0.5">For TU242 Project | College of Interdisclipinary Studies</div>
+            <div class="text-slate-500 text-[10px] md:text-xs">วิทยาลัยสหวิทยาการ</div>
         </footer>
     </div>
 
     <div id="screen-setup" class="absolute inset-0 z-[150] hidden flex flex-col items-center justify-center bg-black/95 backdrop-blur-3xl transition-opacity duration-1000 overflow-hidden p-4 md:p-8">
         
-        <div class="glass-panel w-full max-w-7xl h-auto max-h-[95dvh] md:max-h-full p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] flex flex-col items-center border-amber-500/60 relative overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,1)]">
+        <div class="glass-panel w-full max-w-7xl h-auto max-h-[95dvh] md:max-h-full p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] flex flex-col items-center border-amber-500/60 relative overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,1)]">
             <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
             
-            <h2 class="text-2xl md:text-5xl lg:text-7xl font-bold text-white mb-6 md:mb-12 tracking-wide text-center drop-shadow-2xl shrink-0">กำหนดจำนวนผู้เล่น</h2>
+            <h2 class="text-2xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-8 tracking-wide text-center drop-shadow-2xl shrink-0">กำหนดการตั้งค่าห้อง</h2>
+
+            <div class="w-full max-w-2xl mb-6 md:mb-10">
+                <label class="text-slate-300 font-bold text-sm md:text-xl mb-2 block text-center">กรุณาตั้งชื่อประจำตัวของคุณก่อนเข้าสู่ระบบ</label>
+                <input type="text" id="player-name-input" placeholder="ระบุชื่อผู้เล่น..." class="w-full bg-slate-900/80 border-2 border-slate-600 rounded-xl md:rounded-2xl px-6 py-4 text-center text-white font-bold text-xl md:text-3xl focus:border-amber-400 outline-none shadow-inner transition-colors">
+            </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-10 w-full mb-6 md:mb-12 overflow-hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 w-full mb-6 md:mb-10 overflow-hidden">
                 
-                <button onclick="SystemController.startGame(1)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-blue-500 hover:bg-slate-800 p-3 md:p-12 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full md:min-h-[300px]">
-                    <div class="w-12 h-12 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[3px] md:border-[5px] border-blue-400 flex items-center justify-center text-xl md:text-6xl font-bold mb-2 md:mb-10 group-hover:scale-110 transition-transform shadow-[0_0_30px_#60a5fa]">1</div>
-                    <span class="font-bold text-lg md:text-3xl text-slate-300 group-hover:text-white tracking-wide">เล่นหนึ่งคน</span>
+                <button onclick="SystemController.createRoom(1)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-blue-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[3px] border-blue-400 flex items-center justify-center text-xl md:text-4xl font-bold mb-2 md:mb-6 group-hover:scale-110 transition-transform shadow-[0_0_30px_#60a5fa]">1</div>
+                    <span class="font-bold text-lg md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นหนึ่งคน</span>
                 </button>
                 
-                <button onclick="SystemController.startGame(2)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-rose-500 hover:bg-slate-800 p-3 md:p-12 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full md:min-h-[300px]">
-                    <div class="flex -space-x-3 md:-space-x-8 mb-2 md:mb-10 group-hover:scale-110 transition-transform">
-                        <div class="w-10 h-10 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[3px] md:border-[5px] border-slate-800 flex items-center justify-center text-lg md:text-5xl font-bold z-20 shadow-[0_0_20px_#60a5fa]">1</div>
-                        <div class="w-10 h-10 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[3px] md:border-[5px] border-slate-800 flex items-center justify-center text-lg md:text-5xl font-bold z-10 shadow-[0_0_20px_#fb7185]">2</div>
+                <button onclick="SystemController.createRoom(2)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-rose-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
+                    <div class="flex -space-x-3 md:-space-x-3 mb-2 md:mb-6 group-hover:scale-110 transition-transform">
+                        <div class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[3px] border-slate-800 flex items-center justify-center text-lg md:text-3xl font-bold z-20 shadow-[0_0_20px_#60a5fa]">1</div>
+                        <div class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[3px] border-slate-800 flex items-center justify-center text-lg md:text-3xl font-bold z-10 shadow-[0_0_20px_#fb7185]">2</div>
                     </div>
-                    <span class="font-bold text-lg md:text-3xl text-slate-300 group-hover:text-white tracking-wide">เล่นสองคน</span>
+                    <span class="font-bold text-base md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นสองคน</span>
                 </button>
                 
-                <button onclick="SystemController.startGame(3)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-emerald-500 hover:bg-slate-800 p-3 md:p-12 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full md:min-h-[300px]">
-                    <div class="flex -space-x-3 md:-space-x-6 mb-2 md:mb-10 group-hover:scale-110 transition-transform">
-                        <div class="w-9 h-9 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] md:border-[4px] border-slate-800 flex items-center justify-center text-base md:text-4xl font-bold z-30 shadow-[0_0_15px_#60a5fa]">1</div>
-                        <div class="w-9 h-9 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] md:border-[4px] border-slate-800 flex items-center justify-center text-base md:text-4xl font-bold z-20 shadow-[0_0_15px_#fb7185]">2</div>
-                        <div class="w-9 h-9 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] md:border-[4px] border-slate-800 flex items-center justify-center text-base md:text-4xl font-bold z-10 shadow-[0_0_15px_#34d399]">3</div>
+                <button onclick="SystemController.createRoom(3)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-emerald-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
+                    <div class="flex -space-x-3 md:-space-x-2.5 mb-2 md:mb-6 group-hover:scale-110 transition-transform">
+                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] md:border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-30 shadow-[0_0_15px_#60a5fa]">1</div>
+                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] md:border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-20 shadow-[0_0_15px_#fb7185]">2</div>
+                        <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] md:border-slate-800 flex items-center justify-center text-base md:text-2xl font-bold z-10 shadow-[0_0_15px_#34d399]">3</div>
                     </div>
-                    <span class="font-bold text-lg md:text-3xl text-slate-300 group-hover:text-white tracking-wide">เล่นสามคน</span>
+                    <span class="font-bold text-base md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นสามคน</span>
                 </button>
                 
-                <button onclick="SystemController.startGame(4)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-amber-500 hover:bg-slate-800 p-3 md:p-12 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full md:min-h-[300px]">
-                    <div class="flex -space-x-2 md:-space-x-5 mb-2 md:mb-10 group-hover:scale-110 transition-transform">
-                        <div class="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] md:border-[3px] border-slate-800 flex items-center justify-center text-sm md:text-3xl font-bold z-40 shadow-[0_0_15px_#60a5fa]">1</div>
-                        <div class="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] md:border-[3px] border-slate-800 flex items-center justify-center text-sm md:text-3xl font-bold z-30 shadow-[0_0_15px_#fb7185]">2</div>
-                        <div class="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] md:border-[3px] border-slate-800 flex items-center justify-center text-sm md:text-3xl font-bold z-20 shadow-[0_0_15px_#34d399]">3</div>
-                        <div class="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 border-[2px] md:border-[3px] border-slate-800 flex items-center justify-center text-sm md:text-3xl font-bold z-10 shadow-[0_0_15px_#fbbf24]">4</div>
+                <button onclick="SystemController.createRoom(4)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-amber-500 hover:bg-slate-800 p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center transition-all group shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-full min-h-[160px] md:min-h-[200px]">
+                    <div class="flex -space-x-2 md:-space-x-1.5 mb-2 md:mb-6 group-hover:scale-110 transition-transform">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-40 shadow-[0_0_15px_#60a5fa]">1</div>
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-rose-700 to-rose-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-30 shadow-[0_0_15px_#fb7185]">2</div>
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-20 shadow-[0_0_15px_#34d399]">3</div>
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 border-[2px] md:border-slate-800 flex items-center justify-center text-sm md:text-xl font-bold z-10 shadow-[0_0_15px_#fbbf24]">4</div>
                     </div>
-                    <span class="font-bold text-lg md:text-3xl text-slate-300 group-hover:text-white tracking-wide">เล่นสี่คน</span>
+                    <span class="font-bold text-base md:text-2xl text-slate-300 group-hover:text-white tracking-wide">สร้างห้องเล่นสี่คน</span>
                 </button>
             </div>
             
-            <button onclick="location.reload()" class="text-slate-400 text-sm md:text-2xl font-bold underline hover:text-white transition-colors tracking-wide shrink-0">ยกเลิกคำสั่งและย้อนกลับสู่หน้าหลัก</button>
+            <div class="w-full max-w-2xl bg-black/60 border-2 border-slate-700 p-4 md:p-8 rounded-2xl md:rounded-[2rem] flex flex-col items-center mb-4 shadow-inner">
+                <h3 class="text-base md:text-2xl font-bold text-cyan-400 mb-2 md:mb-4 tracking-wide">เข้าร่วมห้องที่มีอยู่แล้ว</h3>
+                <div class="flex flex-col md:flex-row gap-3 w-full justify-center">
+                    <input type="number" id="join-room-id" placeholder="กรอกรหัสห้อง 6 หลัก" class="bg-slate-900 border-2 border-slate-600 rounded-xl px-4 py-3 md:py-4 text-center text-white font-mono text-lg md:text-2xl focus:border-cyan-400 outline-none w-full md:w-2/3 shadow-inner">
+                    <button onclick="SystemController.joinRoom()" class="bg-gradient-to-b from-cyan-600 to-cyan-800 hover:from-cyan-500 hover:to-cyan-700 text-white font-bold px-6 py-3 md:py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(8,145,178,0.5)] w-full md:w-1/3 text-lg md:text-2xl">เข้าร่วม</button>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="text-slate-400 text-sm md:text-xl font-bold underline hover:text-white transition-colors tracking-wide shrink-0 mt-4">ยกเลิกคำสั่งและย้อนกลับสู่หน้าหลัก</button>
         </div>
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYOYjBUlf7n5PF5aNsn0pIE78qu7kZmDc",
+            authDomain: "taxopia-8e165.firebaseapp.com",
+            databaseURL: "https://taxopia-8e165-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "taxopia-8e165",
+            storageBucket: "taxopia-8e165.firebasestorage.app",
+            messagingSenderId: "579124241021",
+            appId: "1:579124241021:web:339058cab95ec682ea0714",
+            measurementId: "G-HE09N93JMJ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const SystemController = {
             showSetup() {
                 const h = document.getElementById('screen-home');
@@ -253,15 +281,97 @@
                     setup.classList.remove('hidden');
                 }, 1000);
             },
-            startGame(num) {
-                localStorage.setItem('taxopia_players', num);
-                window.location.href = 'game.html';
+            
+            async createRoom(num) {
+                const playerName = document.getElementById('player-name-input').value.trim();
+                
+                if (!playerName) {
+                    alert('ข้อผิดพลาดทางไวยากรณ์ กรุณาระบุชื่อประจำตัวของคุณก่อนทำการสร้างห้องปฏิบัติการ');
+                    return;
+                }
+
+                try {
+                    const roomId = Math.floor(100000 + Math.random() * 900000).toString();
+                    
+                    const initialPlayers = {};
+                    initialPlayers[1] = { name: playerName };
+
+                    await db.ref('rooms/' + roomId).set({
+                        playerCount: num,
+                        currentTurn: 1,
+                        gameState: 'lobby',
+                        playersJoined: 1,
+                        hostId: 1,
+                        players: initialPlayers
+                    });
+                    
+                    localStorage.setItem('taxopia_room_id', roomId);
+                    localStorage.setItem('taxopia_players', num);
+                    localStorage.setItem('taxopia_my_id', '1');
+                    localStorage.setItem('taxopia_player_name', playerName);
+                    
+                    window.location.href = 'game.html';
+                } catch (error) {
+                    alert('ข้อผิดพลาดทางเครือข่าย การพยายามเชื่อมต่อศูนย์ข้อมูลล้มเหลว กรุณาตรวจสอบสัญญาณอินเทอร์เน็ตของท่าน');
+                }
             },
+            
+            async joinRoom() {
+                const playerName = document.getElementById('player-name-input').value.trim();
+                const roomIdInput = document.getElementById('join-room-id').value.trim();
+                
+                if (!playerName) {
+                    alert('ข้อผิดพลาดทางไวยากรณ์ กรุณาระบุชื่อประจำตัวของคุณก่อนทำการเข้าร่วมห้อง');
+                    return;
+                }
+
+                if(!roomIdInput || roomIdInput.length !== 6) {
+                    alert('ข้อผิดพลาดทางไวยากรณ์ กรุณาระบุรหัสผ่านห้องจำนวน 6 หลักให้ครบถ้วนสมบูรณ์');
+                    return;
+                }
+                
+                try {
+                    const snapshot = await db.ref('rooms/' + roomIdInput).once('value');
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        
+                        if (data.gameState !== 'lobby' && data.gameState !== 'waiting') {
+                            alert('ข้อผิดพลาดทางสถานะ ห้องปฏิบัติการนี้ได้เริ่มการแข่งขันไปแล้ว ไม่สามารถเข้าร่วมแทรกแซงได้');
+                            return;
+                        }
+
+                        if (data.playersJoined >= data.playerCount) {
+                            alert('ข้อผิดพลาดทางพื้นที่ จำนวนผู้เล่นในห้องปฏิบัติการนี้ถึงขีดจำกัดสูงสุดแล้ว ไม่สามารถลงทะเบียนเพิ่มเติมได้');
+                            return;
+                        }
+                        
+                        const myNewId = data.playersJoined + 1;
+                        
+                        const updates = {};
+                        updates['/playersJoined'] = myNewId;
+                        updates['/players/' + myNewId] = { name: playerName };
+                        
+                        await db.ref('rooms/' + roomIdInput).update(updates);
+                        
+                        localStorage.setItem('taxopia_room_id', roomIdInput);
+                        localStorage.setItem('taxopia_players', data.playerCount);
+                        localStorage.setItem('taxopia_my_id', myNewId.toString());
+                        localStorage.setItem('taxopia_player_name', playerName);
+                        
+                        window.location.href = 'game.html';
+                    } else {
+                        alert('ข้อผิดพลาดในการตรวจสอบ ไม่พบพิกัดของห้องปฏิบัติการนี้ในระบบฐานข้อมูลส่วนกลาง');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('ข้อผิดพลาดขั้นวิกฤต กระบวนการดึงข้อมูลจากศูนย์กลางเกิดการขัดข้อง');
+                }
+            },
+
             initDynamicBackground() {
                 const wrapper = document.getElementById('data-streams-wrapper');
                 if(!wrapper) return;
                 
-                // Generate data streams
                 for(let i=0; i<20; i++) {
                     const stream = document.createElement('div');
                     stream.className = 'data-stream';
@@ -273,7 +383,6 @@
             }
         };
 
-        // Initialize dynamic elements on load
         window.addEventListener('DOMContentLoaded', () => {
             SystemController.initDynamicBackground();
         });
