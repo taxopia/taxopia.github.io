@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TAXOPIA - บอร์ดเกมภาษี</title>
+    <title>TAXOPIA - เกมจำลองภาษี</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
@@ -446,7 +446,7 @@
             bottom: -80px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 4500;
+            z-index: 350;
             background: linear-gradient(135deg, rgba(15,23,42,0.97), rgba(2,6,23,0.99));
             border: 1.5px solid rgba(255,255,255,0.15);
             border-radius: 50px;
@@ -464,10 +464,10 @@
             text-overflow: ellipsis;
         }
         .action-toast.show {
-            bottom: 80px;
+            bottom: 16px;
             opacity: 1;
         }
-        @media (min-width: 768px) { .action-toast.show { bottom: 100px; } }
+        @media (min-width: 768px) { .action-toast.show { bottom: 24px; } }
 
         /* === TILE HIGHLIGHT TRAIL === */
         @keyframes tileStep {
@@ -1825,14 +1825,25 @@
                                         
                                         data.players.forEach((dp, i) => {
                                             if(State.players[i]) {
-                                                State.players[i].name = dp.name;
-                                                State.players[i].pos = dp.pos;
-                                                State.players[i].cash = dp.cash;
-                                                State.players[i].extraIncome = dp.extraIncome;
-                                                State.players[i].laps = dp.laps;
-                                                State.players[i].skip = dp.skip;
-                                                State.players[i].inventory = dp.inventory || [];
-                                                State.players[i].funds = dp.funds || {};
+                                                // ถ้าตาของเรากำลังรันอยู่ (dice/move/popup กำลังทำงาน)
+                                                // ห้ามให้ Firebase listener overwrite state ของผู้เล่นตัวเอง
+                                                // เพราะอาจทำให้การ์ดหาย / skip flag หาย / ตำแหน่งกลับไป
+                                                const isMyPlayer = (State.players[i].id === window.myId);
+                                                const myTurnActive = (window._isTurnRunning || window._waitingForPopup);
+                                                if(isMyPlayer && myTurnActive) {
+                                                    // อัปเดตเฉพาะ field ที่ไม่ใช่ game action ของตัวเอง
+                                                    State.players[i].name = dp.name;
+                                                    // ข้าม: pos, cash, extraIncome, laps, skip, inventory, funds
+                                                } else {
+                                                    State.players[i].name = dp.name;
+                                                    State.players[i].pos = dp.pos;
+                                                    State.players[i].cash = dp.cash;
+                                                    State.players[i].extraIncome = dp.extraIncome;
+                                                    State.players[i].laps = dp.laps;
+                                                    State.players[i].skip = dp.skip;
+                                                    State.players[i].inventory = dp.inventory || [];
+                                                    State.players[i].funds = dp.funds || {};
+                                                }
                                             }
                                         });
                                         
@@ -2655,6 +2666,8 @@
                         
                         if(nextP.skip && nextP.laps < DBConfig.LAPS_TO_WIN) {
                             ActionLog.add(`${nextP.name} ถูกข้ามตาเดิน 1 รอบ`, '#8b5cf6');
+                            nextP.skip = false;
+                            FirebaseSystem.syncState();
                             
                             if(nextP.id === window.myId) {
                                 UIEngine.triggerEventModal({
@@ -2665,9 +2678,8 @@
                                     icon: "X",
                                     btnText: "ตกลง"
                                 }).then(() => {
-                                    nextP.skip = false;
                                     State.isLocked = false;
-                                    this.executeTurn();
+                                    this.advanceToNextPlayer();
                                 });
                             }
                             return;
@@ -2756,6 +2768,8 @@
                                         ActionLog.add(`${p.name} ซื้อการ์ด ${item.title} สำเร็จ จ่ายไป ฿${item.cost.toLocaleString()}`, CardData[cat].color);
                                         EffectEngine.launchConfetti(CardData[cat].color);
                                         EffectEngine.showToast(`🎴 ได้รับการ์ด: ${item.title} (ลดหย่อน ฿${item.deduct.toLocaleString()})`, CardData[cat].color, '🎴');
+                                        // Sync state ทันทีหลังได้การ์ด เพื่อให้ Firebase มีข้อมูลการ์ดใหม่ก่อนที่ listener จะ update
+                                        FirebaseSystem.syncState();
 
                                         await UIEngine.triggerCardModal({
                                             headerTitle: "ได้รับการ์ดใหม่",
@@ -2863,6 +2877,8 @@
                             p.skip = true;
                             ActionLog.add(`${p.name} ถูกสั่งงดเดิน 1 รอบในตาถัดไป`, '#8b5cf6');
                             EffectEngine.showToast(`⏸ งดเดินรอบถัดไป: ${tile.label}`, '#8b5cf6', '⏸');
+                            // Sync ทันทีหลัง set skip=true เพื่อให้ทุกคนรับสถานะงดเดินก่อน advanceToNextPlayer
+                            FirebaseSystem.syncState();
                             await UIEngine.triggerEventModal({
                                 headerTitle: "งดเดิน",
                                 title: tile.label,
@@ -2876,6 +2892,8 @@
                             let oldPos = p.pos;
                             p.pos = Math.max(0, p.pos + tile.move);
                             UIEngine.drawPawns();
+                            // Sync ตำแหน่งใหม่ทันทีหลังถอยหลัง ให้ทุกคนเห็นพร้อมกัน
+                            FirebaseSystem.syncState();
                             ActionLog.add(`${p.name} ถูกสั่งย้ายไปที่ช่อง ${BoardMap[p.pos].label}`, '#8b5cf6');
                             await UIEngine.triggerEventModal({
                                 headerTitle: "ย้ายตำแหน่ง",
