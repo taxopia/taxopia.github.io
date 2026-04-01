@@ -1825,21 +1825,17 @@
                                         
                                         data.players.forEach((dp, i) => {
                                             if(State.players[i]) {
-                                                // ถ้าตาของเรากำลังรันอยู่ (dice/move/popup กำลังทำงาน)
-                                                // ห้ามให้ Firebase listener overwrite state ของผู้เล่นตัวเอง
-                                                // เพราะอาจทำให้การ์ดหาย / skip flag หาย / ตำแหน่งกลับไป
                                                 const isMyPlayer = (State.players[i].id === window.myId);
                                                 const myTurnActive = (window._isTurnRunning || window._waitingForPopup);
-                                                // ระหว่าง turn ที่กำลัง run อยู่ ห้าม overwrite cash/game state
-                                                // ของผู้เล่นที่กำลังเดินอยู่ (active player) เพราะ mid-turn sync มี cash เก่า
-                                                const activePlayerId = State.players[State.activeIdx] ? State.players[State.activeIdx].id : -1;
-                                                const isActivePlayer = (State.players[i].id === activePlayerId);
-                                                const anyTurnActive = (window._isTurnRunning || window._waitingForPopup);
-                                                if((isMyPlayer && myTurnActive) || (isActivePlayer && anyTurnActive)) {
-                                                    // อัปเดตเฉพาะ field ที่ไม่ใช่ game action
+
+                                                if(isMyPlayer && myTurnActive) {
+                                                    // ตาของเรากำลังรันอยู่: ป้องกัน Firebase overwrite state ตัวเอง
+                                                    // เพราะ mid-turn sync มีค่าเก่า จะทำให้ card/cash/pos หาย
+                                                    // อัปเดตเฉพาะ name ที่ไม่กระทบ game logic
                                                     State.players[i].name = dp.name;
-                                                    // ข้าม: pos, cash, extraIncome, laps, skip, inventory, funds
                                                 } else {
+                                                    // คนอื่น: update ทุก field เพื่อให้เห็นการเดินหมาก
+                                                    // และ HUD ของทุกคนถูกต้อง
                                                     State.players[i].name = dp.name;
                                                     State.players[i].pos = dp.pos;
                                                     State.players[i].cash = dp.cash;
