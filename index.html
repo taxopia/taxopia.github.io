@@ -191,9 +191,8 @@
         </div>
 
         <footer class="fixed bottom-4 right-4 text-right z-50 select-text drop-shadow-md">
-            <div class="font-bold text-slate-400 text-xs md:text-sm tracking-wide">Developed by Nanon</div>
-            <div class="text-slate-500 text-[10px] md:text-xs mt-0.5">For TU242 Project | College of Interdisclipinary Studies</div>
-            <div class="text-slate-500 text-[10px] md:text-xs">วิทยาลัยสหวิทยาการ</div>
+            <div class="font-bold text-slate-400 text-xs md:text-sm tracking-wide">© WEBSITE DEVELOPED BY NANON</div>
+            <div class="text-slate-500 text-[10px] md:text-xs">FOR TU242 PROJECT | วิทยาลัยสหวิทยาการ มหาวิทยาลัยธรรมศาสตร์</div>
         </footer>
     </div>
 
@@ -202,10 +201,10 @@
         <div class="glass-panel w-full h-[95%] max-w-7xl rounded-[2vmin] md:rounded-[3vmin] flex flex-col items-center border-amber-500/60 relative overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,1)] p-[3vmin] md:p-[5vmin]">
             <div class="absolute top-0 left-0 w-full h-1 md:h-2 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
             
-            <h2 class="text-[5vmin] md:text-[5vmin] lg:text-[6vmin] font-bold text-white tracking-wide text-center drop-shadow-2xl flex-shrink-0 mt-2 mb-[2vh]">กำหนดการตั้งค่าห้อง</h2>
+            <h2 class="text-[5vmin] md:text-[5vmin] lg:text-[6vmin] font-bold text-white tracking-wide text-center drop-shadow-2xl flex-shrink-0 mt-2 mb-[2vh]">เลือกรูปแบบการเล่น</h2>
 
             <div class="w-full max-w-2xl mb-[2vh] flex-shrink-0">
-                <label class="text-slate-300 font-bold text-[2vmin] md:text-[2vmin] mb-1 block text-center">กรุณาตั้งชื่อประจำตัวของคุณก่อนเข้าสู่ระบบ</label>
+                <label class="text-slate-300 font-bold text-[2vmin] md:text-[2vmin] mb-1 block text-center">กรุณาตั้งชื่อของคุณก่อนเข้าสู่ระบบ</label>
                 <input type="text" id="player-name-input" placeholder="ระบุชื่อผู้เล่น..." class="w-full bg-slate-900/80 border-2 border-slate-600 rounded-[1vmin] md:rounded-[1.5vmin] px-[3vmin] py-[1.5vh] md:py-[2vh] text-center text-white font-bold text-[3.5vmin] md:text-[3vmin] focus:border-amber-400 outline-none shadow-inner transition-colors">
             </div>
             
@@ -213,7 +212,7 @@
                 
                 <button onclick="SystemController.createRoom(1)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-blue-500 hover:bg-slate-800 rounded-[1.5vmin] md:rounded-[2vmin] flex flex-col items-center justify-center transition-all group shadow-[0_15px_30px_rgba(0,0,0,0.7)] w-full h-full p-[2vmin]">
                     <div class="w-[7vmin] h-[7vmin] md:w-[8vmin] md:h-[8vmin] rounded-full bg-gradient-to-br from-blue-700 to-blue-900 border-[2px] border-blue-400 flex items-center justify-center text-[3.5vmin] md:text-[4vmin] font-bold mb-[1vh] md:mb-[1.5vh] group-hover:scale-110 transition-transform shadow-[0_0_20px_#60a5fa] shrink-0">1</div>
-                    <span class="font-bold text-[1.8vmin] md:text-[2vmin] lg:text-[2.3vmin] text-slate-300 group-hover:text-white tracking-wide text-center leading-tight">สร้างห้องเล่นหนึ่งคน</span>
+                    <span class="font-bold text-[1.8vmin] md:text-[2vmin] lg:text-[2.3vmin] text-slate-300 group-hover:text-white tracking-wide text-center leading-tight">เล่นหนึ่งคน</span>
                 </button>
                 
                 <button onclick="SystemController.createRoom(2)" class="bg-slate-900/90 border-4 border-slate-700 hover:border-rose-500 hover:bg-slate-800 rounded-[1.5vmin] md:rounded-[2vmin] flex flex-col items-center justify-center transition-all group shadow-[0_15px_30px_rgba(0,0,0,0.7)] w-full h-full p-[2vmin]">
@@ -247,7 +246,7 @@
             <div class="w-full max-w-2xl bg-black/60 border-2 border-slate-700 p-[1.5vmin] md:p-[2vmin] rounded-[1.2vmin] md:rounded-[2vmin] flex flex-col items-center mb-[1vh] md:mb-[1.5vh] shadow-inner shrink-0 overflow-hidden">
                 <h3 class="text-[2.2vmin] md:text-[2vmin] lg:text-[2.5vmin] font-bold text-cyan-400 tracking-wide">เข้าร่วมห้องที่มีอยู่แล้ว</h3>
                 <div class="flex flex-row gap-[1.5vmin] w-full justify-center mt-[1vh]">
-                    <input type="number" id="join-room-id" placeholder="รหัสห้อง 6 หลัก" class="bg-slate-900 border-2 border-slate-600 rounded-[0.8vmin] md:rounded-[1vmin] px-[2vmin] py-[1.2vh] md:py-[1.5vh] text-center text-white font-mono text-[2.8vmin] md:text-[2.5vmin] focus:border-cyan-400 outline-none w-2/3 shadow-inner">
+                    <input type="number" id="join-room-id" placeholder="เลขห้อง 6 หลัก" class="bg-slate-900 border-2 border-slate-600 rounded-[0.8vmin] md:rounded-[1vmin] px-[2vmin] py-[1.2vh] md:py-[1.5vh] text-center text-white font-mono text-[2.8vmin] md:text-[2.5vmin] focus:border-cyan-400 outline-none w-2/3 shadow-inner">
                     <button onclick="SystemController.joinRoom()" class="bg-gradient-to-b from-cyan-600 to-cyan-800 hover:from-cyan-500 hover:to-cyan-700 text-white font-bold px-[2vmin] py-[1.2vh] md:py-[1.5vh] rounded-[0.8vmin] md:rounded-[1vmin] transition-all shadow-[0_0_15px_rgba(8,145,178,0.4)] w-1/3 text-[2.8vmin] md:text-[2.5vmin] shrink-0">เข้าร่วม</button>
                 </div>
             </div>
@@ -286,7 +285,7 @@
                 const playerName = document.getElementById('player-name-input').value.trim();
                 
                 if (!playerName) {
-                    alert('ข้อผิดพลาดทางไวยากรณ์ กรุณาระบุชื่อประจำตัวของคุณก่อนทำการสร้างห้องปฏิบัติการ');
+                    alert(' กรุณาระบุชื่อของคุณก่อนเข้าเล่น');
                     return;
                 }
 
@@ -321,12 +320,12 @@
                 const roomIdInput = document.getElementById('join-room-id').value.trim();
                 
                 if (!playerName) {
-                    alert('ข้อผิดพลาดทางไวยากรณ์ กรุณาระบุชื่อประจำตัวของคุณก่อนทำการเข้าร่วมห้อง');
+                    alert('กรุณาระบุชื่อของคุณก่อนเข้าเล่น');
                     return;
                 }
 
                 if(!roomIdInput || roomIdInput.length !== 6) {
-                    alert('ข้อผิดพลาดทางไวยากรณ์ กรุณาระบุรหัสผ่านห้องจำนวน 6 หลักให้ครบถ้วนสมบูรณ์');
+                    alert('กรุณาระบุเลขห้องจำนวน 6 หลัก');
                     return;
                 }
                 
@@ -336,12 +335,12 @@
                         const data = snapshot.val();
                         
                         if (data.gameState !== 'lobby' && data.gameState !== 'waiting') {
-                            alert('ข้อผิดพลาดทางสถานะ ห้องปฏิบัติการนี้ได้เริ่มการแข่งขันไปแล้ว ไม่สามารถเข้าร่วมแทรกแซงได้');
+                            alert('ห้องนี้ได้เริ่มการแข่งขันไปแล้ว ไม่สามารถเข้าร่วมแทรกแซงได้');
                             return;
                         }
 
                         if (data.playersJoined >= data.playerCount) {
-                            alert('ข้อผิดพลาดทางพื้นที่ จำนวนผู้เล่นในห้องปฏิบัติการนี้ถึงขีดจำกัดสูงสุดแล้ว ไม่สามารถลงทะเบียนเพิ่มเติมได้');
+                            alert('ข้อผิดพลาดทางพื้นที่ จำนวนผู้เล่นในห้องนี้ถึงขีดจำกัดสูงสุดแล้ว ไม่สามารถเข้าร่วมเพิ่มเติมได้');
                             return;
                         }
                         
@@ -360,7 +359,7 @@
                         
                         window.location.href = 'game.html';
                     } else {
-                        alert('ข้อผิดพลาดในการตรวจสอบ ไม่พบพิกัดของห้องปฏิบัติการนี้ในระบบฐานข้อมูลส่วนกลาง');
+                        alert('ไม่พบห้องนี้ในระบบฐานข้อมูล โปรดตรวจสอบเลขห้องให้ดีก่อนกดเข้าร่วม');
                     }
                 } catch (error) {
                     console.error(error);
