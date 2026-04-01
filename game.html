@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TAXOPIA - เกมจำลองภาษี</title>
+    <title>TAXOPIA - บอร์ดเกมภาษี</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
@@ -413,38 +413,166 @@
             border-color: #7dd3fc;
             color: white;
         }
+
+        /* === PAWN BOUNCE ANIMATION === */
+        @keyframes pawnBounce {
+            0% { transform: translate(var(--px), var(--py)) scale(1); }
+            30% { transform: translate(var(--px), calc(var(--py) - 12px)) scale(1.2); }
+            60% { transform: translate(var(--px), calc(var(--py) + 3px)) scale(0.95); }
+            80% { transform: translate(var(--px), calc(var(--py) - 4px)) scale(1.05); }
+            100% { transform: translate(var(--px), var(--py)) scale(1); }
+        }
+        .pawn-bounce { animation: pawnBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        /* === PAWN TRAIL === */
+        .pawn-trail {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 45;
+            opacity: 0.7;
+            animation: trailFade 0.5s ease-out forwards;
+        }
+        @keyframes trailFade {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.2); }
+        }
+
+        /* === ACTION TOAST === */
+        .action-toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4500;
+            background: linear-gradient(135deg, rgba(15,23,42,0.97), rgba(2,6,23,0.99));
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+            opacity: 0;
+            white-space: nowrap;
+            max-width: 90vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .action-toast.show {
+            bottom: 80px;
+            opacity: 1;
+        }
+        @media (min-width: 768px) { .action-toast.show { bottom: 100px; } }
+
+        /* === TILE HIGHLIGHT TRAIL === */
+        @keyframes tileStep {
+            0% { box-shadow: inset 0 0 20px rgba(0,0,0,1), 0 0 0 rgba(255,255,255,0); }
+            50% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.4); }
+            100% { box-shadow: inset 0 0 20px rgba(0,0,0,1), 0 0 0 rgba(255,255,255,0); }
+        }
+        .tile-step-glow { animation: tileStep 0.4s ease-out forwards; }
+
+        /* === CONFETTI === */
+        .confetti-piece {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            top: -10px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confettiFall linear forwards;
+            border-radius: 2px;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* === ROLL BUTTON PULSE === */
+        @keyframes rollPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(245,158,11,0.7), 0 0 0 0 rgba(245,158,11,0.4); }
+            50% { box-shadow: 0 0 40px rgba(245,158,11,1), 0 0 0 8px rgba(245,158,11,0); }
+        }
+        .roll-ready { animation: rollPulse 2s ease-in-out infinite; }
+
+        /* === OTHER PLAYER EVENT BADGE === */
+        .other-event-badge {
+            position: fixed;
+            top: 60px;
+            right: -320px;
+            width: 280px;
+            background: linear-gradient(135deg, rgba(15,23,42,0.97), rgba(2,6,23,0.99));
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 12px 16px;
+            z-index: 4500;
+            transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(20px);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+        }
+        .other-event-badge.show { right: 8px; }
+        @media (max-width: 480px) {
+            .other-event-badge { width: 220px; top: 55px; font-size: 0.75rem; }
+        }
     </style>
 </head>
 <body class="w-[100dvw] h-[100dvh] flex flex-col relative select-none bg-slate-950 overflow-hidden">
+
+    <!-- Action Toast -->
+    <div id="action-toast" class="action-toast">
+        <span id="action-toast-icon" class="text-base shrink-0">📢</span>
+        <span id="action-toast-text" class="text-white font-bold text-xs sm:text-sm truncate"></span>
+    </div>
+
+    <!-- Other Player Event Badge -->
+    <div id="other-event-badge" class="other-event-badge">
+        <div class="flex items-center gap-2 mb-1.5">
+            <div id="other-badge-color" class="w-3 h-3 rounded-full shrink-0" style="background:#38bdf8"></div>
+            <span id="other-badge-player" class="text-slate-300 font-bold text-xs uppercase tracking-wide">P2 ดำเนินการ</span>
+        </div>
+        <div id="other-badge-title" class="text-white font-bold text-sm mb-0.5">ชื่อช่อง</div>
+        <div id="other-badge-desc" class="text-slate-400 text-xs leading-relaxed"></div>
+    </div>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-[9998] overflow-hidden"></div>
     
-    <div id="screen-lobby" class="absolute inset-0 z-[2500] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-3xl transition-opacity duration-1000 p-4">
+    <div id="screen-lobby" class="absolute inset-0 z-[2500] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-3xl transition-opacity duration-1000 overflow-hidden p-3 sm:p-4">
         <div class="absolute inset-0 bg-cyber-grid opacity-30 pointer-events-none"></div>
         <div class="ambient-particles z-0"></div>
         
-        <div class="relative z-10 w-full max-w-4xl glass-panel rounded-[2rem] p-6 md:p-12 border-2 border-cyan-500/50 shadow-[0_0_80px_rgba(6,182,212,0.3)] flex flex-col items-center text-center">
+        <div class="relative z-10 w-full max-w-2xl glass-panel rounded-2xl border-2 border-cyan-500/50 shadow-[0_0_80px_rgba(6,182,212,0.3)] flex flex-col items-center text-center p-4 sm:p-6 gap-3 sm:gap-4" style="max-height:calc(100dvh - 24px); overflow-y:auto;">
             
-            <h2 class="text-3xl md:text-5xl font-bold text-white mb-2 tracking-wide uppercase">ห้องพักคอยผู้เล่น</h2>
-            <p class="text-slate-400 text-sm md:text-xl mb-8">โปรดรอให้พลเมืองทุกคนดำเนินการลงทะเบียนยืนยันตัวตนจนครบตามจำนวน</p>
-            
-            <div class="bg-black/80 px-8 py-4 md:px-16 md:py-6 rounded-2xl border-2 border-slate-700 shadow-inner mb-10">
-                <div class="text-slate-500 font-bold text-xs md:text-sm uppercase tracking-widest mb-2">รหัสผ่านห้องปฏิบัติการ</div>
-                <div id="lobby-room-code" class="text-5xl md:text-7xl font-mono font-black text-cyan-400 tracking-widest drop-shadow-[0_0_20px_rgba(34,211,238,0.8)]">------</div>
+            <div>
+                <h2 class="text-xl sm:text-3xl font-bold text-white tracking-wide uppercase leading-tight">ห้องเตรียมตัวเข้าเล่น</h2>
+                <p id="lobby-subtitle" class="text-slate-400 text-xs sm:text-sm mt-1">โปรดรอให้ผู้เล่นเข้าครบจำนวนและรอการกดเริ่มเกม</p>
             </div>
             
-            <div id="lobby-players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mb-10">
+            <div id="lobby-room-code-wrap" class="bg-black/80 px-6 py-3 sm:px-10 sm:py-4 rounded-xl border-2 border-slate-700 shadow-inner w-full">
+                <div class="text-slate-500 font-bold text-[0.6rem] sm:text-xs uppercase tracking-widest mb-1">เลขห้อง</div>
+                <div id="lobby-room-code" class="text-3xl sm:text-5xl font-mono font-black text-cyan-400 tracking-widest drop-shadow-[0_0_20px_rgba(34,211,238,0.8)]">------</div>
             </div>
             
-            <div id="lobby-status-text" class="text-amber-400 font-bold text-lg md:text-2xl mb-6 animate-pulse">กำลังรอให้ผู้เล่นเชื่อมต่อเข้าสู่ระบบส่วนกลาง</div>
+            <div id="lobby-players-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full">
+            </div>
             
-            <button id="lobby-start-btn" onclick="LobbySystem.startGame()" class="w-full md:w-2/3 py-4 md:py-6 rounded-full bg-slate-800 border-4 border-slate-600 text-slate-500 font-bold text-xl md:text-3xl transition-all pointer-events-none opacity-50 uppercase tracking-widest">เริ่มการแข่งขันภาษี</button>
-            <button onclick="location.href='index.html'" class="w-full md:w-2/3 py-3 md:py-4 mt-4 rounded-full bg-transparent border-2 border-rose-500/50 text-rose-400 font-bold text-lg md:text-xl transition-all hover:bg-rose-950/50 hover:border-rose-500 hover:text-rose-300 tracking-wide shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_20px_rgba(244,63,94,0.3)]">ยกเลิกและกลับสู่หน้าหลัก</button>
+            <div id="lobby-status-text" class="text-amber-400 font-bold text-sm sm:text-lg animate-pulse leading-tight">กำลังรอให้ผู้เล่นครบจำนวน</div>
             
+            <div class="flex flex-col gap-2 w-full">
+                <button id="lobby-start-btn" onclick="LobbySystem.startGame()" class="w-full py-3 sm:py-4 rounded-full bg-slate-800 border-2 border-slate-600 text-slate-500 font-bold text-base sm:text-xl transition-all pointer-events-none opacity-50 uppercase tracking-widest">เริ่มการแข่งขันภาษี</button>
+                <button onclick="location.href='index.html'" class="w-full py-2.5 sm:py-3 rounded-full bg-transparent border-2 border-rose-500/50 text-rose-400 font-bold text-sm sm:text-base transition-all hover:bg-rose-950/50 hover:border-rose-500 hover:text-rose-300 tracking-wide">ยกเลิกและกลับสู่หน้าหลัก</button>
+            </div>
         </div>
     </div>
     
     <div id="epic-intro" class="absolute inset-0 z-[2000] hidden items-center justify-center bg-black/90 backdrop-blur-md pointer-events-none transition-opacity duration-1000">
-        <div id="intro-text-1" class="absolute text-center text-3xl md:text-5xl lg:text-6xl font-bold text-glow-gold scale-50 opacity-0 transition-all duration-1000 transform tracking-wide drop-shadow-[0_0_50px_rgba(245,158,11,1)]">ดำเนินการซิงโครไนซ์สำเร็จ</div>
-        <div id="intro-text-2" class="absolute text-center text-3xl md:text-6xl lg:text-7xl font-bold text-rose-500 drop-shadow-[0_0_50px_rgba(244,63,94,1)] scale-50 opacity-0 transition-all duration-1000 transform tracking-wide leading-relaxed">ประตูกระดานเกมเปิดออก<br><span class="text-white text-xl md:text-4xl lg:text-5xl mt-4 md:mt-8 block font-light tracking-wide">ขอต้อนรับสู่ความมั่งคั่ง</span></div>
+        <div id="intro-text-1" class="absolute text-center text-3xl md:text-5xl lg:text-6xl font-bold text-glow-gold scale-50 opacity-0 transition-all duration-1000 transform tracking-wide drop-shadow-[0_0_50px_rgba(245,158,11,1)]">ยินดีต้อนรับสู่ TAXOPIA</div>
+        <div id="intro-text-2" class="absolute text-center text-3xl md:text-6xl lg:text-7xl font-bold text-rose-500 drop-shadow-[0_0_50px_rgba(244,63,94,1)] scale-50 opacity-0 transition-all duration-1000 transform tracking-wide leading-relaxed">ประตูกระดานเกมเปิดออก<br><span class="text-white text-xl md:text-4xl lg:text-5xl mt-4 md:mt-8 block font-light tracking-wide">สรรพากรรอคุณอยู่ !</span></div>
     </div>
     
     <div id="lap-banner" class="lap-notification flex items-center gap-4">
@@ -465,12 +593,12 @@
             <div class="radar-ring radar-3"></div>
         </div>
         
-        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 z-[300] flex gap-2">
-            <button onclick="SysMenu.open()" class="px-4 py-1.5 md:px-6 md:py-2 rounded-b-xl bg-slate-900/90 border-x border-b border-slate-600 text-slate-400 font-bold text-[9px] md:text-xs hover:text-cyan-400 hover:border-cyan-400 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md">การตั้งค่า</button>
-            <button onclick="AdminSystem.prompt()" class="px-4 py-1.5 md:px-6 md:py-2 rounded-b-xl bg-red-950/90 border-x border-b border-red-800 text-red-500 font-bold text-[9px] md:text-xs hover:text-white hover:bg-red-900 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md">แผงควบคุมระบบ</button>
-            <div class="px-4 py-1.5 md:px-6 md:py-2 rounded-b-xl bg-indigo-950/90 border-x border-b border-indigo-800 text-indigo-400 font-bold text-[9px] md:text-xs shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span id="room-id-display">ห้อง: กำลังโหลด</span>
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 z-[300] flex gap-1 sm:gap-2">
+            <button onclick="SysMenu.open()" class="px-2.5 py-1 sm:px-4 sm:py-1.5 md:px-6 md:py-2 rounded-b-xl bg-slate-900/90 border-x border-b border-slate-600 text-slate-400 font-bold text-[8px] sm:text-[9px] md:text-xs hover:text-cyan-400 hover:border-cyan-400 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md whitespace-nowrap">⚙ ตั้งค่า</button>
+            <button onclick="AdminSystem.prompt()" class="px-2.5 py-1 sm:px-4 sm:py-1.5 md:px-6 md:py-2 rounded-b-xl bg-red-950/90 border-x border-b border-red-800 text-red-500 font-bold text-[8px] sm:text-[9px] md:text-xs hover:text-white hover:bg-red-900 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md whitespace-nowrap">⚡ แผงควบคุมระบบ</button>
+            <div id="room-id-badge" class="px-2.5 py-1 sm:px-4 sm:py-1.5 md:px-6 md:py-2 rounded-b-xl bg-indigo-950/90 border-x border-b border-indigo-800 text-indigo-400 font-bold text-[8px] sm:text-[9px] md:text-xs shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+                <span id="room-id-display" class="truncate max-w-[80px] sm:max-w-none">ห้อง: กำลังโหลด</span>
             </div>
         </div>
         
@@ -684,52 +812,97 @@
         </div>
     </div>
     
-    <div id="admin-modal" class="absolute inset-0 z-[5000] hidden bg-black/95 backdrop-blur-3xl flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-500">
-        <div class="w-full max-w-2xl bg-slate-950 border-2 border-red-600 rounded-[2rem] shadow-[0_0_60px_rgba(239,68,68,0.4)] p-6 md:p-8 relative overflow-hidden">
+    <div id="admin-modal" class="absolute inset-0 z-[5000] hidden bg-black/95 backdrop-blur-3xl flex-col items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-500 overflow-y-auto">
+        <div class="w-full max-w-3xl bg-slate-950 border-2 border-red-600 rounded-2xl sm:rounded-[2rem] shadow-[0_0_60px_rgba(239,68,68,0.4)] p-4 sm:p-6 md:p-8 relative overflow-hidden my-2">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 pointer-events-none"></div>
-            <h2 class="text-3xl md:text-4xl font-bold text-red-500 mb-6 border-b-2 border-red-900 pb-4 tracking-wide uppercase relative z-10">แผงควบคุมระบบส่วนกลาง</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 relative z-10">
-                <div>
-                    <label class="block text-red-400 font-bold mb-2 text-sm">เลือกผู้เล่นเป้าหมาย</label>
-                    <select id="admin-player-select" class="w-full bg-slate-900 text-white p-3 rounded-xl border border-red-500/50 outline-none focus:border-red-500"></select>
+            <div class="flex items-center justify-between mb-4 sm:mb-6 border-b-2 border-red-900 pb-3 sm:pb-4 relative z-10">
+                <h2 class="text-xl sm:text-2xl md:text-4xl font-bold text-red-500 tracking-wide uppercase">⚡ แผงควบคุมระบบ</h2>
+                <button onclick="AdminSystem.close()" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-800 hover:bg-red-900 border border-slate-600 text-slate-400 hover:text-white font-bold transition-colors flex items-center justify-center text-sm sm:text-base">✕</button>
+            </div>
+
+            <!-- Player Selection -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6 relative z-10">
+                <div class="sm:col-span-2">
+                    <label class="block text-red-400 font-bold mb-1.5 text-xs sm:text-sm uppercase tracking-wide">👤 เลือกผู้เล่นเป้าหมาย</label>
+                    <select id="admin-player-select" class="w-full bg-slate-900 text-white p-2.5 sm:p-3 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-sm sm:text-base"></select>
                 </div>
-                <div>
-                    <label class="block text-red-400 font-bold mb-2 text-sm">จำนวนเงินสดสุทธิ</label>
+
+                <!-- Cash Control -->
+                <div class="bg-red-950/20 p-3 sm:p-4 rounded-xl border border-red-900/50">
+                    <label class="block text-red-400 font-bold mb-1.5 text-xs sm:text-sm">💰 จำนวนเงินสดสุทธิ</label>
                     <div class="flex gap-2">
-                        <input type="number" id="admin-cash" class="w-full bg-slate-900 text-white p-3 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-center font-mono">
-                            <button onclick="AdminSystem.setCash()" class="bg-red-800 text-white px-5 rounded-xl hover:bg-red-700 font-bold transition-colors">ตั้งค่า</button>
+                        <input type="number" id="admin-cash" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-center font-mono text-sm sm:text-base">
+                        <button onclick="AdminSystem.setCash()" class="bg-red-800 text-white px-3 sm:px-5 rounded-xl hover:bg-red-700 font-bold transition-colors text-sm whitespace-nowrap">ตั้งค่า</button>
+                    </div>
+                    <div class="flex gap-1.5 mt-2 flex-wrap">
+                        <button onclick="AdminSystem.adjustCash(10000)" class="flex-1 min-w-0 bg-emerald-900/50 hover:bg-emerald-800 text-emerald-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-emerald-700 transition-colors">+1 หมื่น</button>
+                        <button onclick="AdminSystem.adjustCash(50000)" class="flex-1 min-w-0 bg-emerald-900/50 hover:bg-emerald-800 text-emerald-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-emerald-700 transition-colors">+5 หมื่น</button>
+                        <button onclick="AdminSystem.adjustCash(-10000)" class="flex-1 min-w-0 bg-rose-900/50 hover:bg-rose-800 text-rose-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-rose-700 transition-colors">-1 หมื่น</button>
+                        <button onclick="AdminSystem.adjustCash(-50000)" class="flex-1 min-w-0 bg-rose-900/50 hover:bg-rose-800 text-rose-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-rose-700 transition-colors">-5 หมื่น</button>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-red-400 font-bold mb-2 text-sm">พิกัดตำแหน่ง</label>
+
+                <!-- Position Control -->
+                <div class="bg-blue-950/20 p-3 sm:p-4 rounded-xl border border-blue-900/50">
+                    <label class="block text-blue-400 font-bold mb-1.5 text-xs sm:text-sm">📍 พิกัดตำแหน่ง (0-39)</label>
                     <div class="flex gap-2">
-                        <input type="number" id="admin-pos" class="w-full bg-slate-900 text-white p-3 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-center font-mono">
-                            <button onclick="AdminSystem.setPos()" class="bg-red-800 text-white px-5 rounded-xl hover:bg-red-700 font-bold transition-colors">ย้าย</button>
+                        <input type="number" id="admin-pos" min="0" max="39" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-blue-500/50 outline-none focus:border-blue-500 text-center font-mono text-sm sm:text-base">
+                        <button onclick="AdminSystem.setPos()" class="bg-blue-800 text-white px-3 sm:px-5 rounded-xl hover:bg-blue-700 font-bold transition-colors text-sm whitespace-nowrap">ย้าย</button>
+                    </div>
+                    <div class="flex gap-1.5 mt-2">
+                        <button onclick="AdminSystem.adjustPos(-5)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">-5 ช่อง</button>
+                        <button onclick="AdminSystem.adjustPos(-1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">-1 ช่อง</button>
+                        <button onclick="AdminSystem.adjustPos(1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">+1 ช่อง</button>
+                        <button onclick="AdminSystem.adjustPos(5)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">+5 ช่อง</button>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-red-400 font-bold mb-2 text-sm">จำนวนรอบบัญชีที่สำเร็จ</label>
+
+                <!-- Laps Control -->
+                <div class="bg-purple-950/20 p-3 sm:p-4 rounded-xl border border-purple-900/50">
+                    <label class="block text-purple-400 font-bold mb-1.5 text-xs sm:text-sm">🔄 จำนวนรอบบัญชีที่สำเร็จ</label>
                     <div class="flex gap-2">
-                        <input type="number" id="admin-laps" class="w-full bg-slate-900 text-white p-3 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-center font-mono">
-                            <button onclick="AdminSystem.setLaps()" class="bg-red-800 text-white px-5 rounded-xl hover:bg-red-700 font-bold transition-colors">ตั้งค่า</button>
+                        <input type="number" id="admin-laps" min="0" max="3" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-purple-500/50 outline-none focus:border-purple-500 text-center font-mono text-sm sm:text-base">
+                        <button onclick="AdminSystem.setLaps()" class="bg-purple-800 text-white px-3 sm:px-5 rounded-xl hover:bg-purple-700 font-bold transition-colors text-sm whitespace-nowrap">ตั้งค่า</button>
+                    </div>
+                    <div class="flex gap-1.5 mt-2">
+                        <button onclick="AdminSystem.setLapsQuick(0)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 0</button>
+                        <button onclick="AdminSystem.setLapsQuick(1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 1</button>
+                        <button onclick="AdminSystem.setLapsQuick(2)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 2</button>
+                        <button onclick="AdminSystem.setLapsQuick(3)" class="flex-1 bg-amber-900/50 hover:bg-amber-800 text-amber-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-amber-700 transition-colors">จบเกม</button>
                     </div>
                 </div>
-                <div class="md:col-span-2 bg-red-950/30 p-4 rounded-xl border border-red-900/50 mt-2">
-                    <label class="block text-red-400 font-bold mb-2 text-sm">เสกการ์ดสิทธิลดหย่อนเข้าคลังโดยตรง</label>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <select id="admin-card-select" class="flex-1 bg-slate-900 text-white p-3 rounded-xl border border-emerald-500/50 outline-none focus:border-emerald-500"></select>
-                        <button onclick="AdminSystem.addCard()" class="bg-emerald-700 text-white px-6 py-3 rounded-xl hover:bg-emerald-600 font-bold transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(16,185,129,0.4)]">เสกการ์ดทันที</button>
+
+                <!-- Skip Turn -->
+                <div class="bg-orange-950/20 p-3 sm:p-4 rounded-xl border border-orange-900/50">
+                    <label class="block text-orange-400 font-bold mb-1.5 text-xs sm:text-sm">⏭ ควบคุมตาเดิน</label>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="AdminSystem.toggleSkip()" class="bg-orange-800 hover:bg-orange-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-orange-600">⏸ สั่งงดตาเดินถัดไปของผู้เล่น</button>
+                        <button onclick="AdminSystem.forceTurn()" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm shadow-[0_0_15px_rgba(37,99,235,0.4)]">⚡ ข้ามตาเดินปัจจุบันทันที</button>
+                    </div>
+                </div>
+
+                <!-- Card Management -->
+                <div class="sm:col-span-2 bg-emerald-950/20 p-3 sm:p-4 rounded-xl border border-emerald-900/50">
+                    <label class="block text-emerald-400 font-bold mb-2 text-xs sm:text-sm">🎴 เสกการ์ดสิทธิลดหย่อนเข้าคลังโดยตรง</label>
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <select id="admin-card-select" class="flex-1 bg-slate-900 text-white p-2.5 rounded-xl border border-emerald-500/50 outline-none focus:border-emerald-500 text-sm"></select>
+                        <button onclick="AdminSystem.addCard()" class="bg-emerald-700 text-white px-4 sm:px-6 py-2.5 rounded-xl hover:bg-emerald-600 font-bold transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm">🎴 เสกทันที</button>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="sm:col-span-2 bg-red-950/30 p-3 sm:p-4 rounded-xl border border-red-700/50">
+                    <label class="block text-red-400 font-bold mb-2 text-xs sm:text-sm uppercase tracking-wide">⚠ โซนอันตราย</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <button onclick="AdminSystem.clearCards()" class="bg-orange-800 hover:bg-orange-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-orange-600">🗑 ล้างคลังการ์ด</button>
+                        <button onclick="AdminSystem.teleportToStart()" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-slate-600">🏠 ส่งกลับจุดเริ่ม</button>
+                        <button onclick="AdminSystem.giveMaxMoney()" class="bg-yellow-800 hover:bg-yellow-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-yellow-600 col-span-2 sm:col-span-1">💎 ให้เงินสูงสุด 999k</button>
                     </div>
                 </div>
             </div>
-            
-            <div class="flex flex-col sm:flex-row justify-between border-t-2 border-red-900/50 pt-6 mt-2 gap-4 relative z-10">
-                <button onclick="AdminSystem.close()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-6 py-3 rounded-xl font-bold transition-colors border border-slate-600">ปิดหน้าต่างควบคุม</button>
-                <div class="flex gap-3">
-                    <button onclick="AdminSystem.clearCards()" class="bg-orange-800 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg">ล้างคลังการ์ด</button>
-                    <button onclick="AdminSystem.forceTurn()" class="bg-blue-700 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-[0_0_15px_rgba(37,99,235,0.4)]">ข้ามตาเดินทันที</button>
-                </div>
+
+            <div class="flex justify-end border-t-2 border-red-900/50 pt-3 sm:pt-4 relative z-10">
+                <button onclick="AdminSystem.close()" class="bg-red-700 hover:bg-red-600 text-white px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl font-bold transition-colors border border-red-500 text-sm sm:text-base">ปิดหน้าต่างควบคุม</button>
             </div>
         </div>
     </div>
@@ -764,7 +937,7 @@
         </div>
         
         <div class="flex gap-2 md:gap-4 lg:gap-6 z-10 mt-2 md:mt-3 lg:mt-4 w-full md:w-auto px-4 md:px-0 flex-col md:flex-row" id="card-action-container">
-            <button id="card-btn-accept" class="w-full md:w-auto px-4 py-3 md:px-12 md:py-5 rounded-full font-bold text-sm md:text-2xl text-white tracking-wide transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.15)] md:shadow-[0_0_30px_rgba(255,255,255,0.15)] bg-slate-800 border-[2px] md:border-[3px] border-slate-600 hover:bg-slate-700 glow-button" style="color: #64748b;">ตกลง</button>
+            <button id="card-btn-accept" class="w-full md:w-auto px-4 py-3 md:px-12 md:py-5 rounded-full font-bold text-sm md:text-2xl text-white tracking-wide transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.5)] md:shadow-[0_0_30px_rgba(16,185,129,0.5)] bg-gradient-to-r from-emerald-600 to-emerald-700 border-[2px] md:border-[3px] border-emerald-400 hover:from-emerald-500 hover:to-emerald-600 glow-button" style="color: #ffffff;">เก็บเข้าคลัง</button>
             <button id="card-btn-use" class="hidden w-full md:w-auto px-4 py-3 md:px-12 md:py-5 rounded-full font-bold text-sm md:text-2xl text-white tracking-wide transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.6)] md:shadow-[0_0_30px_rgba(16,185,129,0.6)] bg-gradient-to-r from-emerald-600 to-emerald-800 border-[2px] md:border-[3px] border-emerald-400 glow-button" style="color: #10b981;">ใช้การ์ดป้องกัน</button>
         </div>
     </div>
@@ -773,6 +946,12 @@
         <div class="event-modal-box w-[92%] max-w-2xl rounded-2xl md:rounded-[2rem] p-4 md:p-6 lg:p-8 flex flex-col items-center text-center relative overflow-hidden max-h-[92vh] overflow-y-auto scrollbar-hide">
             <div id="event-modal-glow" class="absolute inset-0 opacity-20 pointer-events-none" style="background: radial-gradient(circle at 50% -20%, currentColor 0%, transparent 70%);"></div>
             
+            <!-- Player badge in event modal -->
+            <div id="event-player-badge" class="hidden z-10 mb-2 md:mb-4 flex items-center gap-2 bg-black/60 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-slate-700/60 shadow-lg">
+                <div id="event-player-dot" class="w-4 h-4 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center font-bold text-[0.45rem] md:text-[0.6rem] text-white shrink-0" style="border-color:#94a3b8;background:radial-gradient(circle at 30% 30%,#94a3b8,#000)"></div>
+                <span id="event-player-name" class="font-bold text-[0.6rem] md:text-sm tracking-wide"></span>
+            </div>
+
             <div id="event-icon-display" class="w-10 h-10 md:w-20 md:h-20 shrink-0 rounded-xl md:rounded-2xl rotate-45 border-[3px] md:border-4 shadow-[0_0_20px_currentColor] md:shadow-[0_0_40px_currentColor] mb-3 md:mb-6 flex items-center justify-center bg-slate-950 relative z-10">
                 <span class="text-xl md:text-5xl font-bold -rotate-45 block" id="event-icon-char">!</span>
             </div>
@@ -1067,11 +1246,11 @@
                     }
                     
                     if(window.myId !== 1) {
-                        alert("ข้อผิดพลาดทางสิทธิ์ เฉพาะพลเมืองที่เป็นเจ้าภาพห้องเท่านั้นจึงจะสามารถดำเนินการยุบห้องเพื่อเริ่มกระดานใหม่ได้");
+                        alert("ข้อผิดพลาดทางสิทธิ์ เฉพาะนเจ้าของห้องเท่านั้นจึงจะสามารถดำเนินการยุบห้องเพื่อเริ่มกระดานใหม่ได้");
                         return;
                     }
                     
-                    if(confirm("ระบบจะทำการยุบห้องปฏิบัติการนี้ทิ้ง และบังคับให้พลเมืองทุกคนกลับไปเริ่มต้นสร้างห้องใหม่ที่หน้าหลัก คุณแน่ใจหรือไม่ที่จะดำเนินการยุบห้อง")) {
+                    if(confirm("ระบบจะทำการยุบห้องนี้ทิ้ง คุณแน่ใจหรือไม่ที่จะดำเนินการยุบห้อง")) {
                         SysMenu.close();
                         const sumSc = document.getElementById('screen-summary');
                         if(sumSc) {
@@ -1216,12 +1395,89 @@
                         this.close();
                         GameCore.advanceToNextPlayer();
                     }
+                },
+                adjustCash(amount) {
+                    const pId = parseInt(document.getElementById('admin-player-select').value);
+                    const p = State.players.find(x => x.id === pId);
+                    if(p) {
+                        p.cash = Math.max(0, p.cash + amount);
+                        document.getElementById('admin-cash').value = p.cash;
+                        UIEngine.updateHUD();
+                        ActionLog.add(`ผู้ดูแลระบบปรับเงิน P${p.id} ${amount > 0 ? '+' : ''}฿${amount.toLocaleString()} → รวม ฿${p.cash.toLocaleString()}`, '#ef4444');
+                        FirebaseSystem.syncState();
+                        EffectEngine.showToast(`💰 P${p.id}: ${amount > 0 ? '+' : ''}฿${amount.toLocaleString()}`, amount > 0 ? '#10b981' : '#ef4444');
+                    }
+                },
+                adjustPos(delta) {
+                    const pId = parseInt(document.getElementById('admin-player-select').value);
+                    const p = State.players.find(x => x.id === pId);
+                    if(p) {
+                        p.pos = ((p.pos + delta) % DBConfig.TOTAL_TILES + DBConfig.TOTAL_TILES) % DBConfig.TOTAL_TILES;
+                        document.getElementById('admin-pos').value = p.pos;
+                        UIEngine.drawPawns();
+                        ActionLog.add(`ผู้ดูแลระบบย้าย P${p.id} ${delta > 0 ? '+' : ''}${delta} ช่อง → ช่องที่ ${p.pos} (${BoardMap[p.pos].label})`, '#ef4444');
+                        FirebaseSystem.syncState();
+                        EffectEngine.showToast(`📍 P${p.id} → ช่องที่ ${p.pos}: ${BoardMap[p.pos].label}`, '#f59e0b');
+                    }
+                },
+                setLapsQuick(val) {
+                    const pId = parseInt(document.getElementById('admin-player-select').value);
+                    const p = State.players.find(x => x.id === pId);
+                    if(p) {
+                        p.laps = val;
+                        document.getElementById('admin-laps').value = val;
+                        UIEngine.updateHUD();
+                        ActionLog.add(`ผู้ดูแลระบบตั้งรอบ P${p.id} เป็นรอบที่ ${val}`, '#ef4444');
+                        FirebaseSystem.syncState();
+                        EffectEngine.showToast(`🔄 P${p.id}: รอบบัญชี ${val}/${DBConfig.LAPS_TO_WIN}`, '#a855f7');
+                    }
+                },
+                toggleSkip() {
+                    const pId = parseInt(document.getElementById('admin-player-select').value);
+                    const p = State.players.find(x => x.id === pId);
+                    if(p) {
+                        p.skip = !p.skip;
+                        UIEngine.updateHUD();
+                        ActionLog.add(`ผู้ดูแลระบบ${p.skip ? 'สั่งงด' : 'ยกเลิกงด'}ตาเดินของ P${p.id}`, '#ef4444');
+                        FirebaseSystem.syncState();
+                        EffectEngine.showToast(`⏸ P${p.id}: ${p.skip ? 'งดตาเดินถัดไป' : 'ยกเลิกงดตาเดิน'}`, '#f97316');
+                    }
+                },
+                teleportToStart() {
+                    const pId = parseInt(document.getElementById('admin-player-select').value);
+                    const p = State.players.find(x => x.id === pId);
+                    if(p && confirm(`ส่ง P${p.id} กลับจุดเริ่มต้น?`)) {
+                        p.pos = 0;
+                        document.getElementById('admin-pos').value = 0;
+                        UIEngine.drawPawns();
+                        ActionLog.add(`ผู้ดูแลระบบส่ง P${p.id} กลับจุดเริ่มต้น`, '#ef4444');
+                        FirebaseSystem.syncState();
+                        EffectEngine.showToast(`🏠 P${p.id} → จุดเริ่มต้น`, '#38bdf8');
+                    }
+                },
+                giveMaxMoney() {
+                    const pId = parseInt(document.getElementById('admin-player-select').value);
+                    const p = State.players.find(x => x.id === pId);
+                    if(p && confirm(`ให้เงิน 999,000 บาทแก่ P${p.id}?`)) {
+                        p.cash = 999000;
+                        document.getElementById('admin-cash').value = 999000;
+                        UIEngine.updateHUD();
+                        ActionLog.add(`ผู้ดูแลระบบให้เงินสูงสุดแก่ P${p.id}`, '#ef4444');
+                        FirebaseSystem.syncState();
+                        EffectEngine.showToast(`💎 P${p.id}: ได้รับ ฿999,000!`, '#fbbf24');
+                        EffectEngine.launchConfetti(p.color);
+                    }
                 }
             };
 
             const DBConfig = {
                 TOTAL_TILES: 40, LAPS_TO_WIN: 3, BASE_SALARY: 336000, MONTHLY_SALARY: 27000
             };
+            
+            // Flag: ใช้ใน multiplayer เพื่อบอกว่ากำลังรอ popup ปิดอยู่ → ห้ามคืนปุ่มทอย
+            window._waitingForPopup = false;
+            // Flag: ตาของเรากำลังรัน (dice + move + popup) → Firebase listener ห้ามแตะปุ่ม
+            window._isTurnRunning = false;
 
             const CardData = {
                 Family: { color: '#3b82f6', items: [
@@ -1354,6 +1610,11 @@
                     roomRef: null,
                     init() {
                         if(!window.roomId) {
+                            // โหมดคนเดียว: ซ่อน room code block
+                            const rcWrap = document.getElementById('lobby-room-code-wrap');
+                            if(rcWrap) rcWrap.classList.add('hidden');
+                            const subtitle = document.getElementById('lobby-subtitle');
+                            if(subtitle) subtitle.textContent = 'โหมดเล่นคนเดียว';
                             const lobbyScreen = document.getElementById('screen-lobby');
                             if(lobbyScreen) lobbyScreen.classList.add('hidden');
                             this.transitionToGame();
@@ -1378,9 +1639,9 @@
                                 
                                 if(grid) {
                                     grid.innerHTML += `
-                                        <div class="player-slot ${isActive} bg-slate-900/50 border-2 border-slate-700 rounded-xl p-4 flex flex-col items-center">
-                                            <div class="slot-icon w-12 h-12 rounded-full border-2 border-slate-600 flex items-center justify-center font-bold text-xl mb-3 ${colorClass}">${i}</div>
-                                            <div class="font-bold text-sm ${colorClass} truncate w-full text-center">${pName}</div>
+                                        <div class="player-slot ${isActive} bg-slate-900/50 border-2 border-slate-700 rounded-xl p-3 flex flex-col items-center gap-1.5">
+                                            <div class="slot-icon w-9 h-9 sm:w-11 sm:h-11 rounded-full border-2 border-slate-600 flex items-center justify-center font-bold text-base sm:text-lg ${colorClass}">${i}</div>
+                                            <div class="font-bold text-xs sm:text-sm ${colorClass} truncate w-full text-center">${pName}</div>
                                         </div>
                                     `;
                                 }
@@ -1416,7 +1677,7 @@
                                 
                                 if(btn && status) {
                                     if(data.playersJoined >= data.playerCount) {
-                                        status.textContent = 'พลเมืองลงทะเบียนครบถ้วน พร้อมสำหรับการทดสอบ';
+                                        status.textContent = 'ผู้เล่นครบจำนวนแล้ว พร้อมสำหรับการเริ่มเกม';
                                         status.classList.remove('text-amber-400');
                                         status.classList.add('text-emerald-400');
                                         
@@ -1425,7 +1686,7 @@
                                             btn.classList.add('bg-gradient-to-r', 'from-emerald-600', 'to-emerald-800', 'border-emerald-400', 'text-white', 'hover:scale-105', 'shadow-[0_0_30px_rgba(16,185,129,0.5)]');
                                             btn.textContent = 'เริ่มการแข่งขันภาษี';
                                         } else {
-                                            btn.textContent = 'รอเจ้าภาพกดเริ่มการแข่งขัน';
+                                            btn.textContent = 'รอเจ้าของห้องกดเริ่มการแข่งขัน';
                                         }
                                     } else {
                                         status.textContent = 'กำลังรอให้ผู้เล่นเชื่อมต่อเข้าสู่ระบบส่วนกลาง';
@@ -1500,6 +1761,9 @@
                                     setTimeout(() => {
                                         intro.remove();
                                         if(window.roomId) {
+                                            State.isLocked = false;
+                                            window._waitingForPopup = false;
+                                            window._isTurnRunning = false;
                                             if(window.myId === 1) {
                                                 FirebaseSystem.syncState();
                                             }
@@ -1510,6 +1774,7 @@
                                             if(rollBtn) {
                                                 rollBtn.style.opacity = '1';
                                                 rollBtn.style.pointerEvents = 'auto';
+                                                rollBtn.classList.add('roll-ready');
                                             }
                                             const rollBtnText = document.getElementById('roll-btn-text');
                                             if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
@@ -1583,26 +1848,155 @@
                                             return;
                                         }
                                         
+                                        // ถ้าตาของเรากำลังรันอยู่ (dice/move/popup) ไม่ต้องแตะปุ่มเลย
+                                        if(window._isTurnRunning) return;
+                                        // ถ้ากำลัง resolve tile (popup ยังเปิดอยู่ของตัวเอง) ไม่ต้องคืนปุ่ม
+                                        if(window._waitingForPopup) return;
+
                                         if(State.players[State.activeIdx] && State.players[State.activeIdx].id === window.myId) {
+                                            // ถึงตาเรา — คืนปุ่มและ unlock เสมอ
+                                            State.isLocked = false;
                                             if(rollBtn) {
                                                 rollBtn.style.opacity = '1';
                                                 rollBtn.style.pointerEvents = 'auto';
+                                                rollBtn.classList.add('roll-ready');
                                             }
                                             if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
-                                            State.isLocked = false;
                                         } else {
+                                            // ตาคนอื่น — ซ่อนปุ่ม
                                             if(rollBtn) {
-                                                rollBtn.style.opacity = '0.5';
+                                                rollBtn.style.opacity = '0';
                                                 rollBtn.style.pointerEvents = 'none';
+                                                rollBtn.classList.remove('roll-ready');
                                             }
-                                            const activePlayerName = State.players[State.activeIdx] ? State.players[State.activeIdx].name : '?';
+                                            const activePlayer = State.players[State.activeIdx];
+                                            const activePlayerName = activePlayer ? activePlayer.name : '?';
                                             if(rollBtnText) rollBtnText.textContent = 'รอ ' + activePlayerName + ' ดำเนินการ';
                                             State.isLocked = true;
+                                            // Show other player badge
+                                            if(activePlayer && data.logs && data.logs.length > 0) {
+                                                const lastLog = data.logs[0];
+                                                if(lastLog && lastLog.text && lastLog.text.includes(activePlayerName)) {
+                                                    EffectEngine.showOtherPlayerEvent(
+                                                        activePlayer,
+                                                        '🎲 ' + activePlayerName,
+                                                        lastLog.text
+                                                    );
+                                                }
+                                            }
                                         }
                                     }
                                 });
                             }
                         });
+                    }
+                };
+
+                // ===== EFFECT ENGINE =====
+                const EffectEngine = {
+                    _toastTimer: null,
+                    _badgeTimer: null,
+
+                    showToast(text, color = '#38bdf8', icon = '📢') {
+                        const toast = document.getElementById('action-toast');
+                        const textEl = document.getElementById('action-toast-text');
+                        const iconEl = document.getElementById('action-toast-icon');
+                        if(!toast || !textEl) return;
+                        textEl.textContent = text;
+                        if(iconEl) iconEl.textContent = icon;
+                        toast.style.borderColor = color + '55';
+                        toast.style.boxShadow = `0 8px 30px rgba(0,0,0,0.7), 0 0 20px ${color}33`;
+                        textEl.style.color = color;
+                        if(this._toastTimer) clearTimeout(this._toastTimer);
+                        toast.classList.add('show');
+                        this._toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+                    },
+
+                    showOtherPlayerEvent(player, tileLabel, desc) {
+                        const badge = document.getElementById('other-event-badge');
+                        const colorEl = document.getElementById('other-badge-color');
+                        const playerEl = document.getElementById('other-badge-player');
+                        const titleEl = document.getElementById('other-badge-title');
+                        const descEl = document.getElementById('other-badge-desc');
+                        if(!badge) return;
+                        if(colorEl) colorEl.style.background = player.color;
+                        if(playerEl) { playerEl.textContent = `P${player.id} — ${player.name}`; playerEl.style.color = player.color; }
+                        if(titleEl) titleEl.textContent = tileLabel;
+                        if(descEl) descEl.textContent = desc || '';
+                        badge.style.borderColor = player.color + '55';
+                        if(this._badgeTimer) clearTimeout(this._badgeTimer);
+                        badge.classList.add('show');
+                        this._badgeTimer = setTimeout(() => badge.classList.remove('show'), 4000);
+                    },
+
+                    launchConfetti(color) {
+                        if(SystemSettings.lowGfx) return;
+                        const container = document.getElementById('confetti-container');
+                        if(!container) return;
+                        const colors = [color, '#fbbf24', '#ffffff', '#34d399', '#f472b6', '#60a5fa'];
+                        for(let i = 0; i < 60; i++) {
+                            const piece = document.createElement('div');
+                            piece.className = 'confetti-piece';
+                            const c = colors[Math.floor(Math.random() * colors.length)];
+                            const size = Math.random() * 8 + 4;
+                            piece.style.cssText = `
+                                left: ${Math.random() * 100}%;
+                                width: ${size}px;
+                                height: ${size}px;
+                                background: ${c};
+                                animation-duration: ${Math.random() * 2 + 1.5}s;
+                                animation-delay: ${Math.random() * 0.5}s;
+                                border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                            `;
+                            container.appendChild(piece);
+                            setTimeout(() => piece.remove(), 3500);
+                        }
+                    },
+
+                    flashTileStep(pos) {
+                        if(SystemSettings.lowGfx) return;
+                        const tile = document.getElementById(`tile-${pos}`);
+                        if(tile) {
+                            tile.classList.remove('tile-step-glow');
+                            void tile.offsetWidth;
+                            tile.classList.add('tile-step-glow');
+                            setTimeout(() => tile.classList.remove('tile-step-glow'), 500);
+                        }
+                    },
+
+                    spawnPawnTrail(pawnEl, color) {
+                        if(SystemSettings.lowGfx || !pawnEl) return;
+                        const trail = document.createElement('div');
+                        trail.className = 'pawn-trail';
+                        trail.style.cssText = `
+                            left: ${pawnEl.style.left};
+                            top: ${pawnEl.style.top};
+                            background: ${color};
+                            box-shadow: 0 0 6px ${color};
+                        `;
+                        const container = document.getElementById('pawn-container');
+                        if(container) container.appendChild(trail);
+                        setTimeout(() => trail.remove(), 600);
+                    },
+
+                    bouncePawn(playerId) {
+                        if(SystemSettings.lowGfx) return;
+                        const container = document.getElementById('pawn-container');
+                        if(!container) return;
+                        const pawns = container.children;
+                        for(let el of pawns) {
+                            if(el.textContent.trim() == String(playerId)) {
+                                el.style.transition = 'none';
+                                el.animate([
+                                    { transform: el.style.transform + ' translateY(0) scale(1)' },
+                                    { transform: el.style.transform + ' translateY(-14px) scale(1.25)', offset: 0.35 },
+                                    { transform: el.style.transform + ' translateY(3px) scale(0.92)', offset: 0.65 },
+                                    { transform: el.style.transform + ' translateY(-5px) scale(1.08)', offset: 0.82 },
+                                    { transform: el.style.transform + ' translateY(0) scale(1)' }
+                                ], { duration: SystemSettings.fastMode ? 250 : 520, easing: 'ease-out', fill: 'backwards' });
+                                break;
+                            }
+                        }
                     }
                 };
 
@@ -1784,11 +2178,15 @@
                         State.players.forEach(p => {
                             const el = document.createElement('div');
                             let size = window.innerWidth < 768 ? 16 : Math.max(25, Math.min(35, window.innerWidth * 0.04));
-                            el.className = 'absolute rounded-full border-[1.5px] md:border-[4px] border-white flex items-center justify-center font-bold text-white z-50 transition-all cubic-bezier(0.34, 1.56, 0.64, 1) shadow-[0_0_10px_rgba(255,255,255,1)] text-[8px] md:text-base';
+                            const isActive = State.players[State.activeIdx] && State.players[State.activeIdx].id === p.id && !State.ended;
+                            el.className = 'absolute rounded-full border-[1.5px] md:border-[4px] border-white flex items-center justify-center font-bold text-white z-50 transition-all cubic-bezier(0.34, 1.56, 0.64, 1) text-[8px] md:text-base';
                             el.style.transitionDuration = SystemSettings.fastMode ? '0.3s' : '0.7s';
                             el.style.width = `${size}px`;
                             el.style.height = `${size}px`;
                             el.style.background = `radial-gradient(circle at 30% 30%, ${p.color}, #000000)`;
+                            el.style.boxShadow = isActive
+                                ? `0 0 0 2px ${p.color}, 0 0 16px ${p.color}, 0 0 30px ${p.color}88`
+                                : `0 0 10px rgba(255,255,255,0.6)`;
                             el.textContent = p.id;
 
                             let col, row;
@@ -1944,9 +2342,29 @@
                             const finEl = document.getElementById('event-financials');
                             const btnAccept = document.getElementById('event-btn-accept');
                             const glow = document.getElementById('event-modal-glow');
+                            const playerBadge = document.getElementById('event-player-badge');
+                            const playerDot = document.getElementById('event-player-dot');
+                            const playerNameEl = document.getElementById('event-player-name');
                             
                             if(!overlay) { resolve(false); return; }
                             
+                            // แสดง player badge ถ้ามี player ส่งมา
+                            if(config.player && playerBadge && playerDot && playerNameEl) {
+                                const pl = config.player;
+                                playerDot.style.background = `radial-gradient(circle at 30% 30%, ${pl.color}, #000)`;
+                                playerDot.style.borderColor = pl.color;
+                                playerDot.style.boxShadow = `0 0 8px ${pl.color}`;
+                                playerDot.textContent = `P${pl.id}`;
+                                playerNameEl.textContent = pl.name;
+                                playerNameEl.style.color = pl.color;
+                                playerBadge.style.borderColor = pl.color + '44';
+                                playerBadge.classList.remove('hidden');
+                                playerBadge.classList.add('flex');
+                            } else if(playerBadge) {
+                                playerBadge.classList.add('hidden');
+                                playerBadge.classList.remove('flex');
+                            }
+
                             if(header) {
                                 header.textContent = config.headerTitle;
                                 header.style.color = config.colorHex;
@@ -2011,7 +2429,7 @@
                         if(!p) return;
                         
                         const invOwner = document.getElementById('inv-owner');
-                        if(invOwner) invOwner.textContent = `ข้อมูลการ์ดของ ${p.name}`;
+                        if(invOwner) invOwner.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><span style="display:inline-flex;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 30% 30%,${p.color},#000);border:2px solid ${p.color};box-shadow:0 0 10px ${p.color};align-items:center;justify-content:center;font-size:0.65rem;font-weight:900;color:#fff;flex-shrink:0;">P${p.id}</span><span>ข้อมูลการ์ดของ <span style="color:${p.color};text-shadow:0 0 10px ${p.color};">${p.name}</span></span></span>`;
                         
                         const con = document.getElementById('inventory-list');
                         if(!con) return;
@@ -2067,9 +2485,11 @@
                     async executeTurn() {
                         if(State.isLocked || State.ended) return;
                         State.isLocked = true;
+                        if(window.roomId) window._isTurnRunning = true;
                         const p = State.getCur();
                         
                         if (p.laps >= DBConfig.LAPS_TO_WIN) {
+                             window._isTurnRunning = false;
                              this.advanceToNextPlayer();
                              return;
                         }
@@ -2077,9 +2497,12 @@
                         ActionLog.add(`เริ่มตาของ ${p.name}`, p.color);
 
                         const rollBtn = document.getElementById('roll-btn');
+                        const rollBtnText = document.getElementById('roll-btn-text');
+                        // ซ่อนปุ่มระหว่างเดิน (ทั้ง single และ multiplayer)
                         if(rollBtn) {
                             rollBtn.style.opacity = '0';
                             rollBtn.style.pointerEvents = 'none';
+                            rollBtn.classList.remove('roll-ready');
                         }
 
                         let roll1 = Math.floor(Math.random()*6)+1;
@@ -2100,6 +2523,7 @@
                                 p.laps++;
                                 UIEngine.triggerLapNotification(p);
                                 ActionLog.add(`${p.name} เข้าสู่รอบบัญชีที่ ${p.laps}`, '#fcd34d');
+                                EffectEngine.launchConfetti(p.color);
                                 
                                 if (p.laps >= DBConfig.LAPS_TO_WIN) {
                                     reachedEnd = true;
@@ -2111,6 +2535,7 @@
                                 payDaysCrossed++;
                             }
                             
+                            EffectEngine.flashTileStep(p.pos);
                             UIEngine.drawPawns();
                             FirebaseSystem.syncState();
                             await new Promise(r => setTimeout(r, SystemSettings.fastMode ? 80 : 250));
@@ -2120,41 +2545,91 @@
                             }
                         }
                         
+                        // Bounce pawn on landing
+                        EffectEngine.bouncePawn(p.id);
                         UIEngine.triggerTileRipple(p.pos);
 
                         if (reachedEnd) {
                             UIEngine.updateHUD();
                             ActionLog.add(`${p.name} เดินครบกำหนดรอบบัญชีแล้ว รอการคำนวณภาษี`, '#10b981');
-                            await UIEngine.triggerEventModal({
-                                headerTitle: "สำเร็จภารกิจ",
-                                title: "ถึงเส้นชัยแล้ว",
-                                desc: `คุณเดินครบกำหนดรอบบัญชีแล้ว โปรดรอผู้เล่นอื่นให้เดินจนครบเพื่อเข้าสู่การสรุปผลภาษี`,
-                                colorHex: "#f59e0b",
-                                icon: "+",
-                                btnText: "ตกลง"
-                            });
-                            
-                            this.advanceToNextPlayer();
+                            if(window.roomId) {
+                                this.advanceToNextPlayer();
+                                window._isTurnRunning = false;
+                                State.isLocked = false;
+                                UIEngine.triggerEventModal({
+                                    headerTitle: "สำเร็จภารกิจ",
+                                    title: "ถึงเส้นชัยแล้ว",
+                                    desc: `คุณเดินครบกำหนดรอบบัญชีแล้ว โปรดรอผู้เล่นอื่นให้เดินจนครบเพื่อเข้าสู่การสรุปผลภาษี`,
+                                    colorHex: "#f59e0b",
+                                    icon: "+",
+                                    btnText: "ตกลง"
+                                });
+                            } else {
+                                await UIEngine.triggerEventModal({
+                                    headerTitle: "สำเร็จภารกิจ",
+                                    title: "ถึงเส้นชัยแล้ว",
+                                    desc: `คุณเดินครบกำหนดรอบบัญชีแล้ว โปรดรอผู้เล่นอื่นให้เดินจนครบเพื่อเข้าสู่การสรุปผลภาษี`,
+                                    colorHex: "#f59e0b",
+                                    icon: "+",
+                                    btnText: "ตกลง"
+                                });
+                                this.advanceToNextPlayer();
+                            }
                             return;
                         }
 
                         if(payDaysCrossed > 0 && BoardMap[p.pos].type !== 'payday') {
                             ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${(DBConfig.MONTHLY_SALARY * payDaysCrossed).toLocaleString()}`, '#34d399');
-                            await UIEngine.triggerEventModal({
-                                headerTitle: "เงินเดือนเข้า",
-                                title: "รับเงินเดือน",
-                                desc: `คุณเดินผ่านช่องจุดเริ่มต้น ได้รับเงินเดือนเพิ่ม ${payDaysCrossed} รอบ`,
-                                colorHex: "#10b981",
-                                icon: "$",
-                                financials: [{label:"รวมเงินที่ได้รับ", val:DBConfig.MONTHLY_SALARY * payDaysCrossed, color:"#34d399"}],
-                                btnText: "ตกลง"
-                            });
+                            if(!window.roomId) {
+                                await UIEngine.triggerEventModal({
+                                    headerTitle: "เงินเดือนเข้า",
+                                    title: "รับเงินเดือน",
+                                    desc: `คุณเดินผ่านช่องจุดเริ่มต้น ได้รับเงินเดือนเพิ่ม ${payDaysCrossed} รอบ`,
+                                    colorHex: "#10b981",
+                                    icon: "$",
+                                    financials: [{label:"รวมเงินที่ได้รับ", val:DBConfig.MONTHLY_SALARY * payDaysCrossed, color:"#34d399"}],
+                                    btnText: "ตกลง"
+                                });
+                            } else {
+                                UIEngine.triggerEventModal({
+                                    headerTitle: "เงินเดือนเข้า",
+                                    title: "รับเงินเดือน",
+                                    desc: `คุณเดินผ่านช่องจุดเริ่มต้น ได้รับเงินเดือนเพิ่ม ${payDaysCrossed} รอบ`,
+                                    colorHex: "#10b981",
+                                    icon: "$",
+                                    financials: [{label:"รวมเงินที่ได้รับ", val:DBConfig.MONTHLY_SALARY * payDaysCrossed, color:"#34d399"}],
+                                    btnText: "ตกลง"
+                                });
+                            }
                         }
                         
-                        await this.resolveTile(p, BoardMap[p.pos]);
-                        UIEngine.updateHUD();
-
-                        this.advanceToNextPlayer();
+                        // Multiplayer: ปุ่มหายทันทีตอนกด (ทำไปแล้วข้างบน)
+                        // Firebase listener จะคืนปุ่มให้ตอนถึงตาตัวเองอีกครั้ง
+                        if(window.roomId) {
+                            window._waitingForPopup = true;
+                            this.advanceToNextPlayer(); // sync ไปบอกทุกคนว่าตาถัดไปแล้ว
+                            await this.resolveTile(p, BoardMap[p.pos]); // รอ popup ของเราปิด
+                            UIEngine.updateHUD();
+                            window._waitingForPopup = false;
+                            window._isTurnRunning = false;
+                            State.isLocked = false;
+                            // ตรวจว่าหลัง popup ปิด ถึงตาเราอีกหรือเปล่า (เช่น 1 คน)
+                            const nowActive = State.players[State.activeIdx];
+                            if(nowActive && nowActive.id === window.myId) {
+                                if(rollBtn) {
+                                    rollBtn.style.opacity = '1';
+                                    rollBtn.style.pointerEvents = 'auto';
+                                    rollBtn.classList.add('roll-ready');
+                                }
+                                if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
+                            }
+                            // ถ้าไม่ถึงตาเรา Firebase listener จะซ่อนปุ่มให้เองตอน syncState ถัดไป
+                        } else {
+                            // Single player — รอ popup ปิดทั้งหมดแล้วค่อยคืนปุ่ม
+                            await this.resolveTile(p, BoardMap[p.pos]);
+                            UIEngine.updateHUD();
+                            this.advanceToNextPlayer();
+                        }
                     },
                     
                     advanceToNextPlayer() {
@@ -2175,6 +2650,7 @@
                         }
 
                         UIEngine.updateHUD();
+                        // sync ทันที ให้คนอื่นทอยได้เลย (ข้อ 2)
                         FirebaseSystem.syncState();
                         
                         if(nextP.skip && nextP.laps < DBConfig.LAPS_TO_WIN) {
@@ -2197,11 +2673,14 @@
                             return;
                         }
 
-                        if(nextP.id === window.myId) {
+                        // ข้อ 1: Single player เท่านั้นที่คืนปุ่มตรงนี้
+                        // Multiplayer จะได้รับปุ่มคืนผ่าน FirebaseSystem.listen() หลัง syncState
+                        if(!window.roomId && nextP.id === window.myId) {
                             const rollBtn = document.getElementById('roll-btn');
                             if(rollBtn) {
                                 rollBtn.style.opacity = '1';
                                 rollBtn.style.pointerEvents = 'auto';
+                                rollBtn.classList.add('roll-ready');
                             }
                             const rollBtnText = document.getElementById('roll-btn-text');
                             if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
@@ -2220,6 +2699,11 @@
 
                     async resolveTile(p, tile) {
                         ActionLog.add(`${p.name} ตกช่อง: ${tile.label}`);
+
+                        // Show badge for other players (multiplayer)
+                        if(window.roomId && p.id !== window.myId) {
+                            EffectEngine.showOtherPlayerEvent(p, tile.label, tile.type === 'expense' ? `เสียเงิน ฿${(tile.val||0).toLocaleString()}` : tile.type === 'payday' ? 'รับเงินเดือน!' : tile.type === 'hazard' ? '⚠ อุบัติเหตุ!' : tile.type === 'event' ? '🎲 โชคชะตา' : '');
+                        }
 
                         if(tile.type === 'family' || tile.type === 'insurance' || tile.type === 'fund' || tile.type === 'donation') {
                             let cat = tile.type.charAt(0).toUpperCase() + tile.type.slice(1);
@@ -2261,7 +2745,8 @@
                                         financials: fins,
                                         hasUseAction: true,
                                         btnRejectText: "ไม่รับสิทธิ์",
-                                        btnUseText: "รับสิทธิ์"
+                                        btnUseText: "รับสิทธิ์",
+                                        player: p
                                     });
 
                                     if(wantToBuy) {
@@ -2269,6 +2754,8 @@
                                         p.inventory.push(item);
                                         if(tile.type === 'fund') p.funds[item.id]++;
                                         ActionLog.add(`${p.name} ซื้อการ์ด ${item.title} สำเร็จ จ่ายไป ฿${item.cost.toLocaleString()}`, CardData[cat].color);
+                                        EffectEngine.launchConfetti(CardData[cat].color);
+                                        EffectEngine.showToast(`🎴 ได้รับการ์ด: ${item.title} (ลดหย่อน ฿${item.deduct.toLocaleString()})`, CardData[cat].color, '🎴');
 
                                         await UIEngine.triggerCardModal({
                                             headerTitle: "ได้รับการ์ดใหม่",
@@ -2280,15 +2767,18 @@
                                         });
                                     } else {
                                         ActionLog.add(`${p.name} ปฏิเสธการซื้อสิทธิ์ ${item.title}`);
+                                        EffectEngine.showToast(`↩ ปฏิเสธ: ${item.title}`, '#64748b', '↩');
                                     }
                                 } else {
                                     ActionLog.add(`${p.name} มีเงินไม่พอซื้อสิทธิ์ ${item.title}`, '#ef4444');
+                                    EffectEngine.showToast(`💸 เงินไม่พอซื้อ: ${item.title}`, '#ef4444', '💸');
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "เงินสดไม่เพียงพอ",
                                         title: item.title,
                                         desc: "คุณมีเงินสดไม่พอสำหรับการทำรายการนี้",
                                         colorHex: "#ef4444",
-                                        icon: "!"
+                                        icon: "!",
+                                        player: p
                                     });
                                 }
                             } else {
@@ -2297,7 +2787,8 @@
                                     title: item.title,
                                     desc: msg,
                                     colorHex: "#64748b",
-                                    icon: "i"
+                                    icon: "i",
+                                    player: p
                                 });
                             }
                         }
@@ -2312,27 +2803,32 @@
                                     icon: "S",
                                     hasUseAction: true,
                                     btnRejectText: "ยอมจ่ายเงิน",
-                                    btnUseText: "ใช้การ์ดป้องกัน"
+                                    btnUseText: "ใช้การ์ดป้องกัน",
+                                    player: p
                                 });
 
                                 if(used) {
                                     p.useShield(shieldCard.id);
+                                    EffectEngine.showToast(`🛡 ป้องกันอุบัติเหตุสำเร็จ! การ์ดถูกใช้แล้ว`, '#ec4899', '🛡');
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "ใช้การ์ดป้องกันสำเร็จ",
                                         title: "รอดตัวไป",
                                         desc: "การ์ดป้องกันช่วยให้คุณไม่ต้องเสียเงินค่ารักษาพยาบาลในครั้งนี้ แต่การ์ดจะหายไปและไม่สามารถนำไปลดหย่อนภาษีได้แล้ว",
                                         colorHex: "#10b981",
-                                        icon: "OK"
+                                        icon: "OK",
+                                        player: p
                                     });
                                 } else {
                                     p.cash -= tile.val;
                                     ActionLog.add(`${p.name} ยอมเสียเงินค่าอุบัติเหตุ ฿${tile.val.toLocaleString()}`, '#ef4444');
+                                    EffectEngine.showToast(`💊 เสียเงินค่ารักษา -฿${tile.val.toLocaleString()}`, '#ef4444', '💊');
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "เสียเงินค่ารักษา",
                                         title: "เลือกที่จะไม่ใช้การ์ดป้องกัน",
                                         desc: "คุณเลือกที่จะไม่ใช้การ์ดป้องกัน จึงต้องจ่ายค่ารักษาพยาบาลด้วยเงินสดของคุณเอง",
                                         colorHex: "#ef4444",
-                                        financials: [{label:"จ่ายเงินค่ารักษา", val:tile.val, color:"#ef4444"}]
+                                        financials: [{label:"จ่ายเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
+                                        player: p
                                     });
                                 }
                             } else {
@@ -2344,31 +2840,36 @@
                                     desc: "เกิดเหตุฉุกเฉิน คุณต้องจ่ายเงินค่ารักษาพยาบาลทันที และคุณไม่มีการ์ดประกันสำหรับป้องกัน",
                                     colorHex: "#ef4444",
                                     icon: "!",
-                                    financials: [{label:"เสียเงินค่ารักษา", val:tile.val, color:"#ef4444"}]
+                                    financials: [{label:"เสียเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
+                                    player: p
                                 });
                             }
                         }
                         else if(tile.type === 'expense') {
                             p.cash -= tile.val;
                             ActionLog.add(`${p.name} จ่ายค่า ${tile.label} เป็นเงิน ฿${tile.val.toLocaleString()}`, '#ef4444');
+                            EffectEngine.showToast(`💸 ${tile.label}: -฿${tile.val.toLocaleString()}`, '#ef4444', '💸');
                             await UIEngine.triggerEventModal({
                                 headerTitle: "จ่ายค่าใช้จ่าย",
                                 title: tile.label,
                                 desc: "คุณต้องจ่ายเงินสำหรับค่าใช้จ่ายนี้ ถูกหักเงินเรียบร้อยแล้ว",
                                 colorHex: "#ef4444",
                                 icon: "-",
-                                financials: [{label: "จ่ายเงิน", val: tile.val, color: "#ef4444"}]
+                                financials: [{label: "จ่ายเงิน", val: tile.val, color: "#ef4444"}],
+                                player: p
                             });
                         }
                         else if(tile.type === 'action_skip') {
                             p.skip = true;
                             ActionLog.add(`${p.name} ถูกสั่งงดเดิน 1 รอบในตาถัดไป`, '#8b5cf6');
+                            EffectEngine.showToast(`⏸ งดเดินรอบถัดไป: ${tile.label}`, '#8b5cf6', '⏸');
                             await UIEngine.triggerEventModal({
                                 headerTitle: "งดเดิน",
                                 title: tile.label,
                                 desc: "คุณต้องหยุดเดินในตาถัดไป 1 รอบ",
                                 colorHex: "#8b5cf6",
-                                icon: "X"
+                                icon: "X",
+                                player: p
                             });
                         }
                         else if(tile.type === 'action_move') {
@@ -2381,7 +2882,8 @@
                                 title: tile.label,
                                 desc: `คุณถูกย้ายตำแหน่งบนกระดานให้เปลี่ยนพิกัดไป ${Math.abs(tile.move)} ช่อง`,
                                 colorHex: "#8b5cf6",
-                                icon: "M"
+                                icon: "M",
+                                player: p
                             });
                             if(p.pos !== oldPos) {
                                 UIEngine.triggerTileRipple(p.pos);
@@ -2394,25 +2896,29 @@
                             p.extraIncome += incomeAmount;
                             ActionLog.add(`${p.name} ได้รายได้เสริม ฿${incomeAmount.toLocaleString()}`, '#34d399');
                             AudioEngine.playCoin();
+                            EffectEngine.showToast(`💼 งานฟรีแลนซ์: +฿${incomeAmount.toLocaleString()}`, '#34d399', '💼');
                             await UIEngine.triggerEventModal({
                                 headerTitle: "ได้รับเงินพิเศษ",
                                 title: tile.label,
                                 desc: "คุณได้รายได้เสริม ซึ่งยอดนี้จะถูกนำไปรวมเพื่อคิดภาษีในตอนจบเกมด้วย",
                                 colorHex: "#10b981",
                                 icon: "+",
-                                financials: [{label: "ได้รับเงิน", val: incomeAmount, color: "#34d399"}]
+                                financials: [{label: "ได้รับเงิน", val: incomeAmount, color: "#34d399"}],
+                                player: p
                             });
                         }
                         else if(tile.type === 'payday') {
                             ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#34d399');
                             AudioEngine.playCoin();
+                            EffectEngine.showToast(`💰 เงินเดือนเข้า! +฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#f59e0b', '💰');
                             await UIEngine.triggerEventModal({
                                 headerTitle: "ได้เงินเดือน",
                                 title: tile.label,
                                 desc: "คุณเดินมาตกที่ช่องรับเงินเดือนพอดี ได้รับเงินเดือนเข้ากระเป๋าเรียบร้อยแล้ว",
                                 colorHex: "#f59e0b",
                                 icon: "$",
-                                financials: [{label: "ได้รับเงิน", val: DBConfig.MONTHLY_SALARY, color: "#34d399"}]
+                                financials: [{label: "ได้รับเงิน", val: DBConfig.MONTHLY_SALARY, color: "#34d399"}],
+                                player: p
                             });
                         }
                         else if(tile.type === 'income' || tile.type === 'hr' || tile.type === 'event') {
@@ -2437,11 +2943,14 @@
                             if(ev.val > 0) {
                                 fins.push({label: "ได้รับเงิน", val: ev.val, color: "#34d399"});
                                 ActionLog.add(`${p.name} โชคดีได้รับเงิน ฿${ev.val.toLocaleString()}`, '#34d399');
+                                EffectEngine.showToast(`🎉 ${ev.title}: +฿${ev.val.toLocaleString()}`, '#34d399', '🎉');
                             } else if(ev.val < 0) {
                                 fins.push({label: "เสียเงิน", val: Math.abs(ev.val), color: "#ef4444"});
                                 ActionLog.add(`${p.name} โชคร้ายเสียเงิน ฿${Math.abs(ev.val).toLocaleString()}`, '#ef4444');
+                                EffectEngine.showToast(`😬 ${ev.title}: -฿${Math.abs(ev.val).toLocaleString()}`, '#ef4444', '😬');
                             } else {
                                 ActionLog.add(`${p.name} พบเหตุการณ์โชคชะตา`);
+                                EffectEngine.showToast(`🎲 ${ev.title}`, CardData[cat].color, '🎲');
                             }
 
                             await UIEngine.triggerEventModal({
@@ -2450,7 +2959,8 @@
                                 desc: ev.desc + moveText,
                                 colorHex: CardData[cat].color,
                                 icon: "E",
-                                financials: fins
+                                financials: fins,
+                                player: p
                             });
                         }
                     },
@@ -2494,10 +3004,26 @@
                             let regularCards = p.inventory.filter(c => !['d1', 'd2', 'd3', 'd4'].includes(c.id));
                             let donationCards = p.inventory.filter(c => ['d1', 'd2', 'd3', 'd4'].includes(c.id));
 
+                            // คำนวณ cap การ์ดดูแลพ่อแม่ (f4) ไม่เกิน 60,000 (พ่อ+แม่ คนละ 30,000)
+                            const PARENT_CARE_CAP = 60000;
+                            let parentCareCards = regularCards.filter(c => c.id === 'f4');
+                            let otherRegularCards = regularCards.filter(c => c.id !== 'f4');
+                            let rawParentCareDeduct = parentCareCards.reduce((s, c) => s + c.deduct, 0);
+                            let cappedParentCareDeduct = Math.min(rawParentCareDeduct, PARENT_CARE_CAP);
+
                             regularCards.forEach(c => {
+                                if(c.id === 'f4') return; // จัดการแยกด้านล่าง
                                 D_normal += c.deduct;
                                 cardListHtml += `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">${c.title}</span><span class="font-bold">หักได้ ฿${c.deduct.toLocaleString()}</span></div>`;
                             });
+
+                            if(parentCareCards.length > 0) {
+                                D_normal += cappedParentCareDeduct;
+                                const cappedNote = rawParentCareDeduct > PARENT_CARE_CAP
+                                    ? ` <span class="text-amber-400 text-[0.6rem]">(มีเพดานสูงสุด ฿60,000)</span>`
+                                    : '';
+                                cardListHtml += `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">ดูแลพ่อแม่ (${parentCareCards.length} สิทธิ์)${cappedNote}</span><span class="font-bold">หักได้ ฿${cappedParentCareDeduct.toLocaleString()}</span></div>`;
+                            }
 
                             if (donationCards.length === 0) {
                                  donationHtml = '<div class="text-slate-500 text-center font-bold text-[0.6rem] md:text-base border-b border-slate-700/50 pb-2 md:pb-4 mb-2 md:mb-4">ไม่มีข้อมูลการบริจาคเลย</div>';
@@ -2673,16 +3199,15 @@
                                     db.ref('rooms/' + window.roomId).off();
                                 } catch(e) {}
                                 
-                                alert("การเชื่อมต่อสิ้นสุดลง เจ้าภาพได้ทำการยุบห้องปฏิบัติการนี้เป็นที่เรียบร้อยแล้ว ระบบจะนำท่านกลับเข้าสู่ศูนย์กลางเพื่อลงทะเบียนใหม่ในอีกสักครู่");
+                                alert("การเชื่อมต่อสิ้นสุดลง เจ้าของห้องได้ทำการยุบห้องนี้เป็นที่เรียบร้อยแล้ว ระบบจะนำท่านกลับเข้าสู่หน้าแรกในอีกสักครู่");
                                 window.location.replace('index.html');
                             }
                         });
                         
                     } else {
-                        const roomIdDisplay = document.getElementById('room-id-display');
-                        if(roomIdDisplay) {
-                            roomIdDisplay.textContent = 'เล่นคนเดียว';
-                        }
+                        // โหมดคนเดียว: ซ่อน room-id badge
+                        const roomBadge = document.getElementById('room-id-badge');
+                        if(roomBadge) roomBadge.classList.add('hidden');
                     }
 
                     for(let i=1; i<=numPlayersFromStorage; i++) {
