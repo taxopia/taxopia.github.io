@@ -519,6 +519,95 @@
         @media (max-width: 480px) {
             .other-event-badge { width: 220px; top: 55px; font-size: 0.75rem; }
         }
+        /* ===== SUMMARY SCREEN UPGRADE ===== */
+                @keyframes summaryFadeUp {
+                    from { opacity: 0; transform: translateY(60px) scale(0.96); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
+                }
+                @keyframes summaryPulseRing {
+                    0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+                    50% { box-shadow: 0 0 0 20px rgba(245,158,11,0); }
+                }
+                @keyframes summaryShine {
+                    0% { background-position: -200% center; }
+                    100% { background-position: 200% center; }
+                }
+                @keyframes summaryCountUp {
+                    from { opacity: 0; transform: scale(0.5) rotateX(40deg); }
+                    to { opacity: 1; transform: scale(1) rotateX(0deg); }
+                }
+                @keyframes orbFloat {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    33% { transform: translateY(-20px) rotate(5deg); }
+                    66% { transform: translateY(10px) rotate(-3deg); }
+                }
+                @keyframes summaryGradientMove {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+                .summary-card-enter {
+                    animation: summaryFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+                }
+                .summary-hero-badge {
+                    animation: summaryPulseRing 2s ease-in-out infinite;
+                }
+                .summary-shine-text {
+                    background: linear-gradient(90deg, #fbbf24 0%, #fff 40%, #fbbf24 60%, #f59e0b 100%);
+                    background-size: 200% auto;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    animation: summaryShine 3s linear infinite;
+                }
+                .summary-value-pop {
+                    animation: summaryCountUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+                }
+                .summary-step-card {
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .summary-step-card:hover {
+                    transform: translateY(-4px) scale(1.01);
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+                }
+                .summary-step-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: -100%;
+                    width: 100%; height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+                    transition: left 0.6s;
+                }
+                .summary-step-card:hover::before { left: 100%; }
+                .summary-orb {
+                    position: absolute;
+                    border-radius: 50%;
+                    filter: blur(60px);
+                    opacity: 0.15;
+                    pointer-events: none;
+                    animation: orbFloat 8s ease-in-out infinite;
+                }
+                .summary-rank-badge {
+                    position: relative;
+                    overflow: hidden;
+                }
+                .summary-rank-badge::after {
+                    content: '';
+                    position: absolute;
+                    inset: -2px;
+                    border-radius: inherit;
+                    background: conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #06b6d4, #10b981, #f59e0b);
+                    z-index: -1;
+                    animation: spin-slow 4s linear infinite;
+                }
+                @keyframes spin-slow-summary { 100% { transform: rotate(360deg); } }
+                .summary-rank-badge::after { animation: spin-slow-summary 4s linear infinite; }
+                .summary-divider {
+                    height: 1px;
+                    background: linear-gradient(90deg, transparent, rgba(245,158,11,0.3), transparent);
+                }
     </style>
 </head>
 <body class="w-[100dvw] h-[100dvh] flex flex-col relative select-none bg-slate-950 overflow-hidden">
@@ -812,101 +901,97 @@
         </div>
     </div>
     
-    <div id="admin-modal" class="absolute inset-0 z-[5000] hidden bg-black/95 backdrop-blur-3xl flex-col items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-500 overflow-y-auto">
-        <div class="w-full max-w-3xl bg-slate-950 border-2 border-red-600 rounded-2xl sm:rounded-[2rem] shadow-[0_0_60px_rgba(239,68,68,0.4)] p-4 sm:p-6 md:p-8 relative overflow-hidden my-2">
-            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 pointer-events-none"></div>
-            <div class="flex items-center justify-between mb-4 sm:mb-6 border-b-2 border-red-900 pb-3 sm:pb-4 relative z-10">
-                <h2 class="text-xl sm:text-2xl md:text-4xl font-bold text-red-500 tracking-wide uppercase">⚡ แผงควบคุมระบบ</h2>
-                <button onclick="AdminSystem.close()" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-800 hover:bg-red-900 border border-slate-600 text-slate-400 hover:text-white font-bold transition-colors flex items-center justify-center text-sm sm:text-base">✕</button>
-            </div>
+    <div id="admin-modal" class="absolute inset-0 z-[5000] hidden bg-black/95 backdrop-blur-3xl flex-col items-center justify-center p-2 sm:p-4 md:p-6 opacity-0 transition-opacity duration-500 pointer-events-auto">
+            <div class="w-full max-w-3xl bg-slate-950 border-2 border-red-600 rounded-2xl sm:rounded-[2rem] shadow-[0_0_60px_rgba(239,68,68,0.4)] relative overflow-hidden flex flex-col max-h-[90vh]">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 pointer-events-none"></div>
 
-            <!-- Player Selection -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6 relative z-10">
-                <div class="sm:col-span-2">
-                    <label class="block text-red-400 font-bold mb-1.5 text-xs sm:text-sm uppercase tracking-wide">👤 เลือกผู้เล่นเป้าหมาย</label>
-                    <select id="admin-player-select" class="w-full bg-slate-900 text-white p-2.5 sm:p-3 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-sm sm:text-base"></select>
+                <div class="flex items-center justify-between p-4 sm:p-6 md:p-8 border-b-2 border-red-900 shrink-0 relative z-10">
+                    <h2 class="text-xl sm:text-2xl md:text-4xl font-bold text-red-500 tracking-wide uppercase">แผงควบคุมระบบ</h2>
+                    <button onclick="AdminSystem.close()" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-800 hover:bg-red-900 border border-slate-600 text-slate-400 hover:text-white font-bold transition-colors flex items-center justify-center text-sm sm:text-base">X</button>
                 </div>
 
-                <!-- Cash Control -->
-                <div class="bg-red-950/20 p-3 sm:p-4 rounded-xl border border-red-900/50">
-                    <label class="block text-red-400 font-bold mb-1.5 text-xs sm:text-sm">💰 จำนวนเงินสดสุทธิ</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="admin-cash" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-center font-mono text-sm sm:text-base">
-                        <button onclick="AdminSystem.setCash()" class="bg-red-800 text-white px-3 sm:px-5 rounded-xl hover:bg-red-700 font-bold transition-colors text-sm whitespace-nowrap">ตั้งค่า</button>
+                <div class="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 relative z-10 scrollbar-hide space-y-4 sm:space-y-6">
+                    <div>
+                        <label class="block text-red-400 font-bold mb-1.5 text-xs sm:text-sm uppercase tracking-wide">เลือกผู้เล่นเป้าหมาย</label>
+                        <select id="admin-player-select" class="w-full bg-slate-900 text-white p-2.5 sm:p-3 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-sm sm:text-base"></select>
                     </div>
-                    <div class="flex gap-1.5 mt-2 flex-wrap">
-                        <button onclick="AdminSystem.adjustCash(10000)" class="flex-1 min-w-0 bg-emerald-900/50 hover:bg-emerald-800 text-emerald-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-emerald-700 transition-colors">+1 หมื่น</button>
-                        <button onclick="AdminSystem.adjustCash(50000)" class="flex-1 min-w-0 bg-emerald-900/50 hover:bg-emerald-800 text-emerald-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-emerald-700 transition-colors">+5 หมื่น</button>
-                        <button onclick="AdminSystem.adjustCash(-10000)" class="flex-1 min-w-0 bg-rose-900/50 hover:bg-rose-800 text-rose-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-rose-700 transition-colors">-1 หมื่น</button>
-                        <button onclick="AdminSystem.adjustCash(-50000)" class="flex-1 min-w-0 bg-rose-900/50 hover:bg-rose-800 text-rose-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-rose-700 transition-colors">-5 หมื่น</button>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div class="bg-red-950/20 p-3 sm:p-4 rounded-xl border border-red-900/50">
+                            <label class="block text-red-400 font-bold mb-1.5 text-xs sm:text-sm">จำนวนเงินสดสุทธิ</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="admin-cash" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-red-500/50 outline-none focus:border-red-500 text-center font-mono text-sm sm:text-base">
+                                <button onclick="AdminSystem.setCash()" class="bg-red-800 text-white px-3 sm:px-5 rounded-xl hover:bg-red-700 font-bold transition-colors text-sm whitespace-nowrap">ตั้งค่า</button>
+                            </div>
+                            <div class="flex gap-1.5 mt-2 flex-wrap">
+                                <button onclick="AdminSystem.adjustCash(10000)" class="flex-1 min-w-0 bg-emerald-900/50 hover:bg-emerald-800 text-emerald-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-emerald-700 transition-colors">+1 หมื่น</button>
+                                <button onclick="AdminSystem.adjustCash(50000)" class="flex-1 min-w-0 bg-emerald-900/50 hover:bg-emerald-800 text-emerald-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-emerald-700 transition-colors">+5 หมื่น</button>
+                                <button onclick="AdminSystem.adjustCash(-10000)" class="flex-1 min-w-0 bg-rose-900/50 hover:bg-rose-800 text-rose-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-rose-700 transition-colors">-1 หมื่น</button>
+                                <button onclick="AdminSystem.adjustCash(-50000)" class="flex-1 min-w-0 bg-rose-900/50 hover:bg-rose-800 text-rose-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-rose-700 transition-colors">-5 หมื่น</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-950/20 p-3 sm:p-4 rounded-xl border border-blue-900/50">
+                            <label class="block text-blue-400 font-bold mb-1.5 text-xs sm:text-sm">พิกัดตำแหน่ง (0-39)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="admin-pos" min="0" max="39" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-blue-500/50 outline-none focus:border-blue-500 text-center font-mono text-sm sm:text-base">
+                                <button onclick="AdminSystem.setPos()" class="bg-blue-800 text-white px-3 sm:px-5 rounded-xl hover:bg-blue-700 font-bold transition-colors text-sm whitespace-nowrap">ย้าย</button>
+                            </div>
+                            <div class="flex gap-1.5 mt-2">
+                                <button onclick="AdminSystem.adjustPos(-5)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">-5 ช่อง</button>
+                                <button onclick="AdminSystem.adjustPos(-1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">-1 ช่อง</button>
+                                <button onclick="AdminSystem.adjustPos(1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">+1 ช่อง</button>
+                                <button onclick="AdminSystem.adjustPos(5)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">+5 ช่อง</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-950/20 p-3 sm:p-4 rounded-xl border border-purple-900/50">
+                            <label class="block text-purple-400 font-bold mb-1.5 text-xs sm:text-sm">จำนวนรอบบัญชีที่สำเร็จ</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="admin-laps" min="0" max="3" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-purple-500/50 outline-none focus:border-purple-500 text-center font-mono text-sm sm:text-base">
+                                <button onclick="AdminSystem.setLaps()" class="bg-purple-800 text-white px-3 sm:px-5 rounded-xl hover:bg-purple-700 font-bold transition-colors text-sm whitespace-nowrap">ตั้งค่า</button>
+                            </div>
+                            <div class="flex gap-1.5 mt-2">
+                                <button onclick="AdminSystem.setLapsQuick(0)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 0</button>
+                                <button onclick="AdminSystem.setLapsQuick(1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 1</button>
+                                <button onclick="AdminSystem.setLapsQuick(2)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 2</button>
+                                <button onclick="AdminSystem.setLapsQuick(3)" class="flex-1 bg-amber-900/50 hover:bg-amber-800 text-amber-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-amber-700 transition-colors">จบเกม</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-950/20 p-3 sm:p-4 rounded-xl border border-orange-900/50">
+                            <label class="block text-orange-400 font-bold mb-1.5 text-xs sm:text-sm">ควบคุมตาเดิน</label>
+                            <div class="grid grid-cols-1 gap-2">
+                                <button onclick="AdminSystem.toggleSkip()" class="bg-orange-800 hover:bg-orange-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-orange-600">สั่งงดตาเดินถัดไปของผู้เล่น</button>
+                                <button onclick="AdminSystem.forceTurn()" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm shadow-[0_0_15px_rgba(37,99,235,0.4)]">ข้ามตาเดินปัจจุบันทันที</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-950/20 p-3 sm:p-4 rounded-xl border border-emerald-900/50">
+                        <label class="block text-emerald-400 font-bold mb-2 text-xs sm:text-sm">เสกการ์ดสิทธิลดหย่อนเข้าคลังโดยตรง</label>
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                            <select id="admin-card-select" class="flex-1 bg-slate-900 text-white p-2.5 rounded-xl border border-emerald-500/50 outline-none focus:border-emerald-500 text-sm"></select>
+                            <button onclick="AdminSystem.addCard()" class="bg-emerald-700 text-white px-4 sm:px-6 py-2.5 rounded-xl hover:bg-emerald-600 font-bold transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm">เสกทันที</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-950/30 p-3 sm:p-4 rounded-xl border border-red-700/50">
+                        <label class="block text-red-400 font-bold mb-2 text-xs sm:text-sm uppercase tracking-wide">โซนอันตราย</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="AdminSystem.clearCards()" class="bg-orange-800 hover:bg-orange-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-orange-600">ล้างคลังการ์ด</button>
+                            <button onclick="AdminSystem.teleportToStart()" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-slate-600">ส่งกลับจุดเริ่ม</button>
+                            <button onclick="AdminSystem.giveMaxMoney()" class="bg-yellow-800 hover:bg-yellow-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-yellow-600 col-span-2 sm:col-span-1">ให้เงินสูงสุด</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Position Control -->
-                <div class="bg-blue-950/20 p-3 sm:p-4 rounded-xl border border-blue-900/50">
-                    <label class="block text-blue-400 font-bold mb-1.5 text-xs sm:text-sm">📍 พิกัดตำแหน่ง (0-39)</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="admin-pos" min="0" max="39" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-blue-500/50 outline-none focus:border-blue-500 text-center font-mono text-sm sm:text-base">
-                        <button onclick="AdminSystem.setPos()" class="bg-blue-800 text-white px-3 sm:px-5 rounded-xl hover:bg-blue-700 font-bold transition-colors text-sm whitespace-nowrap">ย้าย</button>
-                    </div>
-                    <div class="flex gap-1.5 mt-2">
-                        <button onclick="AdminSystem.adjustPos(-5)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">-5 ช่อง</button>
-                        <button onclick="AdminSystem.adjustPos(-1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">-1 ช่อง</button>
-                        <button onclick="AdminSystem.adjustPos(1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">+1 ช่อง</button>
-                        <button onclick="AdminSystem.adjustPos(5)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">+5 ช่อง</button>
-                    </div>
+                <div class="p-4 sm:p-6 md:p-8 border-t-2 border-red-900/50 shrink-0 flex justify-end relative z-10">
+                    <button onclick="AdminSystem.close()" class="bg-red-700 hover:bg-red-600 text-white px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl font-bold transition-colors border border-red-500 text-sm sm:text-base">ปิดหน้าต่างควบคุม</button>
                 </div>
-
-                <!-- Laps Control -->
-                <div class="bg-purple-950/20 p-3 sm:p-4 rounded-xl border border-purple-900/50">
-                    <label class="block text-purple-400 font-bold mb-1.5 text-xs sm:text-sm">🔄 จำนวนรอบบัญชีที่สำเร็จ</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="admin-laps" min="0" max="3" class="w-full bg-slate-900 text-white p-2.5 rounded-xl border border-purple-500/50 outline-none focus:border-purple-500 text-center font-mono text-sm sm:text-base">
-                        <button onclick="AdminSystem.setLaps()" class="bg-purple-800 text-white px-3 sm:px-5 rounded-xl hover:bg-purple-700 font-bold transition-colors text-sm whitespace-nowrap">ตั้งค่า</button>
-                    </div>
-                    <div class="flex gap-1.5 mt-2">
-                        <button onclick="AdminSystem.setLapsQuick(0)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 0</button>
-                        <button onclick="AdminSystem.setLapsQuick(1)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 1</button>
-                        <button onclick="AdminSystem.setLapsQuick(2)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-600 transition-colors">รอบ 2</button>
-                        <button onclick="AdminSystem.setLapsQuick(3)" class="flex-1 bg-amber-900/50 hover:bg-amber-800 text-amber-300 px-2 py-1.5 rounded-lg text-xs font-bold border border-amber-700 transition-colors">จบเกม</button>
-                    </div>
-                </div>
-
-                <!-- Skip Turn -->
-                <div class="bg-orange-950/20 p-3 sm:p-4 rounded-xl border border-orange-900/50">
-                    <label class="block text-orange-400 font-bold mb-1.5 text-xs sm:text-sm">⏭ ควบคุมตาเดิน</label>
-                    <div class="grid grid-cols-1 gap-2">
-                        <button onclick="AdminSystem.toggleSkip()" class="bg-orange-800 hover:bg-orange-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-orange-600">⏸ สั่งงดตาเดินถัดไปของผู้เล่น</button>
-                        <button onclick="AdminSystem.forceTurn()" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm shadow-[0_0_15px_rgba(37,99,235,0.4)]">⚡ ข้ามตาเดินปัจจุบันทันที</button>
-                    </div>
-                </div>
-
-                <!-- Card Management -->
-                <div class="sm:col-span-2 bg-emerald-950/20 p-3 sm:p-4 rounded-xl border border-emerald-900/50">
-                    <label class="block text-emerald-400 font-bold mb-2 text-xs sm:text-sm">🎴 เสกการ์ดสิทธิลดหย่อนเข้าคลังโดยตรง</label>
-                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                        <select id="admin-card-select" class="flex-1 bg-slate-900 text-white p-2.5 rounded-xl border border-emerald-500/50 outline-none focus:border-emerald-500 text-sm"></select>
-                        <button onclick="AdminSystem.addCard()" class="bg-emerald-700 text-white px-4 sm:px-6 py-2.5 rounded-xl hover:bg-emerald-600 font-bold transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm">🎴 เสกทันที</button>
-                    </div>
-                </div>
-
-                <!-- Danger Zone -->
-                <div class="sm:col-span-2 bg-red-950/30 p-3 sm:p-4 rounded-xl border border-red-700/50">
-                    <label class="block text-red-400 font-bold mb-2 text-xs sm:text-sm uppercase tracking-wide">⚠ โซนอันตราย</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <button onclick="AdminSystem.clearCards()" class="bg-orange-800 hover:bg-orange-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-orange-600">🗑 ล้างคลังการ์ด</button>
-                        <button onclick="AdminSystem.teleportToStart()" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-slate-600">🏠 ส่งกลับจุดเริ่ม</button>
-                        <button onclick="AdminSystem.giveMaxMoney()" class="bg-yellow-800 hover:bg-yellow-700 text-white px-3 py-2.5 rounded-xl font-bold transition-colors text-xs sm:text-sm border border-yellow-600 col-span-2 sm:col-span-1">💎 ให้เงินสูงสุด 999k</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-end border-t-2 border-red-900/50 pt-3 sm:pt-4 relative z-10">
-                <button onclick="AdminSystem.close()" class="bg-red-700 hover:bg-red-600 text-white px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl font-bold transition-colors border border-red-500 text-sm sm:text-base">ปิดหน้าต่างควบคุม</button>
             </div>
         </div>
-    </div>
-    
+
     <div id="card-modal-overlay" class="absolute inset-0 z-[400] hidden bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-2 md:p-4 opacity-0 transition-opacity duration-500 pointer-events-auto">
         <div class="text-center mb-1 md:mb-2 lg:mb-4 z-10 w-full px-4">
             <h3 id="card-modal-header" class="text-2xl md:text-3xl lg:text-6xl font-bold text-white tracking-wide drop-shadow-[0_0_25px_currentColor]">ได้รับการ์ดใหม่</h3>
@@ -979,20 +1064,39 @@
     </div>
     
     <div id="screen-summary" class="absolute inset-0 z-[500] hidden bg-[#020617] overflow-y-auto transition-opacity duration-1000 scrollbar-hide">
-        <div class="min-h-screen p-4 md:p-16 flex flex-col items-center relative">
-            <div class="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none"></div>
-            
-            <div class="text-center mb-6 md:mb-16 pt-8 md:pt-16 border-b border-slate-800 pb-4 md:pb-10 w-full max-w-6xl relative z-10">
-                <h1 class="text-2xl md:text-6xl lg:text-7xl font-bold text-glow-gold mb-2 md:mb-6 tracking-tight">สรุปผลภาษี</h1>
-                <p class="text-slate-400 text-[0.65rem] md:text-2xl tracking-wide">รายงานการคำนวณภาษีเงินได้บุคคลธรรมดาของทุกคน</p>
+            <div class="min-h-screen p-4 md:p-16 flex flex-col items-center relative">
+                <!-- Animated background orbs -->
+                <div class="summary-orb w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-amber-500 top-[-10%] left-[-10%]"></div>
+                <div class="summary-orb w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-purple-600 bottom-[10%] right-[-5%]" style="animation-delay: -3s;"></div>
+                <div class="summary-orb w-[150px] h-[150px] md:w-[300px] md:h-[300px] bg-cyan-500 top-[40%] left-[60%]" style="animation-delay: -5s;"></div>
+                <div class="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none"></div>
+                <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.08) 0%, transparent 60%);"></div>
+                
+                <!-- Hero Header -->
+                <div class="text-center mb-6 md:mb-16 pt-8 md:pt-16 pb-4 md:pb-10 w-full max-w-6xl relative z-10 summary-card-enter">
+                    <div class="inline-flex items-center gap-2 md:gap-3 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 md:px-6 md:py-2 mb-4 md:mb-6 backdrop-blur-sm">
+                        <div class="w-2 h-2 md:w-3 md:h-3 rounded-full bg-amber-400 animate-pulse"></div>
+                        <span class="text-amber-400 font-bold text-[0.6rem] md:text-sm tracking-widest uppercase">การคำนวณเสร็จสมบูรณ์</span>
+                    </div>
+                    <h1 class="text-3xl md:text-7xl lg:text-8xl font-black summary-shine-text mb-3 md:mb-6 tracking-tight leading-none">สรุปผลภาษี</h1>
+                    <p class="text-slate-400 text-[0.65rem] md:text-xl tracking-wide max-w-2xl mx-auto">รายงานการคำนวณภาษีเงินได้บุคคลธรรมดาของทุกคน</p>
+                    <div class="summary-divider w-full max-w-md mx-auto mt-4 md:mt-8"></div>
+                </div>
+                
+                <!-- Ranking podium -->
+                <div id="summary-ranking" class="w-full max-w-4xl mb-6 md:mb-12 relative z-10 summary-card-enter" style="animation-delay: 0.2s;"></div>
+                
+                <div id="summary-content" class="w-full max-w-7xl space-y-4 md:space-y-12 mb-8 md:mb-16 relative z-10"></div>
+                
+                <!-- Action buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 md:gap-4 relative z-10 summary-card-enter" style="animation-delay: 0.6s;">
+                    <button onclick="SystemController.restartGame()" class="group px-6 py-3 md:px-14 md:py-6 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-black font-bold text-[0.75rem] md:text-xl rounded-full border-2 border-white/80 hover:scale-105 transition-all shadow-[0_0_30px_rgba(245,158,11,0.5)] hover:shadow-[0_0_60px_rgba(245,158,11,0.8)] relative overflow-hidden" style="background-size: 200% auto; animation: summaryGradientMove 3s ease infinite;">
+                        <span class="relative z-10">ยุบห้องและเริ่มเกมใหม่</span>
+                    </button>
+                    <button onclick="location.href='index.html'" class="px-6 py-3 md:px-14 md:py-6 bg-slate-900/80 text-white font-bold text-[0.75rem] md:text-xl rounded-full border-2 border-slate-600 hover:border-amber-500/50 transition-all backdrop-blur-sm hover:bg-slate-800/80">ออกจากห้องและกลับหน้าหลัก</button>
+                </div>
             </div>
-            
-            <div id="summary-content" class="w-full max-w-7xl space-y-4 md:space-y-12 mb-8 md:mb-16 relative z-10"></div>
-            
-            <button onclick="SystemController.restartGame()" class="px-6 py-3 md:px-14 md:py-6 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-[0.75rem] md:text-2xl rounded-full border-2 border-white/80 hover:scale-105 transition-all shadow-[0_0_30px_rgba(245,158,11,0.8)] md:shadow-[0_0_50px_rgba(245,158,11,0.8)] relative z-10 glow-button mt-4 md:mt-8">ยุบห้องและเริ่มเกมใหม่</button>
-            <button onclick="location.href='index.html'" class="px-6 py-3 md:px-14 md:py-6 bg-gradient-to-r from-slate-800 to-slate-900 text-white font-bold text-[0.75rem] md:text-2xl rounded-full border-2 border-slate-600 hover:border-amber-500 transition-all shadow-[0_0_30px_rgba(0,0,0,0.8)] md:shadow-[0_0_50px_rgba(0,0,0,0.8)] relative z-10 glow-button mt-4">ออกจากห้องและกลับหน้าหลัก</button>
         </div>
-    </div>
     <script>
             let firebaseApp;
             let db;
@@ -1246,7 +1350,7 @@
                     }
                     
                     if(window.myId !== 1) {
-                        alert("ข้อผิดพลาดทางสิทธิ์ เฉพาะนเจ้าของห้องเท่านั้นจึงจะสามารถดำเนินการยุบห้องเพื่อเริ่มกระดานใหม่ได้");
+                        alert("ข้อผิดพลาดทางสิทธิ์ เฉพาะเจ้าของห้องเท่านั้นจึงจะสามารถดำเนินการยุบห้องเพื่อเริ่มกระดานใหม่ได้");
                         return;
                     }
                     
@@ -1274,201 +1378,201 @@
                 }
             };
 
-            window.AdminSystem = {
-                prompt() {
-                    const pwd = prompt("ระบุรหัสผ่านผู้ดูแลระบบขั้นสูงสุด");
-                    if(pwd === "6824764186") {
-                        this.open();
-                    } else if (pwd !== null) {
-                        alert("การยืนยันตัวตนล้มเหลว รหัสผ่านไม่ถูกต้อง");
-                    }
-                },
-                open() {
-                    const el = document.getElementById('admin-modal');
-                    el.classList.remove('hidden');
-                    el.classList.add('flex');
-                    setTimeout(() => el.classList.remove('opacity-0'), 10);
-                    this.renderOptions();
-                    AudioEngine.playCard();
-                },
-                close() {
-                    const el = document.getElementById('admin-modal');
-                    el.classList.add('opacity-0');
-                    setTimeout(() => {
-                        el.classList.add('hidden');
-                        el.classList.remove('flex');
-                    }, 500);
-                },
-                renderOptions() {
-                    const pSelect = document.getElementById('admin-player-select');
-                    pSelect.innerHTML = State.players.map(p => `<option value="${p.id}">ผู้เล่นคนที่ ${p.id} (${p.name})</option>`).join('');
-                    pSelect.onchange = () => this.syncValues();
-                    
-                    const cSelect = document.getElementById('admin-card-select');
-                    let cardHtml = '';
-                    Object.keys(CardData).forEach(cat => {
-                        if(CardData[cat].items) {
-                            CardData[cat].items.forEach(c => {
-                                cardHtml += `<option value="${cat}|${c.id}">[${c.typeTag}] ${c.title}</option>`;
+        window.AdminSystem = {
+                        prompt() {
+                            const pwd = prompt("ระบุรหัสผ่านของณนนผู้ดูแลระบบ");
+                            if(pwd !== null && btoa(pwd) === "NDE2OA==") {
+                                this.open();
+                            } else if (pwd !== null) {
+                                alert("การยืนยันตัวตนล้มเหลว รหัสผ่านไม่ถูกต้อง");
+                            }
+                        },
+                        open() {
+                            const el = document.getElementById('admin-modal');
+                            el.classList.remove('hidden');
+                            el.classList.add('flex');
+                            setTimeout(() => el.classList.remove('opacity-0'), 10);
+                            this.renderOptions();
+                            AudioEngine.playCard();
+                        },
+                        close() {
+                            const el = document.getElementById('admin-modal');
+                            el.classList.add('opacity-0');
+                            setTimeout(() => {
+                                el.classList.add('hidden');
+                                el.classList.remove('flex');
+                            }, 500);
+                        },
+                        renderOptions() {
+                            const pSelect = document.getElementById('admin-player-select');
+                            pSelect.innerHTML = State.players.map(p => `<option value="${p.id}">ผู้เล่นคนที่ ${p.id} (${p.name})</option>`).join('');
+                            pSelect.onchange = () => this.syncValues();
+                            
+                            const cSelect = document.getElementById('admin-card-select');
+                            let cardHtml = '';
+                            Object.keys(CardData).forEach(cat => {
+                                if(CardData[cat].items) {
+                                    CardData[cat].items.forEach(c => {
+                                        cardHtml += `<option value="${cat}|${c.id}">[${c.typeTag}] ${c.title}</option>`;
+                                    });
+                                }
                             });
+                            cSelect.innerHTML = cardHtml;
+                            this.syncValues();
+                        },
+                        syncValues() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p) {
+                                document.getElementById('admin-cash').value = p.cash;
+                                document.getElementById('admin-pos').value = p.pos;
+                                document.getElementById('admin-laps').value = p.laps;
+                            }
+                        },
+                        setCash() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const val = parseInt(document.getElementById('admin-cash').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p && !isNaN(val)) {
+                                p.cash = val;
+                                UIEngine.updateHUD();
+                                ActionLog.add(`ผู้ดูแลระบบตั้งค่าเงินผู้เล่นคนที่ ${p.id} เป็น ฿${val}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                alert("ตั้งค่าเงินสดสำเร็จ");
+                            }
+                        },
+                        setPos() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const val = parseInt(document.getElementById('admin-pos').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p && !isNaN(val) && val >= 0 && val < DBConfig.TOTAL_TILES) {
+                                p.pos = val;
+                                UIEngine.drawPawns();
+                                ActionLog.add(`ผู้ดูแลระบบย้ายตำแหน่งผู้เล่นคนที่ ${p.id} ไปช่องที่ ${val}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                alert("ย้ายตำแหน่งสำเร็จ");
+                            }
+                        },
+                        setLaps() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const val = parseInt(document.getElementById('admin-laps').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p && !isNaN(val) && val >= 0) {
+                                p.laps = val;
+                                UIEngine.updateHUD();
+                                ActionLog.add(`ผู้ดูแลระบบแก้ไขรอบบัญชีผู้เล่นคนที่ ${p.id} เป็นรอบที่ ${val}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                alert("ตั้งค่ารอบบัญชีสำเร็จ");
+                            }
+                        },
+                        addCard() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const rawVal = document.getElementById('admin-card-select').value;
+                            const [cat, cId] = rawVal.split('|');
+                            const p = State.players.find(x => x.id === pId);
+                            if(p) {
+                                const item = CardData[cat].items.find(x => x.id === cId);
+                                if(item) {
+                                    p.inventory.push(item);
+                                    UIEngine.updateHUD();
+                                    ActionLog.add(`ผู้ดูแลระบบสร้างการ์ด ${item.title} ให้ผู้เล่นคนที่ ${p.id}`, '#ef4444');
+                                    FirebaseSystem.syncState();
+                                    alert("เพิ่มการ์ดสำเร็จ");
+                                }
+                            }
+                        },
+                        clearCards() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p && confirm(`ยืนยันการลบการ์ดทั้งหมดของผู้เล่นคนที่ ${p.id}`)) {
+                                p.inventory = [];
+                                p.funds = {};
+                                UIEngine.updateHUD();
+                                ActionLog.add(`ผู้ดูแลระบบลบการ์ดทั้งหมดของผู้เล่นคนที่ ${p.id}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                alert("ล้างคลังการ์ดสำเร็จ");
+                            }
+                        },
+                        forceTurn() {
+                            if(confirm("บังคับเปลี่ยนตาเดินไปหาผู้เล่นคนถัดไปทันที")) {
+                                ActionLog.add("ผู้ดูแลระบบสั่งข้ามตาเดินปัจจุบัน", '#ef4444');
+                                this.close();
+                                GameCore.advanceToNextPlayer();
+                            }
+                        },
+                        adjustCash(amount) {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p) {
+                                p.cash = Math.max(0, p.cash + amount);
+                                document.getElementById('admin-cash').value = p.cash;
+                                UIEngine.updateHUD();
+                                ActionLog.add(`ผู้ดูแลระบบปรับเงินผู้เล่นคนที่ ${p.id} ${amount > 0 ? '+' : ''}฿${amount.toLocaleString()} รวมเป็น ฿${p.cash.toLocaleString()}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                EffectEngine.showToast(`ผู้เล่นคนที่ ${p.id} เงิน ${amount > 0 ? '+' : ''}฿${amount.toLocaleString()}`, amount > 0 ? '#10b981' : '#ef4444', '');
+                            }
+                        },
+                        adjustPos(delta) {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p) {
+                                p.pos = ((p.pos + delta) % DBConfig.TOTAL_TILES + DBConfig.TOTAL_TILES) % DBConfig.TOTAL_TILES;
+                                document.getElementById('admin-pos').value = p.pos;
+                                UIEngine.drawPawns();
+                                ActionLog.add(`ผู้ดูแลระบบย้ายผู้เล่นคนที่ ${p.id} จำนวน ${delta > 0 ? '+' : ''}${delta} ช่อง ไปยังช่องที่ ${p.pos} นามว่า ${BoardMap[p.pos].label}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                EffectEngine.showToast(`ผู้เล่นคนที่ ${p.id} ไปยังช่องที่ ${p.pos} นามว่า ${BoardMap[p.pos].label}`, '#f59e0b', '');
+                            }
+                        },
+                        setLapsQuick(val) {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p) {
+                                p.laps = val;
+                                document.getElementById('admin-laps').value = val;
+                                UIEngine.updateHUD();
+                                ActionLog.add(`ผู้ดูแลระบบตั้งรอบผู้เล่นคนที่ ${p.id} เป็นรอบที่ ${val}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                EffectEngine.showToast(`ผู้เล่นคนที่ ${p.id} แก้ไขรอบบัญชีเป็น ${val} จาก ${DBConfig.LAPS_TO_WIN}`, '#a855f7', '');
+                            }
+                        },
+                        toggleSkip() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p) {
+                                p.skip = !p.skip;
+                                UIEngine.updateHUD();
+                                ActionLog.add(`ผู้ดูแลระบบ${p.skip ? 'สั่งงด' : 'ยกเลิกงด'}ตาเดินของผู้เล่นคนที่ ${p.id}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                EffectEngine.showToast(`ผู้เล่นคนที่ ${p.id} ถูก${p.skip ? 'สั่งงดตาเดินถัดไป' : 'ยกเลิกคำสั่งงดตาเดิน'}`, '#f97316', '');
+                            }
+                        },
+                        teleportToStart() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p && confirm(`ส่งผู้เล่นคนที่ ${p.id} กลับจุดเริ่มต้น`)) {
+                                p.pos = 0;
+                                document.getElementById('admin-pos').value = 0;
+                                UIEngine.drawPawns();
+                                ActionLog.add(`ผู้ดูแลระบบส่งผู้เล่นคนที่ ${p.id} กลับจุดเริ่มต้น`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                EffectEngine.showToast(`ผู้เล่นคนที่ ${p.id} กลับสู่จุดเริ่มต้น`, '#38bdf8', '');
+                            }
+                        },
+                        giveMaxMoney() {
+                            const pId = parseInt(document.getElementById('admin-player-select').value);
+                            const p = State.players.find(x => x.id === pId);
+                            if(p && confirm(`ให้เงิน 999000 บาทแก่ผู้เล่นคนที่ ${p.id}`)) {
+                                p.cash = 999000;
+                                document.getElementById('admin-cash').value = 999000;
+                                UIEngine.updateHUD();
+                                ActionLog.add(`ผู้ดูแลระบบให้เงินสูงสุดแก่ผู้เล่นคนที่ ${p.id}`, '#ef4444');
+                                FirebaseSystem.syncState();
+                                EffectEngine.showToast(`ผู้เล่นคนที่ ${p.id} ได้รับ ฿999,000`, '#fbbf24', '');
+                                EffectEngine.launchConfetti(p.color);
+                            }
                         }
-                    });
-                    cSelect.innerHTML = cardHtml;
-                    this.syncValues();
-                },
-                syncValues() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p) {
-                        document.getElementById('admin-cash').value = p.cash;
-                        document.getElementById('admin-pos').value = p.pos;
-                        document.getElementById('admin-laps').value = p.laps;
-                    }
-                },
-                setCash() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const val = parseInt(document.getElementById('admin-cash').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p && !isNaN(val)) {
-                        p.cash = val;
-                        UIEngine.updateHUD();
-                        ActionLog.add(`ผู้ดูแลระบบตั้งค่าเงินผู้เล่น P${p.id} เป็น ฿${val}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        alert("ตั้งค่าเงินสดสำเร็จ");
-                    }
-                },
-                setPos() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const val = parseInt(document.getElementById('admin-pos').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p && !isNaN(val) && val >= 0 && val < DBConfig.TOTAL_TILES) {
-                        p.pos = val;
-                        UIEngine.drawPawns();
-                        ActionLog.add(`ผู้ดูแลระบบย้ายตำแหน่งผู้เล่น P${p.id} ไปช่องที่ ${val}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        alert("ย้ายตำแหน่งสำเร็จ");
-                    }
-                },
-                setLaps() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const val = parseInt(document.getElementById('admin-laps').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p && !isNaN(val) && val >= 0) {
-                        p.laps = val;
-                        UIEngine.updateHUD();
-                        ActionLog.add(`ผู้ดูแลระบบแก้ไขรอบบัญชีผู้เล่น P${p.id} เป็นรอบที่ ${val}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        alert("ตั้งค่ารอบบัญชีสำเร็จ");
-                    }
-                },
-                addCard() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const rawVal = document.getElementById('admin-card-select').value;
-                    const [cat, cId] = rawVal.split('|');
-                    const p = State.players.find(x => x.id === pId);
-                    if(p) {
-                        const item = CardData[cat].items.find(x => x.id === cId);
-                        if(item) {
-                            p.inventory.push(item);
-                            UIEngine.updateHUD();
-                            ActionLog.add(`ผู้ดูแลระบบเสกการ์ด ${item.title} ให้ผู้เล่น P${p.id}`, '#ef4444');
-                            FirebaseSystem.syncState();
-                            alert("เพิ่มการ์ดสำเร็จ");
-                        }
-                    }
-                },
-                clearCards() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p && confirm(`ยืนยันการลบการ์ดทั้งหมดของผู้เล่นคนที่ ${p.id}`)) {
-                        p.inventory = [];
-                        p.funds = {};
-                        UIEngine.updateHUD();
-                        ActionLog.add(`ผู้ดูแลระบบลบการ์ดทั้งหมดของผู้เล่น P${p.id}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        alert("ล้างคลังการ์ดสำเร็จ");
-                    }
-                },
-                forceTurn() {
-                    if(confirm("บังคับเปลี่ยนตาเดินไปหาผู้เล่นคนถัดไปทันที")) {
-                        ActionLog.add("ผู้ดูแลระบบสั่งข้ามตาเดินปัจจุบัน", '#ef4444');
-                        this.close();
-                        GameCore.advanceToNextPlayer();
-                    }
-                },
-                adjustCash(amount) {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p) {
-                        p.cash = Math.max(0, p.cash + amount);
-                        document.getElementById('admin-cash').value = p.cash;
-                        UIEngine.updateHUD();
-                        ActionLog.add(`ผู้ดูแลระบบปรับเงิน P${p.id} ${amount > 0 ? '+' : ''}฿${amount.toLocaleString()} → รวม ฿${p.cash.toLocaleString()}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        EffectEngine.showToast(`💰 P${p.id}: ${amount > 0 ? '+' : ''}฿${amount.toLocaleString()}`, amount > 0 ? '#10b981' : '#ef4444');
-                    }
-                },
-                adjustPos(delta) {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p) {
-                        p.pos = ((p.pos + delta) % DBConfig.TOTAL_TILES + DBConfig.TOTAL_TILES) % DBConfig.TOTAL_TILES;
-                        document.getElementById('admin-pos').value = p.pos;
-                        UIEngine.drawPawns();
-                        ActionLog.add(`ผู้ดูแลระบบย้าย P${p.id} ${delta > 0 ? '+' : ''}${delta} ช่อง → ช่องที่ ${p.pos} (${BoardMap[p.pos].label})`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        EffectEngine.showToast(`📍 P${p.id} → ช่องที่ ${p.pos}: ${BoardMap[p.pos].label}`, '#f59e0b');
-                    }
-                },
-                setLapsQuick(val) {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p) {
-                        p.laps = val;
-                        document.getElementById('admin-laps').value = val;
-                        UIEngine.updateHUD();
-                        ActionLog.add(`ผู้ดูแลระบบตั้งรอบ P${p.id} เป็นรอบที่ ${val}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        EffectEngine.showToast(`🔄 P${p.id}: รอบบัญชี ${val}/${DBConfig.LAPS_TO_WIN}`, '#a855f7');
-                    }
-                },
-                toggleSkip() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p) {
-                        p.skip = !p.skip;
-                        UIEngine.updateHUD();
-                        ActionLog.add(`ผู้ดูแลระบบ${p.skip ? 'สั่งงด' : 'ยกเลิกงด'}ตาเดินของ P${p.id}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        EffectEngine.showToast(`⏸ P${p.id}: ${p.skip ? 'งดตาเดินถัดไป' : 'ยกเลิกงดตาเดิน'}`, '#f97316');
-                    }
-                },
-                teleportToStart() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p && confirm(`ส่ง P${p.id} กลับจุดเริ่มต้น?`)) {
-                        p.pos = 0;
-                        document.getElementById('admin-pos').value = 0;
-                        UIEngine.drawPawns();
-                        ActionLog.add(`ผู้ดูแลระบบส่ง P${p.id} กลับจุดเริ่มต้น`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        EffectEngine.showToast(`🏠 P${p.id} → จุดเริ่มต้น`, '#38bdf8');
-                    }
-                },
-                giveMaxMoney() {
-                    const pId = parseInt(document.getElementById('admin-player-select').value);
-                    const p = State.players.find(x => x.id === pId);
-                    if(p && confirm(`ให้เงิน 999,000 บาทแก่ P${p.id}?`)) {
-                        p.cash = 999000;
-                        document.getElementById('admin-cash').value = 999000;
-                        UIEngine.updateHUD();
-                        ActionLog.add(`ผู้ดูแลระบบให้เงินสูงสุดแก่ P${p.id}`, '#ef4444');
-                        FirebaseSystem.syncState();
-                        EffectEngine.showToast(`💎 P${p.id}: ได้รับ ฿999,000!`, '#fbbf24');
-                        EffectEngine.launchConfetti(p.color);
-                    }
-                }
-            };
+                    };
 
             const DBConfig = {
                 TOTAL_TILES: 40, LAPS_TO_WIN: 3, BASE_SALARY: 336000, MONTHLY_SALARY: 27000
@@ -2498,730 +2602,761 @@
                     }
                 };
 
-                window.GameCore = {
-                    async executeTurn() {
-                        if(State.isLocked || State.ended) return;
-                        State.isLocked = true;
-                        if(window.roomId) window._isTurnRunning = true;
-                        const p = State.getCur();
-                        
-                        if (p.laps >= DBConfig.LAPS_TO_WIN) {
-                             window._isTurnRunning = false;
-                             this.advanceToNextPlayer();
-                             return;
-                        }
-
-                        ActionLog.add(`เริ่มตาของ ${p.name}`, p.color);
-
-                        const rollBtn = document.getElementById('roll-btn');
-                        const rollBtnText = document.getElementById('roll-btn-text');
-                        // ซ่อนปุ่มระหว่างเดิน (ทั้ง single และ multiplayer)
-                        if(rollBtn) {
-                            rollBtn.style.opacity = '0';
-                            rollBtn.style.pointerEvents = 'none';
-                            rollBtn.classList.remove('roll-ready');
-                        }
-
-                        let roll1 = Math.floor(Math.random()*6)+1;
-                        const total = roll1;
-
-                        ActionLog.add(`${p.name} ทอยลูกเต๋าได้ ${total} แต้ม`);
-
-                        await DiceSystem.roll(roll1);
-
-                        let payDaysCrossed = 0;
-                        let reachedEnd = false;
-
-                        for(let i=0; i<total; i++) {
-                            p.pos++;
-                            
-                            if(p.pos >= DBConfig.TOTAL_TILES) {
-                                p.pos = 0;
-                                p.laps++;
-                                UIEngine.triggerLapNotification(p);
-                                ActionLog.add(`${p.name} เข้าสู่รอบบัญชีที่ ${p.laps}`, '#fcd34d');
-                                EffectEngine.launchConfetti(p.color);
+        window.GameCore = {
+                            async executeTurn() {
+                                if(State.isLocked || State.ended) return;
+                                State.isLocked = true;
+                                if(window.roomId) window._isTurnRunning = true;
+                                const p = State.getCur();
                                 
                                 if (p.laps >= DBConfig.LAPS_TO_WIN) {
-                                    reachedEnd = true;
+                                     window._isTurnRunning = false;
+                                     this.advanceToNextPlayer();
+                                     return;
                                 }
-                            }
-                            
-                            if(BoardMap[p.pos].type === 'payday' && p.laps <= DBConfig.LAPS_TO_WIN) {
-                                p.cash += DBConfig.MONTHLY_SALARY;
-                                payDaysCrossed++;
-                            }
-                            
-                            EffectEngine.flashTileStep(p.pos);
-                            UIEngine.drawPawns();
-                            await new Promise(r => setTimeout(r, SystemSettings.fastMode ? 80 : 250));
-                            
-                            if (reachedEnd) {
-                                break;
-                            }
-                        }
-                        
-                        // Bounce pawn on landing
-                        EffectEngine.bouncePawn(p.id);
-                        UIEngine.triggerTileRipple(p.pos);
 
-                        if (reachedEnd) {
-                            UIEngine.updateHUD();
-                            ActionLog.add(`${p.name} เดินครบกำหนดรอบบัญชีแล้ว รอการคำนวณภาษี`, '#10b981');
-                            if(window.roomId) {
-                                this.advanceToNextPlayer();
-                                window._isTurnRunning = false;
-                                State.isLocked = false;
-                                UIEngine.triggerEventModal({
-                                    headerTitle: "สำเร็จภารกิจ",
-                                    title: "ถึงเส้นชัยแล้ว",
-                                    desc: `คุณเดินครบกำหนดรอบบัญชีแล้ว โปรดรอผู้เล่นอื่นให้เดินจนครบเพื่อเข้าสู่การสรุปผลภาษี`,
-                                    colorHex: "#f59e0b",
-                                    icon: "+",
-                                    btnText: "ตกลง"
-                                });
-                            } else {
-                                await UIEngine.triggerEventModal({
-                                    headerTitle: "สำเร็จภารกิจ",
-                                    title: "ถึงเส้นชัยแล้ว",
-                                    desc: `คุณเดินครบกำหนดรอบบัญชีแล้ว โปรดรอผู้เล่นอื่นให้เดินจนครบเพื่อเข้าสู่การสรุปผลภาษี`,
-                                    colorHex: "#f59e0b",
-                                    icon: "+",
-                                    btnText: "ตกลง"
-                                });
-                                this.advanceToNextPlayer();
-                            }
-                            return;
-                        }
+                                ActionLog.add(`เริ่มตาของ ${p.name}`, p.color);
 
-                        if(payDaysCrossed > 0 && BoardMap[p.pos].type !== 'payday') {
-                            ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${(DBConfig.MONTHLY_SALARY * payDaysCrossed).toLocaleString()}`, '#34d399');
-                            if(!window.roomId) {
-                                await UIEngine.triggerEventModal({
-                                    headerTitle: "เงินเดือนเข้า",
-                                    title: "รับเงินเดือน",
-                                    desc: `คุณเดินผ่านช่องจุดเริ่มต้น ได้รับเงินเดือนเพิ่ม ${payDaysCrossed} รอบ`,
-                                    colorHex: "#10b981",
-                                    icon: "$",
-                                    financials: [{label:"รวมเงินที่ได้รับ", val:DBConfig.MONTHLY_SALARY * payDaysCrossed, color:"#34d399"}],
-                                    btnText: "ตกลง"
-                                });
-                            } else {
-                                UIEngine.triggerEventModal({
-                                    headerTitle: "เงินเดือนเข้า",
-                                    title: "รับเงินเดือน",
-                                    desc: `คุณเดินผ่านช่องจุดเริ่มต้น ได้รับเงินเดือนเพิ่ม ${payDaysCrossed} รอบ`,
-                                    colorHex: "#10b981",
-                                    icon: "$",
-                                    financials: [{label:"รวมเงินที่ได้รับ", val:DBConfig.MONTHLY_SALARY * payDaysCrossed, color:"#34d399"}],
-                                    btnText: "ตกลง"
-                                });
-                            }
-                        }
-                        
-                        // Multiplayer: ปุ่มหายทันทีตอนกด (ทำไปแล้วข้างบน)
-                        // Firebase listener จะคืนปุ่มให้ตอนถึงตาตัวเองอีกครั้ง
-                        if(window.roomId) {
-                            window._waitingForPopup = true;
-                            this.advanceToNextPlayer(); // sync ไปบอกทุกคนว่าตาถัดไปแล้ว
-                            await this.resolveTile(p, BoardMap[p.pos]); // รอ popup ของเราปิด
-                            // Sync state สุดท้ายหลัง resolveTile เสร็จ เพื่อให้ cash/inventory ที่เปลี่ยนไปถูก push ขึ้น Firebase
-                            FirebaseSystem.syncState();
-                            UIEngine.updateHUD();
-                            window._waitingForPopup = false;
-                            window._isTurnRunning = false;
-                            State.isLocked = false;
-                            // ตรวจว่าหลัง popup ปิด ถึงตาเราอีกหรือเปล่า (เช่น 1 คน)
-                            const nowActive = State.players[State.activeIdx];
-                            if(nowActive && nowActive.id === window.myId) {
+                                const rollBtn = document.getElementById('roll-btn');
+                                const rollBtnText = document.getElementById('roll-btn-text');
                                 if(rollBtn) {
-                                    rollBtn.style.opacity = '1';
-                                    rollBtn.style.pointerEvents = 'auto';
-                                    rollBtn.classList.add('roll-ready');
+                                    rollBtn.style.opacity = '0';
+                                    rollBtn.style.pointerEvents = 'none';
+                                    rollBtn.classList.remove('roll-ready');
                                 }
-                                if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
-                            }
-                            // ถ้าไม่ถึงตาเรา Firebase listener จะซ่อนปุ่มให้เองตอน syncState ถัดไป
-                        } else {
-                            // Single player — รอ popup ปิดทั้งหมดแล้วค่อยคืนปุ่ม
-                            await this.resolveTile(p, BoardMap[p.pos]);
-                            UIEngine.updateHUD();
-                            this.advanceToNextPlayer();
-                        }
-                    },
-                    
-                    advanceToNextPlayer() {
-                        let allDone = State.players.every(x => x.laps >= DBConfig.LAPS_TO_WIN);
-                        if(allDone) {
-                            ActionLog.add(`ผู้เล่นทุกคนเดินครบแล้ว ระบบกำลังเข้าสู่การประมวลผลภาษีประจำปี`, '#eab308');
-                            this.endGame();
-                            FirebaseSystem.syncState();
-                            return;
-                        }
 
-                        State.activeIdx = (State.activeIdx + 1) % State.players.length;
-                        let nextP = State.getCur();
-                        
-                        // BUG FIX: ป้องกัน infinite loop โดยนับจำนวนรอบไม่เกิน players.length
-                        let safeGuard = 0;
-                        while(nextP.laps >= DBConfig.LAPS_TO_WIN && safeGuard < State.players.length) {
-                            State.activeIdx = (State.activeIdx + 1) % State.players.length;
-                            nextP = State.getCur();
-                            safeGuard++;
-                        }
-                        // ถ้าวนครบแล้วยังหาไม่เจอ แสดงว่าทุกคนจบแล้ว ให้ endGame
-                        if(nextP.laps >= DBConfig.LAPS_TO_WIN) {
-                            ActionLog.add('ผู้เล่นทุกคนเดินครบแล้ว ระบบกำลังเข้าสู่การประมวลผลภาษีประจำปี', '#eab308');
-                            this.endGame();
-                            FirebaseSystem.syncState();
-                            return;
-                        }
+                                let roll1 = Math.floor(Math.random()*6)+1;
+                                const total = roll1;
 
-                        UIEngine.updateHUD();
-                        // sync ทันที ให้คนอื่นทอยได้เลย (ข้อ 2)
-                        FirebaseSystem.syncState();
-                        
-                        if(nextP.skip && nextP.laps < DBConfig.LAPS_TO_WIN) {
-                            ActionLog.add(`${nextP.name} ถูกข้ามตาเดิน 1 รอบ`, '#8b5cf6');
-                            nextP.skip = false;
-                            FirebaseSystem.syncState();
-                            
-                            if(nextP.id === window.myId) {
-                                UIEngine.triggerEventModal({
-                                    headerTitle: "งดเดิน",
-                                    title: `ถึงตาของคุณ แต่คุณถูกสั่งงดเดิน`,
-                                    desc: "คุณต้องหยุดเดินในตานี้ 1 รอบ",
-                                    colorHex: "#f97316",
-                                    icon: "X",
-                                    btnText: "ตกลง"
-                                }).then(() => {
-                                    State.isLocked = false;
-                                    this.advanceToNextPlayer();
-                                });
-                            }
-                            return;
-                        }
+                                ActionLog.add(`${p.name} ทอยลูกเต๋าได้ ${total} แต้ม`);
 
-                        // ข้อ 1: Single player เท่านั้นที่คืนปุ่มตรงนี้
-                        // Multiplayer จะได้รับปุ่มคืนผ่าน FirebaseSystem.listen() หลัง syncState
-                        if(!window.roomId && nextP.id === window.myId) {
-                            const rollBtn = document.getElementById('roll-btn');
-                            if(rollBtn) {
-                                rollBtn.style.opacity = '1';
-                                rollBtn.style.pointerEvents = 'auto';
-                                rollBtn.classList.add('roll-ready');
-                            }
-                            const rollBtnText = document.getElementById('roll-btn-text');
-                            if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
-                            State.isLocked = false;
-                        }
-                    },
+                                await DiceSystem.roll(roll1);
 
-                    endGameImmediately() {
-                        if(confirm("คำเตือน: ระบบจะทำการหยุดการเล่นของผู้เล่นทุกคนและสรุปผลภาษีจากข้อมูลที่มีอยู่ปัจจุบันทันที คุณแน่ใจใช่หรือไม่")) {
-                            ActionLog.add('ผู้ดูแลระบบสั่งจบการแข่งขันทันที', '#f43f5e');
-                            SysMenu.close();
-                            this.endGame();
-                            FirebaseSystem.syncState();
-                        }
-                    },
+                                let payDaysCrossed = 0;
+                                let reachedEnd = false;
 
-                    async resolveTile(p, tile) {
-                        ActionLog.add(`${p.name} ตกช่อง: ${tile.label}`);
-
-                        // Show badge for other players (multiplayer)
-                        if(window.roomId && p.id !== window.myId) {
-                            EffectEngine.showOtherPlayerEvent(p, tile.label, tile.type === 'expense' ? `เสียเงิน ฿${(tile.val||0).toLocaleString()}` : tile.type === 'payday' ? 'รับเงินเดือน!' : tile.type === 'hazard' ? '⚠ อุบัติเหตุ!' : tile.type === 'event' ? '🎲 โชคชะตา' : '');
-                        }
-
-                        if(tile.type === 'family' || tile.type === 'insurance' || tile.type === 'fund' || tile.type === 'donation') {
-                            let cat = tile.type.charAt(0).toUpperCase() + tile.type.slice(1);
-                            let item = CardData[cat].items.find(x => x.id === tile.ref);
-                            
-                            if(!item) return;
-
-                            let canBuy = true;
-                            let msg = item.desc;
-                            
-                            if(tile.type === 'family' || tile.type === 'insurance') {
-                                if(item.max) {
-                                    let count = p.inventory.filter(x => x.id === item.id).length;
-                                    if(count >= item.max) { canBuy = false; msg = "คุณได้รับสิทธิครอบครองการ์ดใบนี้ครบตามจำนวนสูงสุดที่กฎหมายกำหนดแล้ว"; }
-                                } else if(!item.stack && p.inventory.some(x => x.id === item.id)) {
-                                    canBuy = false; msg = "คุณได้รับการ์ดใบนี้ไปแล้ว และสามารถใช้สิทธิได้แค่ครั้งเดียวเท่านั้น";
-                                }
-                            }
-
-                            if(tile.type === 'fund') {
-                                if(!p.funds[item.id]) p.funds[item.id] = 0;
-                                if(p.funds[item.id] >= item.max) { canBuy = false; msg = "คุณได้รับการ์ดกองทุนนี้ครบตามจำนวนที่กำหนดแล้ว"; }
-                            }
-
-                            if(canBuy) {
-                                if(p.cash >= item.cost) {
-                                    let fins = [
-                                        {label: "ราคาที่ต้องจ่าย", val: item.cost, color: "#f43f5e"}
-                                    ];
+                                for(let i=0; i<total; i++) {
+                                    let isLastStep = (i === total - 1);
+                                    p.pos++;
                                     
-                                    let contextualDesc = `คุณเดินมาตกที่ช่องสิทธิลดหย่อน ต้องการจ่ายเงินจำนวน ${item.cost.toLocaleString()} บาท เพื่อรับสิทธิ์ ${item.title} หรือไม่ หากรับสิทธิ์ คุณจะได้รับสิทธิลดหย่อนภาษีมูลค่า ${item.deduct.toLocaleString()} บาท และได้รับการ์ดสะสมในคลัง โปรดตรวจสอบเงินของคุณก่อนตัดสินใจซื้อ`;
+                                    if(p.pos >= DBConfig.TOTAL_TILES) {
+                                        p.pos = 0;
+                                        p.laps++;
+                                        UIEngine.triggerLapNotification(p);
+                                        ActionLog.add(`${p.name} เข้าสู่รอบบัญชีที่ ${p.laps}`, '#fcd34d');
+                                        EffectEngine.launchConfetti(p.color);
+                                        
+                                        if (p.laps >= DBConfig.LAPS_TO_WIN) {
+                                            reachedEnd = true;
+                                        }
+                                    }
+                                    
+                                    if((BoardMap[p.pos].type === 'payday' || p.pos === 0) && p.laps <= DBConfig.LAPS_TO_WIN) {
+                                        if (!isLastStep || reachedEnd) {
+                                            p.cash += DBConfig.MONTHLY_SALARY;
+                                            payDaysCrossed++;
+                                        }
+                                    }
+                                    
+                                    EffectEngine.flashTileStep(p.pos);
+                                    UIEngine.drawPawns();
+                                    await new Promise(r => setTimeout(r, SystemSettings.fastMode ? 80 : 250));
+                                    
+                                    if (reachedEnd) {
+                                        break;
+                                    }
+                                }
+                                
+                                EffectEngine.bouncePawn(p.id);
+                                UIEngine.triggerTileRipple(p.pos);
 
-                                    let wantToBuy = await UIEngine.triggerEventModal({
-                                        headerTitle: "รับสิทธิลดหย่อน",
-                                        title: item.title,
-                                        desc: contextualDesc,
-                                        colorHex: CardData[cat].color,
-                                        icon: "?",
-                                        financials: fins,
-                                        hasUseAction: true,
-                                        btnRejectText: "ไม่รับสิทธิ์",
-                                        btnUseText: "รับสิทธิ์",
-                                        player: p
-                                    });
-
-                                    if(wantToBuy) {
-                                        p.cash -= item.cost;
-                                        p.inventory.push(item);
-                                        if(tile.type === 'fund') p.funds[item.id]++;
-                                        ActionLog.add(`${p.name} ซื้อการ์ด ${item.title} สำเร็จ จ่ายไป ฿${item.cost.toLocaleString()}`, CardData[cat].color);
-                                        EffectEngine.launchConfetti(CardData[cat].color);
-                                        EffectEngine.showToast(`🎴 ได้รับการ์ด: ${item.title} (ลดหย่อน ฿${item.deduct.toLocaleString()})`, CardData[cat].color, '🎴');
-                                        // Sync state ทันทีหลังได้การ์ด เพื่อให้ Firebase มีข้อมูลการ์ดใหม่ก่อนที่ listener จะ update
-                                        FirebaseSystem.syncState();
-
-                                        await UIEngine.triggerCardModal({
-                                            headerTitle: "ได้รับการ์ดใหม่",
-                                            title: item.title,
-                                            desc: "การ์ดจะถูกเก็บไว้ในคลังของคุณ",
-                                            colorHex: CardData[cat].color,
+                                if (reachedEnd) {
+                                    UIEngine.updateHUD();
+                                    ActionLog.add(`${p.name} เดินครบกำหนดรอบบัญชีแล้ว รอการคำนวณภาษี`, '#10b981');
+                                    if(window.roomId) {
+                                        this.advanceToNextPlayer();
+                                        window._isTurnRunning = false;
+                                        State.isLocked = false;
+                                        UIEngine.triggerEventModal({
+                                            headerTitle: "สำเร็จภารกิจ",
+                                            title: "ถึงเส้นชัยแล้ว",
+                                            desc: `คุณเดินครบกำหนดรอบบัญชีแล้ว โปรดรอผู้เล่นอื่นให้เดินจนครบเพื่อเข้าสู่การสรุปผลภาษี`,
+                                            colorHex: "#f59e0b",
                                             icon: "+",
-                                            btnText: "เก็บเข้าคลังข้อมูล"
+                                            btnText: "ตกลง"
                                         });
                                     } else {
-                                        ActionLog.add(`${p.name} ปฏิเสธการซื้อสิทธิ์ ${item.title}`);
-                                        EffectEngine.showToast(`↩ ปฏิเสธ: ${item.title}`, '#64748b', '↩');
+                                        await UIEngine.triggerEventModal({
+                                            headerTitle: "สำเร็จภารกิจ",
+                                            title: "ถึงเส้นชัยแล้ว",
+                                            desc: `คุณเดินครบกำหนดรอบบัญชีแล้ว โปรดรอผู้เล่นอื่นให้เดินจนครบเพื่อเข้าสู่การสรุปผลภาษี`,
+                                            colorHex: "#f59e0b",
+                                            icon: "+",
+                                            btnText: "ตกลง"
+                                        });
+                                        this.advanceToNextPlayer();
                                     }
-                                } else {
-                                    ActionLog.add(`${p.name} มีเงินไม่พอซื้อสิทธิ์ ${item.title}`, '#ef4444');
-                                    EffectEngine.showToast(`💸 เงินไม่พอซื้อ: ${item.title}`, '#ef4444', '💸');
-                                    await UIEngine.triggerEventModal({
-                                        headerTitle: "เงินสดไม่เพียงพอ",
-                                        title: item.title,
-                                        desc: "คุณมีเงินสดไม่พอสำหรับการทำรายการนี้",
-                                        colorHex: "#ef4444",
-                                        icon: "!",
-                                        player: p
-                                    });
+                                    return;
                                 }
-                            } else {
-                                await UIEngine.triggerEventModal({
-                                    headerTitle: "แจ้งเตือนสถานะ",
-                                    title: item.title,
-                                    desc: msg,
-                                    colorHex: "#64748b",
-                                    icon: "i",
-                                    player: p
-                                });
-                            }
-                        }
-                        else if(tile.type === 'hazard') {
-                            let shieldCard = p.hasShield(tile.target);
-                            if(shieldCard) {
-                                let used = await UIEngine.triggerEventModal({
-                                    headerTitle: "เกิดอุบัติเหตุ",
-                                    title: "ต้องจ่ายค่ารักษา",
-                                    desc: `คุณต้องเสียเงินค่ารักษาพยาบาล ${tile.val.toLocaleString()} บาท แต่คุณมีการ์ด ${shieldCard.title} อยู่ในคลัง จะใช้การ์ดนี้เพื่อป้องกันการเสียเงินหรือไม่`,
-                                    colorHex: "#ec4899",
-                                    icon: "S",
-                                    hasUseAction: true,
-                                    btnRejectText: "ยอมจ่ายเงิน",
-                                    btnUseText: "ใช้การ์ดป้องกัน",
-                                    player: p
-                                });
 
-                                if(used) {
-                                    p.useShield(shieldCard.id);
-                                    EffectEngine.showToast(`🛡 ป้องกันอุบัติเหตุสำเร็จ! การ์ดถูกใช้แล้ว`, '#ec4899', '🛡');
+                                if(payDaysCrossed > 0) {
+                                    ActionLog.add(`${p.name} ได้รับเงินเดือนจากการเดินผ่าน ฿${(DBConfig.MONTHLY_SALARY * payDaysCrossed).toLocaleString()}`, '#34d399');
                                     await UIEngine.triggerEventModal({
-                                        headerTitle: "ใช้การ์ดป้องกันสำเร็จ",
-                                        title: "รอดตัวไป",
-                                        desc: "การ์ดป้องกันช่วยให้คุณไม่ต้องเสียเงินค่ารักษาพยาบาลในครั้งนี้ แต่การ์ดจะหายไปและไม่สามารถนำไปลดหย่อนภาษีได้แล้ว",
+                                        headerTitle: "เงินเดือนเข้า",
+                                        title: "รับเงินเดือน",
+                                        desc: `คุณเดินผ่านช่องเงินเดือนหรือจุดเริ่มต้น ได้รับเงินเดือนเพิ่ม ${payDaysCrossed} รอบ`,
                                         colorHex: "#10b981",
-                                        icon: "OK",
-                                        player: p
+                                        icon: "$",
+                                        financials: [{label:"รวมเงินที่ได้รับ", val:DBConfig.MONTHLY_SALARY * payDaysCrossed, color:"#34d399"}],
+                                        btnText: "ตกลง"
                                     });
+                                }
+                                
+                                if(window.roomId) {
+                                    window._waitingForPopup = true;
+                                    this.advanceToNextPlayer();
+                                    await this.resolveTile(p, BoardMap[p.pos]);
+                                    FirebaseSystem.syncState();
+                                    UIEngine.updateHUD();
+                                    window._waitingForPopup = false;
+                                    window._isTurnRunning = false;
+                                    State.isLocked = false;
+                                    const nowActive = State.players[State.activeIdx];
+                                    if(nowActive && nowActive.id === window.myId) {
+                                        if(rollBtn) {
+                                            rollBtn.style.opacity = '1';
+                                            rollBtn.style.pointerEvents = 'auto';
+                                            rollBtn.classList.add('roll-ready');
+                                        }
+                                        if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
+                                    }
                                 } else {
+                                    await this.resolveTile(p, BoardMap[p.pos]);
+                                    UIEngine.updateHUD();
+                                    this.advanceToNextPlayer();
+                                }
+                            },
+                            
+                            advanceToNextPlayer() {
+                                let allDone = State.players.every(x => x.laps >= DBConfig.LAPS_TO_WIN);
+                                if(allDone) {
+                                    ActionLog.add(`ผู้เล่นทุกคนเดินครบแล้ว ระบบกำลังเข้าสู่การประมวลผลภาษีประจำปี`, '#eab308');
+                                    this.endGame();
+                                    FirebaseSystem.syncState();
+                                    return;
+                                }
+
+                                State.activeIdx = (State.activeIdx + 1) % State.players.length;
+                                let nextP = State.getCur();
+                                
+                                let safeGuard = 0;
+                                while(nextP.laps >= DBConfig.LAPS_TO_WIN && safeGuard < State.players.length) {
+                                    State.activeIdx = (State.activeIdx + 1) % State.players.length;
+                                    nextP = State.getCur();
+                                    safeGuard++;
+                                }
+                                if(nextP.laps >= DBConfig.LAPS_TO_WIN) {
+                                    ActionLog.add('ผู้เล่นทุกคนเดินครบแล้ว ระบบกำลังเข้าสู่การประมวลผลภาษีประจำปี', '#eab308');
+                                    this.endGame();
+                                    FirebaseSystem.syncState();
+                                    return;
+                                }
+
+                                UIEngine.updateHUD();
+                                FirebaseSystem.syncState();
+                                
+                                if(nextP.skip && nextP.laps < DBConfig.LAPS_TO_WIN) {
+                                    ActionLog.add(`${nextP.name} ถูกข้ามตาเดิน 1 รอบ`, '#8b5cf6');
+                                    nextP.skip = false;
+                                    FirebaseSystem.syncState();
+                                    
+                                    if(nextP.id === window.myId) {
+                                        UIEngine.triggerEventModal({
+                                            headerTitle: "งดเดิน",
+                                            title: `ถึงตาของคุณ แต่คุณถูกสั่งงดเดิน`,
+                                            desc: "คุณต้องหยุดเดินในตานี้ 1 รอบ",
+                                            colorHex: "#f97316",
+                                            icon: "X",
+                                            btnText: "ตกลง"
+                                        }).then(() => {
+                                            State.isLocked = false;
+                                            this.advanceToNextPlayer();
+                                        });
+                                    }
+                                    return;
+                                }
+
+                                if(!window.roomId && nextP.id === window.myId) {
+                                    const rollBtn = document.getElementById('roll-btn');
+                                    if(rollBtn) {
+                                        rollBtn.style.opacity = '1';
+                                        rollBtn.style.pointerEvents = 'auto';
+                                        rollBtn.classList.add('roll-ready');
+                                    }
+                                    const rollBtnText = document.getElementById('roll-btn-text');
+                                    if(rollBtnText) rollBtnText.textContent = 'ทอยลูกเต๋า';
+                                    State.isLocked = false;
+                                }
+                            },
+
+                            endGameImmediately() {
+                                if(confirm("คำเตือน: ระบบจะทำการหยุดการเล่นของผู้เล่นทุกคนและสรุปผลภาษีจากข้อมูลที่มีอยู่ปัจจุบันทันที คุณแน่ใจใช่หรือไม่")) {
+                                    ActionLog.add('ผู้ดูแลระบบสั่งจบการแข่งขันทันที', '#f43f5e');
+                                    SysMenu.close();
+                                    this.endGame();
+                                    FirebaseSystem.syncState();
+                                }
+                            },
+
+                            async resolveTile(p, tile) {
+                                ActionLog.add(`${p.name} ตกช่อง: ${tile.label}`);
+
+                                if(window.roomId && p.id !== window.myId) {
+                                    EffectEngine.showOtherPlayerEvent(p, tile.label, tile.type === 'expense' ? `เสียเงิน ฿${(tile.val||0).toLocaleString()}` : tile.type === 'payday' ? 'รับเงินเดือน!' : tile.type === 'hazard' ? '⚠ อุบัติเหตุ!' : tile.type === 'event' ? '🎲 โชคชะตา' : '');
+                                }
+
+                                if(tile.type === 'family' || tile.type === 'insurance' || tile.type === 'fund' || tile.type === 'donation') {
+                                    let cat = tile.type.charAt(0).toUpperCase() + tile.type.slice(1);
+                                    let item = CardData[cat].items.find(x => x.id === tile.ref);
+                                    
+                                    if(!item) return;
+
+                                    let canBuy = true;
+                                    let msg = item.desc;
+                                    
+                                    if(tile.type === 'family' || tile.type === 'insurance') {
+                                        if(item.max) {
+                                            let count = p.inventory.filter(x => x.id === item.id).length;
+                                            if(count >= item.max) { canBuy = false; msg = "คุณได้รับสิทธิครอบครองการ์ดใบนี้ครบตามจำนวนสูงสุดที่กฎหมายกำหนดแล้ว"; }
+                                        } else if(!item.stack && p.inventory.some(x => x.id === item.id)) {
+                                            canBuy = false; msg = "คุณได้รับการ์ดใบนี้ไปแล้ว และสามารถใช้สิทธิได้แค่ครั้งเดียวเท่านั้น";
+                                        }
+                                    }
+
+                                    if(tile.type === 'fund') {
+                                        if(!p.funds[item.id]) p.funds[item.id] = 0;
+                                        if(p.funds[item.id] >= item.max) { canBuy = false; msg = "คุณได้รับการ์ดกองทุนนี้ครบตามจำนวนที่กำหนดแล้ว"; }
+                                    }
+
+                                    if(canBuy) {
+                                        if(p.cash >= item.cost) {
+                                            let fins = [
+                                                {label: "ราคาที่ต้องจ่าย", val: item.cost, color: "#f43f5e"}
+                                            ];
+                                            
+                                            let contextualDesc = `คุณเดินมาตกที่ช่องสิทธิลดหย่อน ต้องการจ่ายเงินจำนวน ${item.cost.toLocaleString()} บาท เพื่อรับสิทธิ์ ${item.title} หรือไม่ หากรับสิทธิ์ คุณจะได้รับสิทธิลดหย่อนภาษีมูลค่า ${item.deduct.toLocaleString()} บาท และได้รับการ์ดสะสมในคลัง โปรดตรวจสอบเงินของคุณก่อนตัดสินใจซื้อ`;
+
+                                            let wantToBuy = await UIEngine.triggerEventModal({
+                                                headerTitle: "รับสิทธิลดหย่อน",
+                                                title: item.title,
+                                                desc: contextualDesc,
+                                                colorHex: CardData[cat].color,
+                                                icon: "?",
+                                                financials: fins,
+                                                hasUseAction: true,
+                                                btnRejectText: "ไม่รับสิทธิ์",
+                                                btnUseText: "รับสิทธิ์",
+                                                player: p
+                                            });
+
+                                            if(wantToBuy) {
+                                                p.cash -= item.cost;
+                                                p.inventory.push(item);
+                                                if(tile.type === 'fund') p.funds[item.id]++;
+                                                ActionLog.add(`${p.name} ซื้อการ์ด ${item.title} สำเร็จ จ่ายไป ฿${item.cost.toLocaleString()}`, CardData[cat].color);
+                                                EffectEngine.launchConfetti(CardData[cat].color);
+                                                EffectEngine.showToast(`🎴 ได้รับการ์ด: ${item.title} (ลดหย่อน ฿${item.deduct.toLocaleString()})`, CardData[cat].color, '🎴');
+                                                FirebaseSystem.syncState();
+
+                                                await UIEngine.triggerCardModal({
+                                                    headerTitle: "ได้รับการ์ดใหม่",
+                                                    title: item.title,
+                                                    desc: "การ์ดจะถูกเก็บไว้ในคลังของคุณ",
+                                                    colorHex: CardData[cat].color,
+                                                    icon: "+",
+                                                    btnText: "เก็บเข้าคลังข้อมูล"
+                                                });
+                                            } else {
+                                                ActionLog.add(`${p.name} ปฏิเสธการซื้อสิทธิ์ ${item.title}`);
+                                                EffectEngine.showToast(`↩ ปฏิเสธ: ${item.title}`, '#64748b', '↩');
+                                            }
+                                        } else {
+                                            ActionLog.add(`${p.name} มีเงินไม่พอซื้อสิทธิ์ ${item.title}`, '#ef4444');
+                                            EffectEngine.showToast(`💸 เงินไม่พอซื้อ: ${item.title}`, '#ef4444', '💸');
+                                            await UIEngine.triggerEventModal({
+                                                headerTitle: "เงินสดไม่เพียงพอ",
+                                                title: item.title,
+                                                desc: "คุณมีเงินสดไม่พอสำหรับการทำรายการนี้",
+                                                colorHex: "#ef4444",
+                                                icon: "!",
+                                                player: p
+                                            });
+                                        }
+                                    } else {
+                                        await UIEngine.triggerEventModal({
+                                            headerTitle: "แจ้งเตือนสถานะ",
+                                            title: item.title,
+                                            desc: msg,
+                                            colorHex: "#64748b",
+                                            icon: "i",
+                                            player: p
+                                        });
+                                    }
+                                }
+                                else if(tile.type === 'hazard') {
+                                    let shieldCard = p.hasShield(tile.target);
+                                    if(shieldCard) {
+                                        let used = await UIEngine.triggerEventModal({
+                                            headerTitle: "เกิดอุบัติเหตุ",
+                                            title: "ต้องจ่ายค่ารักษา",
+                                            desc: `คุณต้องเสียเงินค่ารักษาพยาบาล ${tile.val.toLocaleString()} บาท แต่คุณมีการ์ด ${shieldCard.title} อยู่ในคลัง จะใช้การ์ดนี้เพื่อป้องกันการเสียเงินหรือไม่`,
+                                            colorHex: "#ec4899",
+                                            icon: "S",
+                                            hasUseAction: true,
+                                            btnRejectText: "ยอมจ่ายเงิน",
+                                            btnUseText: "ใช้การ์ดป้องกัน",
+                                            player: p
+                                        });
+
+                                        if(used) {
+                                            p.useShield(shieldCard.id);
+                                            EffectEngine.showToast(`🛡 ป้องกันอุบัติเหตุสำเร็จ! การ์ดถูกใช้แล้ว`, '#ec4899', '🛡');
+                                            await UIEngine.triggerEventModal({
+                                                headerTitle: "ใช้การ์ดป้องกันสำเร็จ",
+                                                title: "รอดตัวไป",
+                                                desc: "การ์ดป้องกันช่วยให้คุณไม่ต้องเสียเงินค่ารักษาพยาบาลในครั้งนี้ แต่การ์ดจะหายไปและไม่สามารถนำไปลดหย่อนภาษีได้แล้ว",
+                                                colorHex: "#10b981",
+                                                icon: "OK",
+                                                player: p
+                                            });
+                                        } else {
+                                            p.cash -= tile.val;
+                                            ActionLog.add(`${p.name} ยอมเสียเงินค่าอุบัติเหตุ ฿${tile.val.toLocaleString()}`, '#ef4444');
+                                            EffectEngine.showToast(`💊 เสียเงินค่ารักษา -฿${tile.val.toLocaleString()}`, '#ef4444', '💊');
+                                            await UIEngine.triggerEventModal({
+                                                headerTitle: "เสียเงินค่ารักษา",
+                                                title: "เลือกที่จะไม่ใช้การ์ดป้องกัน",
+                                                desc: "คุณเลือกที่จะไม่ใช้การ์ดป้องกัน จึงต้องจ่ายค่ารักษาพยาบาลด้วยเงินสดของคุณเอง",
+                                                colorHex: "#ef4444",
+                                                financials: [{label:"จ่ายเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
+                                                player: p
+                                            });
+                                        }
+                                    } else {
+                                        p.cash -= tile.val;
+                                        ActionLog.add(`${p.name} เจออุบัติเหตุ เสียเงิน ฿${tile.val.toLocaleString()}`, '#ef4444');
+                                        await UIEngine.triggerEventModal({
+                                            headerTitle: "เกิดอุบัติเหตุ",
+                                            title: "ต้องจ่ายค่ารักษา",
+                                            desc: "เกิดเหตุฉุกเฉิน คุณต้องจ่ายเงินค่ารักษาพยาบาลทันที และคุณไม่มีการ์ดประกันสำหรับป้องกัน",
+                                            colorHex: "#ef4444",
+                                            icon: "!",
+                                            financials: [{label:"เสียเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
+                                            player: p
+                                        });
+                                    }
+                                }
+                                else if(tile.type === 'expense') {
                                     p.cash -= tile.val;
-                                    ActionLog.add(`${p.name} ยอมเสียเงินค่าอุบัติเหตุ ฿${tile.val.toLocaleString()}`, '#ef4444');
-                                    EffectEngine.showToast(`💊 เสียเงินค่ารักษา -฿${tile.val.toLocaleString()}`, '#ef4444', '💊');
+                                    ActionLog.add(`${p.name} จ่ายค่า ${tile.label} เป็นเงิน ฿${tile.val.toLocaleString()}`, '#ef4444');
+                                    EffectEngine.showToast(`💸 ${tile.label}: -฿${tile.val.toLocaleString()}`, '#ef4444', '💸');
                                     await UIEngine.triggerEventModal({
-                                        headerTitle: "เสียเงินค่ารักษา",
-                                        title: "เลือกที่จะไม่ใช้การ์ดป้องกัน",
-                                        desc: "คุณเลือกที่จะไม่ใช้การ์ดป้องกัน จึงต้องจ่ายค่ารักษาพยาบาลด้วยเงินสดของคุณเอง",
+                                        headerTitle: "จ่ายค่าใช้จ่าย",
+                                        title: tile.label,
+                                        desc: "คุณต้องจ่ายเงินสำหรับค่าใช้จ่ายนี้ ถูกหักเงินเรียบร้อยแล้ว",
                                         colorHex: "#ef4444",
-                                        financials: [{label:"จ่ายเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
+                                        icon: "-",
+                                        financials: [{label: "จ่ายเงิน", val: tile.val, color: "#ef4444"}],
                                         player: p
                                     });
                                 }
-                            } else {
-                                p.cash -= tile.val;
-                                ActionLog.add(`${p.name} เจออุบัติเหตุ เสียเงิน ฿${tile.val.toLocaleString()}`, '#ef4444');
-                                await UIEngine.triggerEventModal({
-                                    headerTitle: "เกิดอุบัติเหตุ",
-                                    title: "ต้องจ่ายค่ารักษา",
-                                    desc: "เกิดเหตุฉุกเฉิน คุณต้องจ่ายเงินค่ารักษาพยาบาลทันที และคุณไม่มีการ์ดประกันสำหรับป้องกัน",
-                                    colorHex: "#ef4444",
-                                    icon: "!",
-                                    financials: [{label:"เสียเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
-                                    player: p
-                                });
-                            }
-                        }
-                        else if(tile.type === 'expense') {
-                            p.cash -= tile.val;
-                            ActionLog.add(`${p.name} จ่ายค่า ${tile.label} เป็นเงิน ฿${tile.val.toLocaleString()}`, '#ef4444');
-                            EffectEngine.showToast(`💸 ${tile.label}: -฿${tile.val.toLocaleString()}`, '#ef4444', '💸');
-                            await UIEngine.triggerEventModal({
-                                headerTitle: "จ่ายค่าใช้จ่าย",
-                                title: tile.label,
-                                desc: "คุณต้องจ่ายเงินสำหรับค่าใช้จ่ายนี้ ถูกหักเงินเรียบร้อยแล้ว",
-                                colorHex: "#ef4444",
-                                icon: "-",
-                                financials: [{label: "จ่ายเงิน", val: tile.val, color: "#ef4444"}],
-                                player: p
-                            });
-                        }
-                        else if(tile.type === 'action_skip') {
-                            p.skip = true;
-                            ActionLog.add(`${p.name} ถูกสั่งงดเดิน 1 รอบในตาถัดไป`, '#8b5cf6');
-                            EffectEngine.showToast(`⏸ งดเดินรอบถัดไป: ${tile.label}`, '#8b5cf6', '⏸');
-                            // Sync ทันทีหลัง set skip=true เพื่อให้ทุกคนรับสถานะงดเดินก่อน advanceToNextPlayer
-                            FirebaseSystem.syncState();
-                            await UIEngine.triggerEventModal({
-                                headerTitle: "งดเดิน",
-                                title: tile.label,
-                                desc: "คุณต้องหยุดเดินในตาถัดไป 1 รอบ",
-                                colorHex: "#8b5cf6",
-                                icon: "X",
-                                player: p
-                            });
-                        }
-                        else if(tile.type === 'action_move') {
-                            let oldPos = p.pos;
-                            p.pos = Math.max(0, p.pos + tile.move);
-                            UIEngine.drawPawns();
-                            // Sync ตำแหน่งใหม่ทันทีหลังถอยหลัง ให้ทุกคนเห็นพร้อมกัน
-                            FirebaseSystem.syncState();
-                            ActionLog.add(`${p.name} ถูกสั่งย้ายไปที่ช่อง ${BoardMap[p.pos].label}`, '#8b5cf6');
-                            await UIEngine.triggerEventModal({
-                                headerTitle: "ย้ายตำแหน่ง",
-                                title: tile.label,
-                                desc: `คุณถูกย้ายตำแหน่งบนกระดานให้เปลี่ยนพิกัดไป ${Math.abs(tile.move)} ช่อง`,
-                                colorHex: "#8b5cf6",
-                                icon: "M",
-                                player: p
-                            });
-                            if(p.pos !== oldPos) {
-                                UIEngine.triggerTileRipple(p.pos);
-                                await this.resolveTile(p, BoardMap[p.pos]);
-                                // BUG FIX: sync state หลัง recursive resolveTile เสร็จ
-                                FirebaseSystem.syncState();
-                            }
-                        }
-                        else if(tile.type === 'income_fixed') {
-                            let incomeAmount = tile.income || 0;
-                            p.cash += incomeAmount;
-                            p.extraIncome += incomeAmount;
-                            ActionLog.add(`${p.name} ได้รายได้เสริม ฿${incomeAmount.toLocaleString()}`, '#34d399');
-                            AudioEngine.playCoin();
-                            EffectEngine.showToast(`💼 งานฟรีแลนซ์: +฿${incomeAmount.toLocaleString()}`, '#34d399', '💼');
-                            await UIEngine.triggerEventModal({
-                                headerTitle: "ได้รับเงินพิเศษ",
-                                title: tile.label,
-                                desc: "คุณได้รายได้เสริม ซึ่งยอดนี้จะถูกนำไปรวมเพื่อคิดภาษีในตอนจบเกมด้วย",
-                                colorHex: "#10b981",
-                                icon: "+",
-                                financials: [{label: "ได้รับเงิน", val: incomeAmount, color: "#34d399"}],
-                                player: p
-                            });
-                        }
-                        else if(tile.type === 'payday') {
-                            // BUG FIX: ต้องบวกเงินเดือนให้ผู้เล่นด้วย (เดิมแสดง modal แต่ไม่ได้บวกเงิน)
-                            p.cash += DBConfig.MONTHLY_SALARY;
-                            ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#34d399');
-                            AudioEngine.playCoin();
-                            EffectEngine.showToast(`💰 เงินเดือนเข้า! +฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#f59e0b', '💰');
-                            await UIEngine.triggerEventModal({
-                                headerTitle: "ได้เงินเดือน",
-                                title: tile.label,
-                                desc: "คุณเดินมาตกที่ช่องรับเงินเดือนพอดี ได้รับเงินเดือนเข้ากระเป๋าเรียบร้อยแล้ว",
-                                colorHex: "#f59e0b",
-                                icon: "$",
-                                financials: [{label: "ได้รับเงิน", val: DBConfig.MONTHLY_SALARY, color: "#34d399"}],
-                                player: p
-                            });
-                        }
-                        else if(tile.type === 'income' || tile.type === 'hr' || tile.type === 'event') {
-                            let cat = tile.type === 'income' ? 'Income' : tile.type === 'hr' ? 'HR' : 'Destiny';
-                            let list = CardData[cat].events;
-                            let ev = list[Math.floor(Math.random() * list.length)];
-                            
-                            if(ev.val > 0) { p.cash += ev.val; AudioEngine.playCoin(); }
-                            if(ev.val < 0) { p.cash += ev.val; }
-                            if(ev.isIncome) p.extraIncome += ev.val;
-                            if(ev.skip) p.skip = true;
-                            
-                            let moveText = "";
-                            if(ev.move) {
-                                p.pos = Math.max(0, p.pos + ev.move);
-                                UIEngine.drawPawns();
-                                UIEngine.triggerTileRipple(p.pos);
-                                moveText = ` คุณถูกย้ายตำแหน่งบนกระดานใหม่ด้วย`;
-                            }
-                            // BUG FIX: sync skip/move/cash จาก hr-event ทันที ก่อน popup เปิด
-                            FirebaseSystem.syncState();
-
-                            let fins = [];
-                            if(ev.val > 0) {
-                                fins.push({label: "ได้รับเงิน", val: ev.val, color: "#34d399"});
-                                ActionLog.add(`${p.name} โชคดีได้รับเงิน ฿${ev.val.toLocaleString()}`, '#34d399');
-                                EffectEngine.showToast(`🎉 ${ev.title}: +฿${ev.val.toLocaleString()}`, '#34d399', '🎉');
-                            } else if(ev.val < 0) {
-                                fins.push({label: "เสียเงิน", val: Math.abs(ev.val), color: "#ef4444"});
-                                ActionLog.add(`${p.name} โชคร้ายเสียเงิน ฿${Math.abs(ev.val).toLocaleString()}`, '#ef4444');
-                                EffectEngine.showToast(`😬 ${ev.title}: -฿${Math.abs(ev.val).toLocaleString()}`, '#ef4444', '😬');
-                            } else {
-                                ActionLog.add(`${p.name} พบเหตุการณ์โชคชะตา`);
-                                EffectEngine.showToast(`🎲 ${ev.title}`, CardData[cat].color, '🎲');
-                            }
-
-                            await UIEngine.triggerEventModal({
-                                headerTitle: `เหตุการณ์ ${tile.label}`,
-                                title: ev.title,
-                                desc: ev.desc + moveText,
-                                colorHex: CardData[cat].color,
-                                icon: "E",
-                                financials: fins,
-                                player: p
-                            });
-                        }
-                    },
-
-                    endGame() {
-                        State.ended = true;
-                        AudioEngine.stopBGM();
-                        const sc = document.getElementById('screen-game');
-                        if(sc) {
-                            sc.style.opacity = '0';
-                            setTimeout(() => {
-                                sc.classList.add('hidden');
-                                this.renderSummary();
-                            }, 1000);
-                        } else {
-                            this.renderSummary();
-                        }
-                    },
-
-                    renderSummary() {
-                        const con = document.getElementById('summary-content');
-                        if(!con) return;
-                        con.innerHTML = '';
-                        State.players.forEach(p => {
-                            let grossBase = DBConfig.BASE_SALARY;
-                            let extraInc = p.extraIncome;
-                            let A = grossBase + extraInc;
-                            
-                            let personalExp = 100000;
-                            let personalDed = 60000;
-                            let B = personalExp + personalDed;
-                            
-                            let socialSecurityDed = 9000;
-                            let D_normal = socialSecurityDed;
-                            let D_donation2x = 0;
-                            let D_donation1x = 0;
-                            
-                            let cardListHtml = `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">ประกันสังคม</span><span class="font-bold">หักได้ ฿9,000</span></div>`;
-                            let donationHtml = '';
-
-                            let regularCards = p.inventory.filter(c => !['d1', 'd2', 'd3', 'd4'].includes(c.id));
-                            let donationCards = p.inventory.filter(c => ['d1', 'd2', 'd3', 'd4'].includes(c.id));
-
-                            // คำนวณ cap การ์ดดูแลพ่อแม่ (f4) ไม่เกิน 60,000 (พ่อ+แม่ คนละ 30,000)
-                            const PARENT_CARE_CAP = 60000;
-                            let parentCareCards = regularCards.filter(c => c.id === 'f4');
-                            let otherRegularCards = regularCards.filter(c => c.id !== 'f4');
-                            let rawParentCareDeduct = parentCareCards.reduce((s, c) => s + c.deduct, 0);
-                            let cappedParentCareDeduct = Math.min(rawParentCareDeduct, PARENT_CARE_CAP);
-
-                            regularCards.forEach(c => {
-                                if(c.id === 'f4') return; // จัดการแยกด้านล่าง
-                                D_normal += c.deduct;
-                                cardListHtml += `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">${c.title}</span><span class="font-bold">หักได้ ฿${c.deduct.toLocaleString()}</span></div>`;
-                            });
-
-                            if(parentCareCards.length > 0) {
-                                D_normal += cappedParentCareDeduct;
-                                const cappedNote = rawParentCareDeduct > PARENT_CARE_CAP
-                                    ? ` <span class="text-amber-400 text-[0.6rem]">(มีเพดานสูงสุด ฿60,000)</span>`
-                                    : '';
-                                cardListHtml += `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">ดูแลพ่อแม่ (${parentCareCards.length} สิทธิ์)${cappedNote}</span><span class="font-bold">หักได้ ฿${cappedParentCareDeduct.toLocaleString()}</span></div>`;
-                            }
-
-                            if (donationCards.length === 0) {
-                                 donationHtml = '<div class="text-slate-500 text-center font-bold text-[0.6rem] md:text-base border-b border-slate-700/50 pb-2 md:pb-4 mb-2 md:mb-4">ไม่มีข้อมูลการบริจาคเลย</div>';
-                            } else {
-                                 donationCards.forEach(c => {
-                                     if (['d1', 'd2', 'd4'].includes(c.id)) {
-                                        D_donation2x += c.deduct;
-                                    } else if (c.id === 'd3') {
-                                        D_donation1x += c.deduct;
+                                else if(tile.type === 'action_skip') {
+                                    p.skip = true;
+                                    ActionLog.add(`${p.name} ถูกสั่งงดเดิน 1 รอบในตาถัดไป`, '#8b5cf6');
+                                    EffectEngine.showToast(`⏸ งดเดินรอบถัดไป: ${tile.label}`, '#8b5cf6', '⏸');
+                                    FirebaseSystem.syncState();
+                                    await UIEngine.triggerEventModal({
+                                        headerTitle: "งดเดิน",
+                                        title: tile.label,
+                                        desc: "คุณต้องหยุดเดินในตาถัดไป 1 รอบ",
+                                        colorHex: "#8b5cf6",
+                                        icon: "X",
+                                        player: p
+                                    });
+                                }
+                                else if(tile.type === 'action_move') {
+                                    let oldPos = p.pos;
+                                    p.pos = Math.max(0, p.pos + tile.move);
+                                    UIEngine.drawPawns();
+                                    FirebaseSystem.syncState();
+                                    ActionLog.add(`${p.name} ถูกสั่งย้ายไปที่ช่อง ${BoardMap[p.pos].label}`, '#8b5cf6');
+                                    await UIEngine.triggerEventModal({
+                                        headerTitle: "ย้ายตำแหน่ง",
+                                        title: tile.label,
+                                        desc: `คุณถูกย้ายตำแหน่งบนกระดานให้เปลี่ยนพิกัดไป ${Math.abs(tile.move)} ช่อง`,
+                                        colorHex: "#8b5cf6",
+                                        icon: "M",
+                                        player: p
+                                    });
+                                    if(p.pos !== oldPos) {
+                                        UIEngine.triggerTileRipple(p.pos);
+                                        await this.resolveTile(p, BoardMap[p.pos]);
+                                        FirebaseSystem.syncState();
                                     }
-                                    donationHtml += `<div class="flex justify-between border-b border-slate-700/50 pb-2 md:pb-4 mb-2 md:mb-4"><span class="font-bold text-slate-400 text-[0.6rem] md:text-base">${c.title}</span><span class="text-xs md:text-2xl font-bold text-amber-200 font-mono">ขอลดหย่อน ฿${c.deduct.toLocaleString()}</span></div>`;
-                                 });
-                            }
-
-                            let netBeforeDonation = Math.max(0, A - B - D_normal);
-                            let donationCeiling = Math.floor(netBeforeDonation * 0.10);
-                            let totalRequestedDonation = D_donation2x + D_donation1x;
-                            let allowedDonation2x = Math.min(D_donation2x, donationCeiling);
-                            let remainingCeilingFor1x = donationCeiling - allowedDonation2x;
-                            let allowedDonation1x = Math.min(D_donation1x, remainingCeilingFor1x);
-
-                            let totalAllowedDonation = allowedDonation2x + allowedDonation1x;
-                            let E = Math.max(0, netBeforeDonation - totalAllowedDonation);
-                            
-                            let tax = 0;
-                            let taxStepStr = "";
-                            if (E <= 150000) {
-                                tax = 0;
-                                taxStepStr = `เงินได้สุทธิ ${E.toLocaleString()} บาท ไม่เกิน 150,000 บาท ได้รับการยกเว้น ไม่ต้องเสียภาษี`;
-                            } else if (E <= 300000) {
-                                tax = (E - 150000) * 0.05;
-                                taxStepStr = `หัก 150,000 บาทแรกที่ได้รับยกเว้น เหลือ ${(E - 150000).toLocaleString()} บาท นำมาคิดภาษี 5 เปอร์เซ็นต์ กลายเป็นเงิน ${tax.toLocaleString()} บาท`;
-                            } else {
-                                tax = 7500 + ((E - 300000) * 0.10);
-                                taxStepStr = `มีภาษีสะสมจากฐานก่อนหน้า 7,500 บาท และส่วนที่เกิน 300,000 บาท จำนวน ${(E - 300000).toLocaleString()} บาท คิดอีก 10 เปอร์เซ็นต์ รวมเป็นต้องจ่ายภาษี ${tax.toLocaleString()} บาท`;
-                            }
-                            
-                            let prePaidTax = 3000;
-                            let finalTaxDiff = tax - prePaidTax;
-                            let finalStatus = "";
-                            let finalColor = "";
-                            
-                            if (finalTaxDiff < 0) {
-                                finalStatus = `รัฐต้องคืนเงินภาษีให้คุณ ${Math.abs(finalTaxDiff).toLocaleString()} บาท`;
-                                finalColor = "text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]";
-                            } else if (finalTaxDiff > 0) {
-                                finalStatus = `คุณต้องจ่ายภาษีเพิ่ม ${finalTaxDiff.toLocaleString()} บาท`;
-                                finalColor = "text-rose-500 drop-shadow-[0_0_15px_rgba(244,63,94,0.8)]";
-                            } else {
-                                finalStatus = `จ่ายภาษีครบพอดี ไม่ต้องจ่ายเพิ่ม`;
-                                finalColor = "text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]";
-                            }
-
-                            con.innerHTML += `
-                                <div class="glass-panel p-4 md:p-8 rounded-[1rem] md:rounded-[2rem] border-l-[8px] md:border-l-[12px] shadow-[0_30px_80px_rgba(0,0,0,0.9)] transition-all mb-4 md:mb-8" style="border-color: ${p.color}">
-                                    <div class="flex flex-col md:flex-row justify-between items-center mb-3 md:mb-6 gap-3 md:gap-4 border-b-2 border-slate-700/60 pb-3 md:pb-6">
-                                        <h3 class="text-xl md:text-4xl font-bold text-white tracking-wide uppercase text-center md:text-left">${p.name} (ผู้เล่นคนที่ ${p.id})</h3>
-                                        <div class="bg-black/60 px-4 py-2 md:px-8 md:py-4 rounded-xl md:rounded-2xl border border-slate-700 shadow-inner text-center w-full md:w-auto">
-                                            <div class="text-slate-400 text-[0.55rem] md:text-sm font-bold tracking-wide uppercase mb-1">สรุปสถานะการจ่ายภาษี</div>
-                                            <div class="${finalColor} text-base md:text-3xl font-bold tracking-wide">${finalStatus}</div>
-                                        </div>
-                                    </div>
+                                }
+                                else if(tile.type === 'income_fixed') {
+                                    let incomeAmount = tile.income || 0;
+                                    p.cash += incomeAmount;
+                                    p.extraIncome += incomeAmount;
+                                    ActionLog.add(`${p.name} ได้รายได้เสริม ฿${incomeAmount.toLocaleString()}`, '#34d399');
+                                    AudioEngine.playCoin();
+                                    EffectEngine.showToast(`💼 งานฟรีแลนซ์: +฿${incomeAmount.toLocaleString()}`, '#34d399', '💼');
+                                    await UIEngine.triggerEventModal({
+                                        headerTitle: "ได้รับเงินพิเศษ",
+                                        title: tile.label,
+                                        desc: "คุณได้รายได้เสริม ซึ่งยอดนี้จะถูกนำไปรวมเพื่อคิดภาษีในตอนจบเกมด้วย",
+                                        colorHex: "#10b981",
+                                        icon: "+",
+                                        financials: [{label: "ได้รับเงิน", val: incomeAmount, color: "#34d399"}],
+                                        player: p
+                                    });
+                                }
+                                else if(tile.type === 'payday' || (tile.type === 'system' && tile.id === 0)) {
+                                    p.cash += DBConfig.MONTHLY_SALARY;
+                                    ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#34d399');
+                                    AudioEngine.playCoin();
+                                    EffectEngine.showToast(`💰 เงินเดือนเข้า! +฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#f59e0b', '💰');
+                                    await UIEngine.triggerEventModal({
+                                        headerTitle: "ได้เงินเดือน",
+                                        title: tile.label,
+                                        desc: "คุณเดินมาตกที่ช่องรับเงินเดือน หรือ ช่องจุดเริ่มต้นพอดี ได้รับเงินเดือนเข้ากระเป๋าเรียบร้อยแล้ว",
+                                        colorHex: "#f59e0b",
+                                        icon: "$",
+                                        financials: [{label: "ได้รับเงิน", val: DBConfig.MONTHLY_SALARY, color: "#34d399"}],
+                                        player: p
+                                    });
+                                }
+                                else if(tile.type === 'income' || tile.type === 'hr' || tile.type === 'event') {
+                                    let cat = tile.type === 'income' ? 'Income' : tile.type === 'hr' ? 'HR' : 'Destiny';
+                                    let list = CardData[cat].events;
+                                    let ev = list[Math.floor(Math.random() * list.length)];
                                     
-                                    <button onclick="const detail = document.getElementById('detail-${p.id}'); detail.classList.toggle('hidden'); detail.classList.toggle('flex'); this.classList.toggle('bg-slate-700'); this.classList.toggle('border-amber-500');" class="w-full py-2 md:py-5 rounded-lg md:rounded-2xl bg-gradient-to-r from-slate-800 to-slate-900 border-[2px] md:border-[3px] border-slate-600 hover:border-amber-400 text-white font-bold text-[0.65rem] md:text-xl tracking-wide transition-all shadow-[0_10px_30px_rgba(0,0,0,0.5)] glow-button">กดเพื่อดูวิธีคำนวณภาษีอย่างละเอียด</button>
+                                    if(ev.val > 0) { p.cash += ev.val; AudioEngine.playCoin(); }
+                                    if(ev.val < 0) { p.cash += ev.val; }
+                                    if(ev.isIncome) p.extraIncome += ev.val;
+                                    if(ev.skip) p.skip = true;
                                     
-                                    <div id="detail-${p.id}" class="hidden flex-col gap-3 md:gap-8 mt-3 md:mt-8">
-                                        
-                                        <div class="bg-slate-900/90 p-3 md:p-8 rounded-lg md:rounded-[2rem] border-t-[3px] md:border-t-4 border-blue-500 shadow-[0_10px_40px_rgba(0,0,0,0.8)] hover:scale-[1.01] transition-transform">
-                                            <h4 class="text-sm md:text-2xl font-bold text-blue-400 mb-1.5 md:mb-4 tracking-wide uppercase">ขั้นตอนที่ 1 : สรุปรายได้ทั้งหมด</h4>
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-2 md:p-5 border border-slate-800 flex flex-col gap-2 md:gap-4">
-                                                <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-bold">เงินเดือนทั้งปี</span><span class="text-xs md:text-2xl font-bold text-blue-200 font-mono">฿336,000</span></div>
-                                                <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-bold">รายได้เสริมทั้งหมด</span><span class="text-xs md:text-2xl font-bold text-blue-200 font-mono">฿${extraInc.toLocaleString()}</span></div>
-                                                <div class="flex justify-between items-center"><span class="text-slate-400 text-[0.65rem] md:text-lg font-bold tracking-wide">รวมรายได้ทั้งหมด (A)</span><span class="text-sm md:text-3xl font-bold text-blue-400 font-mono drop-shadow-md">฿${A.toLocaleString()}</span></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="bg-slate-900/90 p-3 md:p-8 rounded-lg md:rounded-[2rem] border-t-[3px] md:border-t-4 border-rose-500 shadow-[0_10px_40px_rgba(0,0,0,0.8)] hover:scale-[1.01] transition-transform">
-                                            <h4 class="text-sm md:text-2xl font-bold text-rose-400 mb-1.5 md:mb-4 tracking-wide uppercase">ขั้นตอนที่ 2 : หักค่าใช้จ่ายตามกฎหมาย</h4>
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-2 md:p-5 border border-slate-800 flex flex-col gap-2 md:gap-4">
-                                                <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-bold">ค่าใช้จ่ายส่วนตัวตามกฎหมาย</span><span class="text-xs md:text-2xl font-bold text-rose-200 font-mono">หักออก ฿100,000</span></div>
-                                                <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-bold">ค่าลดหย่อนส่วนตัว</span><span class="text-xs md:text-2xl font-bold text-rose-200 font-mono">หักออก ฿60,000</span></div>
-                                                <div class="flex justify-between items-center"><span class="text-slate-400 text-[0.65rem] md:text-lg font-bold tracking-wide">รายได้หลังหักค่าใช้จ่ายส่วนตัว</span><span class="text-sm md:text-3xl font-bold text-white font-mono drop-shadow-md">เหลือ ฿${(A - B).toLocaleString()}</span></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="bg-slate-900/90 p-3 md:p-8 rounded-lg md:rounded-[2rem] border-t-[3px] md:border-t-4 border-emerald-500 shadow-[0_10px_40px_rgba(0,0,0,0.8)] hover:scale-[1.01] transition-transform">
-                                            <h4 class="text-sm md:text-2xl font-bold text-emerald-400 mb-1.5 md:mb-4 tracking-wide uppercase">ขั้นตอนที่ 3 : หักค่าลดหย่อนทั้งหมด</h4>
-                                            <p class="text-slate-300 font-medium leading-relaxed mb-2 md:mb-6 text-[0.65rem] md:text-lg">รวมค่าลดหย่อนประกันสังคมและค่าลดหย่อนจากการ์ดที่คุณสะสมได้</p>
-                                            <div class="bg-black/50 p-3 md:p-6 rounded-md md:rounded-xl mb-3 md:mb-6 font-mono text-[0.55rem] md:text-base text-emerald-200 border border-emerald-900/30">
-                                                ${cardListHtml}
-                                            </div>
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-2 md:p-5 border border-slate-800 flex justify-between items-center border-b border-slate-700/50 pb-2 md:pb-4 mb-2 md:mb-4">
-                                                <span class="text-slate-400 text-[0.65rem] md:text-lg font-bold">รวมยอดค่าลดหย่อนในส่วนนี้</span>
-                                                <span class="text-sm md:text-3xl font-bold text-emerald-300 font-mono drop-shadow-md">หักออก ฿${D_normal.toLocaleString()}</span>
-                                            </div>
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-2 md:p-5 border border-slate-800 flex justify-between items-center">
-                                                <span class="text-slate-400 text-[0.65rem] md:text-lg font-bold tracking-wide">รายได้เตรียมพร้อมหักเงินบริจาค</span>
-                                                <span class="text-sm md:text-3xl font-bold text-white font-mono drop-shadow-md">เหลือ ฿${netBeforeDonation.toLocaleString()}</span>
-                                            </div>
-                                        </div>
+                                    let moveText = "";
+                                    if(ev.move) {
+                                        p.pos = Math.max(0, p.pos + ev.move);
+                                        UIEngine.drawPawns();
+                                        UIEngine.triggerTileRipple(p.pos);
+                                        moveText = ` คุณถูกย้ายตำแหน่งบนกระดานใหม่ด้วย`;
+                                    }
+                                    FirebaseSystem.syncState();
 
-                                        <div class="bg-slate-900/90 p-3 md:p-8 rounded-lg md:rounded-[2rem] border-t-[3px] md:border-t-4 border-amber-500 shadow-[0_10px_40px_rgba(0,0,0,0.8)] hover:scale-[1.01] transition-transform">
-                                            <h4 class="text-sm md:text-2xl font-bold text-amber-400 mb-1.5 md:mb-4 tracking-wide uppercase">ขั้นตอนที่ 4 : หักเงินบริจาค</h4>
-                                            <div class="bg-black/40 rounded-md md:rounded-xl p-3 md:p-5 border border-amber-900/50 mb-3 md:mb-6 text-center">
-                                                <span class="text-slate-400 text-[0.6rem] md:text-sm font-bold block mb-1">เพดานการลดหย่อนบริจาคของคุณคือ 10 เปอร์เซ็นต์</span>
-                                                <span class="text-lg md:text-2xl font-bold text-amber-400">เพดาน ฿${donationCeiling.toLocaleString()}</span>
-                                            </div>
+                                    let fins = [];
+                                    if(ev.val > 0) {
+                                        fins.push({label: "ได้รับเงิน", val: ev.val, color: "#34d399"});
+                                        ActionLog.add(`${p.name} โชคดีได้รับเงิน ฿${ev.val.toLocaleString()}`, '#34d399');
+                                        EffectEngine.showToast(`🎉 ${ev.title}: +฿${ev.val.toLocaleString()}`, '#34d399', '🎉');
+                                    } else if(ev.val < 0) {
+                                        fins.push({label: "เสียเงิน", val: Math.abs(ev.val), color: "#ef4444"});
+                                        ActionLog.add(`${p.name} โชคร้ายเสียเงิน ฿${Math.abs(ev.val).toLocaleString()}`, '#ef4444');
+                                        EffectEngine.showToast(`😬 ${ev.title}: -฿${Math.abs(ev.val).toLocaleString()}`, '#ef4444', '😬');
+                                    } else {
+                                        ActionLog.add(`${p.name} พบเหตุการณ์โชคชะตา`);
+                                        EffectEngine.showToast(`🎲 ${ev.title}`, CardData[cat].color, '🎲');
+                                    }
 
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-2 md:p-5 border border-slate-800 flex flex-col gap-2 md:gap-4 mb-3 md:mb-6">
-                                                ${donationHtml}
-                                                <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-bold">รวมยอดขอลดหย่อนบริจาคทั้งหมด</span><span class="text-xs md:text-2xl font-bold text-amber-200 font-mono">฿${totalRequestedDonation.toLocaleString()}</span></div>
-                                                <div class="flex justify-between items-center"><span class="text-amber-400 text-[0.6rem] md:text-base font-bold">ยอดเงินบริจาคที่หักได้จริง</span><span class="text-xs md:text-2xl font-bold text-amber-400 font-mono drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">หักออก ฿${totalAllowedDonation.toLocaleString()}</span></div>
-                                            </div>
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-2 md:p-5 border border-amber-500/50 flex justify-between items-center shadow-[inset_0_0_20px_rgba(245,158,11,0.15)]">
-                                                <span class="text-white text-[0.7rem] md:text-xl font-bold tracking-wide uppercase">เงินได้สุทธิ</span>
-                                                <span class="text-base md:text-4xl font-bold text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)] font-mono">฿${E.toLocaleString()}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="bg-slate-900/90 p-3 md:p-8 rounded-lg md:rounded-[2rem] border-t-[3px] md:border-t-4 border-purple-500 shadow-[0_10px_40px_rgba(0,0,0,0.8)] hover:scale-[1.01] transition-transform">
-                                            <h4 class="text-sm md:text-2xl font-bold text-purple-400 mb-1.5 md:mb-4 tracking-wide uppercase">ขั้นตอนที่ 5 : นำไปเข้าตารางคิดภาษี</h4>
-                                            <div class="bg-black/50 p-3 md:p-6 rounded-md md:rounded-xl mb-3 md:mb-6 font-mono text-[0.6rem] md:text-lg text-purple-200 border border-purple-900/50 flex items-center justify-center text-center shadow-inner">
-                                                <span class="font-bold tracking-wide">${taxStepStr}</span>
-                                            </div>
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-2 md:p-5 border border-slate-800 flex justify-between items-center">
-                                                <span class="text-slate-400 text-[0.65rem] md:text-lg font-bold tracking-wide uppercase">ภาษีที่คุณควรจะต้องจ่าย</span>
-                                                <span class="text-sm md:text-3xl font-bold text-purple-300 font-mono drop-shadow-md">฿${tax.toLocaleString()}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="bg-slate-900/90 p-3 md:p-8 rounded-lg md:rounded-[2rem] border-t-[3px] md:border-t-4 border-cyan-500 shadow-[0_10px_40px_rgba(0,0,0,0.8)] hover:scale-[1.01] transition-transform">
-                                            <h4 class="text-sm md:text-2xl font-bold text-cyan-400 mb-1.5 md:mb-4 tracking-wide uppercase">ขั้นตอนที่ 6 : สรุปยอดเงินสุทธิที่ต้องจ่ายจริง</h4>
-                                            <div class="bg-black/80 rounded-md md:rounded-xl p-3 md:p-6 border border-slate-800 flex flex-col gap-3 md:gap-5">
-                                                <div class="flex justify-between items-center border-b border-slate-700/50 pb-2 md:pb-5">
-                                                    <span class="text-slate-400 text-[0.6rem] md:text-base font-bold">หักภาษีที่จ่ายล่วงหน้าไปแล้ว</span>
-                                                    <span class="text-xs md:text-2xl font-bold text-cyan-200 font-mono">฿3,000</span>
-                                                </div>
-                                                <div class="flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4 mt-1 md:mt-2">
-                                                    <span class="text-slate-300 text-[0.65rem] md:text-xl font-bold tracking-wide text-center md:text-left">สรุปยอดที่คุณต้องจ่ายเพิ่ม หรือได้เงินคืน</span>
-                                                    <div class="bg-slate-950 px-4 py-2 md:px-8 md:py-4 rounded-full border-[1.5px] md:border-2 border-slate-700 shadow-[inset_0_0_15px_rgba(0,0,0,1)] w-full md:w-auto text-center">
-                                                        <span class="text-base md:text-4xl font-bold ${finalColor} font-mono">${finalTaxDiff < 0 ? 'ได้เงินคืน ' : (finalTaxDiff > 0 ? 'ชำระเพิ่ม ' : '')}฿${Math.abs(finalTaxDiff).toLocaleString()}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        const sumSc = document.getElementById('screen-summary');
-                        if(sumSc) {
-                            sumSc.classList.remove('hidden');
-                            setTimeout(() => sumSc.classList.remove('opacity-0'), 100);
-                        }
-                    }
-                };
+                                    await UIEngine.triggerEventModal({
+                                        headerTitle: `เหตุการณ์ ${tile.label}`,
+                                        title: ev.title,
+                                        desc: ev.desc + moveText,
+                                        colorHex: CardData[cat].color,
+                                        icon: "E",
+                                        financials: fins,
+                                        player: p
+                                    });
+                                }
+                            },
+
+                            endGame() {
+                                State.ended = true;
+                                AudioEngine.stopBGM();
+                                const sc = document.getElementById('screen-game');
+                                if(sc) {
+                                    sc.style.opacity = '0';
+                                    setTimeout(() => {
+                                        sc.classList.add('hidden');
+                                        this.renderSummary();
+                                    }, 1000);
+                                } else {
+                                    this.renderSummary();
+                                }
+                            },
+
+                            renderSummary() {
+                                const con = document.getElementById('summary-content');
+                                if(!con) return;
+                                con.innerHTML = '';
+                                State.players.forEach(p => {
+                                    let grossBase = DBConfig.BASE_SALARY;
+                                    let extraInc = p.extraIncome;
+                                    let A = grossBase + extraInc;
+                                    
+                                    let personalExp = 100000;
+                                    let personalDed = 60000;
+                                    let B = personalExp + personalDed;
+                                    
+                                    let socialSecurityDed = 9000;
+                                    let D_normal = socialSecurityDed;
+                                    let D_donation2x = 0;
+                                    let D_donation1x = 0;
+                                    
+                                    let cardListHtml = `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">ประกันสังคม</span><span class="font-bold">หักได้ ฿9,000</span></div>`;
+                                    let donationHtml = '';
+
+                                    let regularCards = p.inventory.filter(c => !['d1', 'd2', 'd3', 'd4'].includes(c.id));
+                                    let donationCards = p.inventory.filter(c => ['d1', 'd2', 'd3', 'd4'].includes(c.id));
+
+                                    const PARENT_CARE_CAP = 60000;
+                                    let parentCareCards = regularCards.filter(c => c.id === 'f4');
+                                    let otherRegularCards = regularCards.filter(c => c.id !== 'f4');
+                                    let rawParentCareDeduct = parentCareCards.reduce((s, c) => s + c.deduct, 0);
+                                    let cappedParentCareDeduct = Math.min(rawParentCareDeduct, PARENT_CARE_CAP);
+
+                                    regularCards.forEach(c => {
+                                        if(c.id === 'f4') return;
+                                        D_normal += c.deduct;
+                                        cardListHtml += `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">${c.title}</span><span class="font-bold">หักได้ ฿${c.deduct.toLocaleString()}</span></div>`;
+                                    });
+
+                                    if(parentCareCards.length > 0) {
+                                        D_normal += cappedParentCareDeduct;
+                                        const cappedNote = rawParentCareDeduct > PARENT_CARE_CAP
+                                            ? ` <span class="text-amber-400 text-[0.6rem]">(มีเพดานสูงสุด ฿60,000)</span>`
+                                            : '';
+                                        cardListHtml += `<div class="flex justify-between border-b border-emerald-900/50 pb-2 mb-2"><span class="font-bold">ดูแลพ่อแม่ (${parentCareCards.length} สิทธิ์)${cappedNote}</span><span class="font-bold">หักได้ ฿${cappedParentCareDeduct.toLocaleString()}</span></div>`;
+                                    }
+
+                                    if (donationCards.length === 0) {
+                                         donationHtml = '<div class="text-slate-500 text-center font-bold text-[0.6rem] md:text-base border-b border-slate-700/50 pb-2 md:pb-4 mb-2 md:mb-4">ไม่มีข้อมูลการบริจาคเลย</div>';
+                                    } else {
+                                         donationCards.forEach(c => {
+                                             if (['d1', 'd2', 'd4'].includes(c.id)) {
+                                                D_donation2x += c.deduct;
+                                            } else if (c.id === 'd3') {
+                                                D_donation1x += c.deduct;
+                                            }
+                                            donationHtml += `<div class="flex justify-between border-b border-slate-700/50 pb-2 md:pb-4 mb-2 md:mb-4"><span class="font-bold text-slate-400 text-[0.6rem] md:text-base">${c.title}</span><span class="text-xs md:text-2xl font-bold text-amber-200 font-mono">ขอลดหย่อน ฿${c.deduct.toLocaleString()}</span></div>`;
+                                         });
+                                    }
+
+                                    let netBeforeDonation = Math.max(0, A - B - D_normal);
+                                    let donationCeiling = Math.floor(netBeforeDonation * 0.10);
+                                    let totalRequestedDonation = D_donation2x + D_donation1x;
+                                    let allowedDonation2x = Math.min(D_donation2x, donationCeiling);
+                                    let remainingCeilingFor1x = donationCeiling - allowedDonation2x;
+                                    let allowedDonation1x = Math.min(D_donation1x, remainingCeilingFor1x);
+
+                                    let totalAllowedDonation = allowedDonation2x + allowedDonation1x;
+                                    let E = Math.max(0, netBeforeDonation - totalAllowedDonation);
+                                    
+                                    let tax = 0;
+                                    let taxStepStr = "";
+                                    if (E <= 150000) {
+                                        tax = 0;
+                                        taxStepStr = `เงินได้สุทธิ ${E.toLocaleString()} บาท ไม่เกิน 150,000 บาท ได้รับการยกเว้น ไม่ต้องเสียภาษี`;
+                                    } else if (E <= 300000) {
+                                        tax = (E - 150000) * 0.05;
+                                        taxStepStr = `หัก 150,000 บาทแรกที่ได้รับยกเว้น เหลือ ${(E - 150000).toLocaleString()} บาท นำมาคิดภาษี 5 เปอร์เซ็นต์ กลายเป็นเงิน ${tax.toLocaleString()} บาท`;
+                                    } else {
+                                        tax = 7500 + ((E - 300000) * 0.10);
+                                        taxStepStr = `มีภาษีสะสมจากฐานก่อนหน้า 7,500 บาท และส่วนที่เกิน 300,000 บาท จำนวน ${(E - 300000).toLocaleString()} บาท คิดอีก 10 เปอร์เซ็นต์ รวมเป็นต้องจ่ายภาษี ${tax.toLocaleString()} บาท`;
+                                    }
+                                    
+                                    let prePaidTax = 3000;
+                                    let finalTaxDiff = tax - prePaidTax;
+                                    let finalStatus = "";
+                                    let finalColor = "";
+                                    
+                                    if (finalTaxDiff < 0) {
+                                        finalStatus = `รัฐต้องคืนเงินภาษีให้คุณ ${Math.abs(finalTaxDiff).toLocaleString()} บาท`;
+                                        finalColor = "text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]";
+                                    } else if (finalTaxDiff > 0) {
+                                        finalStatus = `คุณต้องจ่ายภาษีเพิ่ม ${finalTaxDiff.toLocaleString()} บาท`;
+                                        finalColor = "text-rose-500 drop-shadow-[0_0_15px_rgba(244,63,94,0.8)]";
+                                    } else {
+                                        finalStatus = `จ่ายภาษีครบพอดี ไม่ต้องจ่ายเพิ่ม`;
+                                        finalColor = "text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]";
+                                    }
+
+                                    const playerIndex = State.players.indexOf(p);
+                                                                        const delay = playerIndex * 0.3;
+                                                                        
+                                                                        con.innerHTML += `
+                                                                            <div class="summary-card-enter relative" style="animation-delay: ${0.3 + delay}s;">
+                                                                                <!-- Player card with glassmorphism -->
+                                                                                <div class="relative rounded-[1rem] md:rounded-[2rem] overflow-hidden mb-4 md:mb-8 group" style="background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.9));">
+                                                                                    
+                                                                                    <!-- Animated border glow -->
+                                                                                    <div class="absolute inset-0 rounded-[1rem] md:rounded-[2rem] pointer-events-none" style="box-shadow: inset 0 0 0 2px ${p.color}40, 0 0 40px ${p.color}15, 0 20px 60px rgba(0,0,0,0.8);"></div>
+                                                                                    
+                                                                                    <!-- Top accent bar -->
+                                                                                    <div class="h-1 md:h-1.5 w-full" style="background: linear-gradient(90deg, transparent, ${p.color}, transparent);"></div>
+                                                                                    
+                                                                                    <!-- Header section -->
+                                                                                    <div class="p-4 md:p-8">
+                                                                                        <div class="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 mb-4 md:mb-8">
+                                                                                            <!-- Player identity -->
+                                                                                            <div class="flex items-center gap-3 md:gap-5">
+                                                                                                <div class="relative">
+                                                                                                    <div class="w-12 h-12 md:w-20 md:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center text-xl md:text-4xl font-black text-white shadow-lg" style="background: linear-gradient(135deg, ${p.color}, ${p.color}88);">
+                                                                                                        P${p.id}
+                                                                                                    </div>
+                                                                                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 md:w-7 md:h-7 rounded-full bg-slate-900 border-2 flex items-center justify-center text-[0.5rem] md:text-xs font-bold" style="border-color: ${p.color}; color: ${p.color};">
+                                                                                                        #${playerIndex + 1}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div>
+                                                                                                    <h3 class="text-xl md:text-4xl font-black text-white tracking-wide">${p.name}</h3>
+                                                                                                    <p class="text-slate-500 text-[0.6rem] md:text-sm font-medium">ผู้เล่นคนที่ ${p.id}</p>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <!-- Tax result hero badge -->
+                                                                                            <div class="summary-hero-badge relative bg-black/60 px-5 py-3 md:px-10 md:py-5 rounded-2xl md:rounded-3xl border shadow-lg text-center backdrop-blur-sm w-full md:w-auto" style="border-color: ${finalTaxDiff <= 0 ? 'rgba(16,185,129,0.5)' : 'rgba(244,63,94,0.5)'};">
+                                                                                                <div class="text-[0.5rem] md:text-xs font-bold tracking-widest uppercase mb-1 md:mb-2" style="color: ${finalTaxDiff <= 0 ? '#6ee7b7' : '#fda4af'};">สรุปสถานะภาษี</div>
+                                                                                                <div class="summary-value-pop ${finalColor} text-lg md:text-4xl font-black tracking-wide" style="animation-delay: ${0.5 + delay}s;">${finalStatus}</div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        
+                                                                                        <!-- Expand details button -->
+                                                                                        <button onclick="const detail = document.getElementById('detail-${p.id}'); detail.classList.toggle('hidden'); detail.classList.toggle('flex'); const arrow = this.querySelector('.arrow-icon'); arrow.style.transform = detail.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';" class="w-full py-2.5 md:py-5 rounded-xl md:rounded-2xl border border-slate-700/50 hover:border-amber-500/50 text-white font-bold text-[0.65rem] md:text-lg tracking-wide transition-all flex items-center justify-center gap-2 md:gap-3 group/btn" style="background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.8));">
+                                                                                            <span>กดเพื่อดูวิธีคำนวณภาษีอย่างละเอียด</span>
+                                                                                            <svg class="arrow-icon w-3 h-3 md:w-5 md:h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                                                                                        </button>
+                                                                                        
+                                                                                        <!-- Detail steps -->
+                                                                                        <div id="detail-${p.id}" class="hidden flex-col gap-3 md:gap-6 mt-4 md:mt-8">
+                                                                                            
+                                                                                            <!-- Step 1 -->
+                                                                                            <div class="summary-step-card bg-slate-900/80 p-3 md:p-8 rounded-xl md:rounded-2xl border border-blue-500/20 backdrop-blur-sm">
+                                                                                                <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-5">
+                                                                                                    <div class="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 font-black text-xs md:text-base">1</div>
+                                                                                                    <h4 class="text-sm md:text-xl font-bold text-blue-400 tracking-wide">สรุปรายได้ทั้งหมด</h4>
+                                                                                                </div>
+                                                                                                <div class="bg-black/40 rounded-lg md:rounded-xl p-2.5 md:p-5 border border-slate-800/50 flex flex-col gap-2 md:gap-4">
+                                                                                                    <div class="flex justify-between items-center border-b border-slate-700/30 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-medium">เงินเดือนทั้งปี</span><span class="text-xs md:text-xl font-bold text-blue-200 font-mono">฿336,000</span></div>
+                                                                                                    <div class="flex justify-between items-center border-b border-slate-700/30 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-medium">รายได้เสริมทั้งหมด</span><span class="text-xs md:text-xl font-bold text-blue-200 font-mono">฿${extraInc.toLocaleString()}</span></div>
+                                                                                                    <div class="flex justify-between items-center bg-blue-500/5 rounded-lg p-2 md:p-3 -mx-1"><span class="text-slate-300 text-[0.65rem] md:text-lg font-bold">รวมรายได้ทั้งหมด (A)</span><span class="text-sm md:text-2xl font-black text-blue-400 font-mono">฿${A.toLocaleString()}</span></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
+                                                                                            <!-- Step 2 -->
+                                                                                            <div class="summary-step-card bg-slate-900/80 p-3 md:p-8 rounded-xl md:rounded-2xl border border-rose-500/20 backdrop-blur-sm">
+                                                                                                <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-5">
+                                                                                                    <div class="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-400 font-black text-xs md:text-base">2</div>
+                                                                                                    <h4 class="text-sm md:text-xl font-bold text-rose-400 tracking-wide">หักค่าใช้จ่ายตามกฎหมาย</h4>
+                                                                                                </div>
+                                                                                                <div class="bg-black/40 rounded-lg md:rounded-xl p-2.5 md:p-5 border border-slate-800/50 flex flex-col gap-2 md:gap-4">
+                                                                                                    <div class="flex justify-between items-center border-b border-slate-700/30 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-medium">ค่าใช้จ่ายส่วนตัวตามกฎหมาย</span><span class="text-xs md:text-xl font-bold text-rose-200 font-mono">หักออก ฿100,000</span></div>
+                                                                                                    <div class="flex justify-between items-center border-b border-slate-700/30 pb-2 md:pb-4"><span class="text-slate-400 text-[0.6rem] md:text-base font-medium">ค่าลดหย่อนส่วนตัว</span><span class="text-xs md:text-xl font-bold text-rose-200 font-mono">หักออก ฿60,000</span></div>
+                                                                                                    <div class="flex justify-between items-center bg-rose-500/5 rounded-lg p-2 md:p-3 -mx-1"><span class="text-slate-300 text-[0.65rem] md:text-lg font-bold">รายได้หลังหักค่าใช้จ่ายส่วนตัว</span><span class="text-sm md:text-2xl font-black text-white font-mono">เหลือ ฿${(A - B).toLocaleString()}</span></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
+                                                                                            <!-- Step 3 -->
+                                                                                            <div class="summary-step-card bg-slate-900/80 p-3 md:p-8 rounded-xl md:rounded-2xl border border-emerald-500/20 backdrop-blur-sm">
+                                                                                                <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-5">
+                                                                                                    <div class="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-black text-xs md:text-base">3</div>
+                                                                                                    <h4 class="text-sm md:text-xl font-bold text-emerald-400 tracking-wide">หักค่าลดหย่อนทั้งหมด</h4>
+                                                                                                </div>
+                                                                                                <p class="text-slate-400 font-medium leading-relaxed mb-2 md:mb-5 text-[0.6rem] md:text-base">รวมค่าลดหย่อนประกันสังคมและค่าลดหย่อนจากการ์ดที่คุณสะสมได้</p>
+                                                                                                <div class="bg-black/40 p-2.5 md:p-5 rounded-lg md:rounded-xl mb-3 md:mb-5 font-mono text-[0.55rem] md:text-sm text-emerald-200 border border-emerald-900/20">
+                                                                                                    ${cardListHtml}
+                                                                                                </div>
+                                                                                                <div class="bg-black/60 rounded-lg md:rounded-xl p-2 md:p-4 border border-slate-800/50 flex justify-between items-center mb-2 md:mb-3">
+                                                                                                    <span class="text-slate-400 text-[0.6rem] md:text-base font-bold">รวมยอดค่าลดหย่อนในส่วนนี้</span>
+                                                                                                    <span class="text-sm md:text-2xl font-black text-emerald-300 font-mono">หักออก ฿${D_normal.toLocaleString()}</span>
+                                                                                                </div>
+                                                                                                <div class="bg-emerald-500/5 rounded-lg md:rounded-xl p-2 md:p-4 border border-emerald-500/20 flex justify-between items-center">
+                                                                                                    <span class="text-slate-300 text-[0.65rem] md:text-base font-bold">รายได้เตรียมพร้อมหักเงินบริจาค</span>
+                                                                                                    <span class="text-sm md:text-2xl font-black text-white font-mono">เหลือ ฿${netBeforeDonation.toLocaleString()}</span>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <!-- Step 4 -->
+                                                                                            <div class="summary-step-card bg-slate-900/80 p-3 md:p-8 rounded-xl md:rounded-2xl border border-amber-500/20 backdrop-blur-sm">
+                                                                                                <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-5">
+                                                                                                    <div class="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 font-black text-xs md:text-base">4</div>
+                                                                                                    <h4 class="text-sm md:text-xl font-bold text-amber-400 tracking-wide">หักเงินบริจาค</h4>
+                                                                                                </div>
+                                                                                                <div class="bg-amber-500/5 rounded-lg md:rounded-xl p-2.5 md:p-4 border border-amber-500/20 mb-3 md:mb-5 text-center">
+                                                                                                    <span class="text-slate-400 text-[0.55rem] md:text-xs font-bold block mb-1">เพดานการลดหย่อนบริจาค 10%</span>
+                                                                                                    <span class="text-base md:text-2xl font-black text-amber-400">เพดาน ฿${donationCeiling.toLocaleString()}</span>
+                                                                                                </div>
+
+                                                                                                <div class="bg-black/40 rounded-lg md:rounded-xl p-2.5 md:p-5 border border-slate-800/50 flex flex-col gap-2 md:gap-3 mb-3 md:mb-5">
+                                                                                                    ${donationHtml}
+                                                                                                    <div class="flex justify-between items-center border-t border-slate-700/30 pt-2 md:pt-3"><span class="text-slate-400 text-[0.6rem] md:text-base font-bold">รวมยอดขอลดหย่อนบริจาคทั้งหมด</span><span class="text-xs md:text-xl font-bold text-amber-200 font-mono">฿${totalRequestedDonation.toLocaleString()}</span></div>
+                                                                                                    <div class="flex justify-between items-center"><span class="text-amber-400 text-[0.6rem] md:text-base font-bold">ยอดเงินบริจาคที่หักได้จริง</span><span class="text-xs md:text-xl font-black text-amber-400 font-mono">หักออก ฿${totalAllowedDonation.toLocaleString()}</span></div>
+                                                                                                </div>
+                                                                                                <div class="bg-amber-500/10 rounded-lg md:rounded-xl p-2.5 md:p-5 border border-amber-500/30 flex justify-between items-center" style="box-shadow: inset 0 0 30px rgba(245,158,11,0.05);">
+                                                                                                    <span class="text-white text-[0.65rem] md:text-lg font-bold tracking-wide">เงินได้สุทธิ</span>
+                                                                                                    <span class="text-base md:text-3xl font-black text-amber-400 font-mono" style="text-shadow: 0 0 20px rgba(251,191,36,0.4);">฿${E.toLocaleString()}</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
+                                                                                            <!-- Step 5 -->
+                                                                                            <div class="summary-step-card bg-slate-900/80 p-3 md:p-8 rounded-xl md:rounded-2xl border border-purple-500/20 backdrop-blur-sm">
+                                                                                                <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-5">
+                                                                                                    <div class="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 font-black text-xs md:text-base">5</div>
+                                                                                                    <h4 class="text-sm md:text-xl font-bold text-purple-400 tracking-wide">นำไปเข้าตารางคิดภาษี</h4>
+                                                                                                </div>
+                                                                                                <div class="bg-black/40 p-3 md:p-5 rounded-lg md:rounded-xl mb-3 md:mb-5 font-mono text-[0.55rem] md:text-base text-purple-200 border border-purple-900/30 text-center leading-relaxed">
+                                                                                                    <span class="font-bold">${taxStepStr}</span>
+                                                                                                </div>
+                                                                                                <div class="bg-purple-500/5 rounded-lg md:rounded-xl p-2 md:p-4 border border-purple-500/20 flex justify-between items-center">
+                                                                                                    <span class="text-slate-300 text-[0.65rem] md:text-lg font-bold">ภาษีที่คุณควรจะต้องจ่าย</span>
+                                                                                                    <span class="text-sm md:text-2xl font-black text-purple-300 font-mono">฿${tax.toLocaleString()}</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
+                                                                                            <!-- Step 6 - Final -->
+                                                                                            <div class="summary-step-card relative bg-slate-900/80 p-3 md:p-8 rounded-xl md:rounded-2xl border backdrop-blur-sm" style="border-color: ${finalTaxDiff <= 0 ? 'rgba(6,182,212,0.3)' : 'rgba(244,63,94,0.3)'}; box-shadow: 0 0 40px ${finalTaxDiff <= 0 ? 'rgba(6,182,212,0.05)' : 'rgba(244,63,94,0.05)'};">
+                                                                                                <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-5">
+                                                                                                    <div class="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center text-cyan-400 font-black text-xs md:text-base" style="background: ${finalTaxDiff <= 0 ? 'rgba(6,182,212,0.2)' : 'rgba(244,63,94,0.2)'};">6</div>
+                                                                                                    <h4 class="text-sm md:text-xl font-bold tracking-wide" style="color: ${finalTaxDiff <= 0 ? '#22d3ee' : '#f43f5e'};">สรุปยอดเงินสุทธิที่ต้องจ่ายจริง</h4>
+                                                                                                </div>
+                                                                                                <div class="bg-black/40 rounded-lg md:rounded-xl p-3 md:p-6 border border-slate-800/50 flex flex-col gap-3 md:gap-5">
+                                                                                                    <div class="flex justify-between items-center border-b border-slate-700/30 pb-2 md:pb-4">
+                                                                                                        <span class="text-slate-400 text-[0.6rem] md:text-base font-medium">หักภาษีที่จ่ายล่วงหน้าไปแล้ว</span>
+                                                                                                        <span class="text-xs md:text-xl font-bold text-cyan-200 font-mono">฿3,000</span>
+                                                                                                    </div>
+                                                                                                    <div class="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 mt-1 md:mt-2">
+                                                                                                        <span class="text-slate-300 text-[0.65rem] md:text-lg font-bold text-center md:text-left">สรุปยอดที่คุณต้องจ่ายเพิ่ม หรือได้เงินคืน</span>
+                                                                                                        <div class="px-5 py-2.5 md:px-10 md:py-5 rounded-xl md:rounded-2xl border-2 w-full md:w-auto text-center" style="background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(15,23,42,0.8)); border-color: ${finalTaxDiff <= 0 ? 'rgba(16,185,129,0.4)' : 'rgba(244,63,94,0.4)'}; box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 0 20px ${finalTaxDiff <= 0 ? 'rgba(16,185,129,0.1)' : 'rgba(244,63,94,0.1)'};">
+                                                                                                            <span class="summary-value-pop text-lg md:text-4xl font-black ${finalColor} font-mono">${finalTaxDiff < 0 ? 'ได้เงินคืน ' : (finalTaxDiff > 0 ? 'ชำระเพิ่ม ' : '')}฿${Math.abs(finalTaxDiff).toLocaleString()}</span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        `;
+                                });
+                                const sumSc = document.getElementById('screen-summary');
+                                if(sumSc) {
+                                    sumSc.classList.remove('hidden');
+                                    setTimeout(() => sumSc.classList.remove('opacity-0'), 100);
+                                }
+                            }
+                        };
 
                 window.addEventListener('DOMContentLoaded', () => {
                     if(window.roomId) {
@@ -3266,6 +3401,248 @@
                     UIEngine.updateHUD();
                     
                     ActionLog.add('ระบบเตรียมความพร้อมเสร็จสิ้น เริ่มต้นกระดานเกมภาษี TAXOPIA', '#0ea5e9');
+                    // --- คัดลอกตั้งแต่บรรทัดนี้เป็นต้นไป ---
+                                        (function initAdvancedNotifications() {
+                                            const styleEl = document.createElement('style');
+                                            styleEl.innerHTML = `
+                                                :root {
+                                                    --sys-banner-color: #38bdf8;
+                                                }
+                                                #turn-announcer-banner {
+                                                    position: fixed;
+                                                    top: -150px;
+                                                    left: 50%;
+                                                    transform: translateX(-50%);
+                                                    z-index: 5500;
+                                                    background: linear-gradient(180deg, rgba(10, 15, 30, 0.95) 0%, rgba(2, 6, 15, 0.85) 100%);
+                                                    border: 1px solid rgba(255, 255, 255, 0.1);
+                                                    border-bottom: 4px solid var(--sys-banner-color);
+                                                    padding: 16px 45px;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    gap: 20px;
+                                                    box-shadow: 0 25px 50px rgba(0,0,0,0.9), 0 0 40px rgba(var(--sys-banner-color-rgb), 0.4);
+                                                    backdrop-filter: blur(12px);
+                                                    -webkit-backdrop-filter: blur(12px);
+                                                    clip-path: polygon(5% 0, 95% 0, 100% 100%, 0% 100%);
+                                                    transition: top 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.7s;
+                                                    opacity: 0;
+                                                    pointer-events: none;
+                                                    min-width: 380px;
+                                                    justify-content: center;
+                                                }
+                                                #turn-announcer-banner.show {
+                                                    top: 20px;
+                                                    opacity: 1;
+                                                }
+                                                .hexa-icon {
+                                                    width: 48px;
+                                                    height: 48px;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    font-weight: 900;
+                                                    font-size: 1.3rem;
+                                                    color: #ffffff;
+                                                    text-shadow: 0 0 8px rgba(255,255,255,0.8);
+                                                    background: var(--sys-banner-color);
+                                                    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+                                                    flex-shrink: 0;
+                                                    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+                                                    border: 2px solid rgba(255,255,255,0.3);
+                                                }
+                                                #right-event-stack-container {
+                                                    position: fixed;
+                                                    right: 24px;
+                                                    top: 50%;
+                                                    transform: translateY(-50%);
+                                                    z-index: 5000;
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    pointer-events: none;
+                                                    max-width: 360px;
+                                                }
+                                                .hologram-event-card {
+                                                    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(0, 0, 0, 0.8) 100%);
+                                                    border: 1px solid rgba(255, 255, 255, 0.1);
+                                                    border-right: 5px solid var(--event-color);
+                                                    padding: 14px 20px;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    gap: 14px;
+                                                    box-shadow: -10px 15px 35px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.03);
+                                                    backdrop-filter: blur(10px);
+                                                    transform: translateX(150%) skewX(-4deg);
+                                                    opacity: 0;
+                                                    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.6s;
+                                                    position: relative;
+                                                    overflow: hidden;
+                                                    border-radius: 4px;
+                                                }
+                                                .hologram-event-card::before {
+                                                    content: '';
+                                                    position: absolute;
+                                                    top: 0;
+                                                    left: -100%;
+                                                    width: 60%;
+                                                    height: 100%;
+                                                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+                                                    animation: cyber-scan 2.5s linear infinite;
+                                                    pointer-events: none;
+                                                    z-index: 1;
+                                                }
+                                                @keyframes cyber-scan {
+                                                    100% { left: 200%; }
+                                                }
+                                                .hologram-event-card.show {
+                                                    transform: translateX(0) skewX(0deg);
+                                                    opacity: 1;
+                                                }
+                                                .event-status-dot {
+                                                    width: 14px;
+                                                    height: 14px;
+                                                    border-radius: 50%;
+                                                    background-color: var(--event-color);
+                                                    box-shadow: 0 0 15px var(--event-color), inset 0 0 4px #ffffff;
+                                                    flex-shrink: 0;
+                                                    z-index: 2;
+                                                    animation: event-pulse 1.5s infinite alternate;
+                                                }
+                                                @keyframes event-pulse {
+                                                    0% { opacity: 0.6; transform: scale(0.85); }
+                                                    100% { opacity: 1; transform: scale(1.15); }
+                                                }
+                                                @media (max-width: 768px) {
+                                                    #turn-announcer-banner { padding: 12px 25px; min-width: 280px; gap: 12px; border-bottom-width: 3px; }
+                                                    .hexa-icon { width: 36px; height: 36px; font-size: 1rem; }
+                                                    #right-event-stack-container { right: 12px; max-width: 260px; }
+                                                    .hologram-event-card { padding: 10px 14px; gap: 10px; border-right-width: 4px; }
+                                                }
+                                            `;
+                                            document.head.appendChild(styleEl);
+
+                                            const topBanner = document.createElement('div');
+                                            topBanner.id = 'turn-announcer-banner';
+                                            topBanner.innerHTML = `
+                                                <div id="turn-banner-icon" class="hexa-icon"></div>
+                                                <div style="display: flex; flex-direction: column; justify-content: center;">
+                                                    <div id="turn-banner-status" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2px;"></div>
+                                                    <div id="turn-banner-title" style="font-size: 1.15rem; font-weight: bold; line-height: 1.2; white-space: nowrap; text-shadow: 0 2px 4px rgba(0,0,0,1);"></div>
+                                                </div>
+                                            `;
+                                            document.body.appendChild(topBanner);
+
+                                            const rightStack = document.createElement('div');
+                                            rightStack.id = 'right-event-stack-container';
+                                            document.body.appendChild(rightStack);
+
+                                            let lastAnnouncedIdx = -1;
+                                            let turnBannerTimer = null;
+                                            
+                                            const hexToRgb = (hex) => {
+                                                let r = 0, g = 0, b = 0;
+                                                if (hex.length === 4) {
+                                                    r = parseInt(hex[1] + hex[1], 16);
+                                                    g = parseInt(hex[2] + hex[2], 16);
+                                                    b = parseInt(hex[3] + hex[3], 16);
+                                                } else if (hex.length === 7) {
+                                                    r = parseInt(hex.substring(1, 3), 16);
+                                                    g = parseInt(hex.substring(3, 5), 16);
+                                                    b = parseInt(hex.substring(5, 7), 16);
+                                                }
+                                                return r + "," + g + "," + b;
+                                            };
+
+                                            const originalUpdateHUD = UIEngine.updateHUD;
+                                            UIEngine.updateHUD = function() {
+                                                originalUpdateHUD.call(this);
+                                                if (State.activeIdx !== lastAnnouncedIdx && !State.ended) {
+                                                    lastAnnouncedIdx = State.activeIdx;
+                                                    const p = State.players[State.activeIdx];
+                                                    if (p) {
+                                                        const banner = document.getElementById('turn-announcer-banner');
+                                                        const icon = document.getElementById('turn-banner-icon');
+                                                        const status = document.getElementById('turn-banner-status');
+                                                        const title = document.getElementById('turn-banner-title');
+
+                                                        icon.textContent = "P" + p.id;
+                                                        
+                                                        banner.style.setProperty('--sys-banner-color', p.color);
+                                                        banner.style.setProperty('--sys-banner-color-rgb', hexToRgb(p.color));
+
+                                                        if (p.id === window.myId) {
+                                                            status.textContent = "ตรวจพบตาเดินของคุณ";
+                                                            status.style.color = "#34d399";
+                                                            title.textContent = "เข้าสู่ระบบ ทอยลูกเต๋าได้ทันที";
+                                                            title.style.color = "#ffffff";
+                                                        } else {
+                                                            status.textContent = "ระบบกำลังประมวลผล";
+                                                            status.style.color = "#fcd34d";
+                                                            title.textContent = "รอผู้เล่น " + p.name + " ตัดสินใจ";
+                                                            title.style.color = "#94a3b8";
+                                                        }
+
+                                                        banner.classList.add('show');
+                                                        
+                                                        if(turnBannerTimer) clearTimeout(turnBannerTimer);
+                                                        turnBannerTimer = setTimeout(() => {
+                                                            banner.classList.remove('show');
+                                                        }, 4000);
+                                                    }
+                                                }
+                                            };
+
+                                            const originalActionLogAdd = ActionLog.add;
+                                            let currentCardTimer = null;
+                                            
+                                            ActionLog.add = function(msg, colorHex = '#94a3b8') {
+                                                originalActionLogAdd.call(this, msg, colorHex);
+
+                                                if(msg.includes('ระบบเตรียมความพร้อมเสร็จสิ้น')) return;
+                                                
+                                                let delayTime = 0;
+                                                if(msg.includes('ทอยลูกเต๋าได้')) {
+                                                    delayTime = SystemSettings.fastMode ? 600 : 2000;
+                                                }
+
+                                                setTimeout(() => {
+                                                    const stack = document.getElementById('right-event-stack-container');
+                                                    if (!stack) return;
+                                                    
+                                                    if(currentCardTimer) {
+                                                        clearTimeout(currentCardTimer);
+                                                        currentCardTimer = null;
+                                                    }
+
+                                                    while(stack.firstChild) {
+                                                        stack.removeChild(stack.firstChild);
+                                                    }
+
+                                                    const card = document.createElement('div');
+                                                    card.className = "hologram-event-card";
+                                                    card.style.setProperty('--event-color', colorHex);
+
+                                                    card.innerHTML = `
+                                                        <div class="event-status-dot"></div>
+                                                        <div style="font-size: 0.85rem; font-weight: 600; color: #f8fafc; line-height: 1.5; text-shadow: 0 2px 5px rgba(0,0,0,1); z-index: 2;">${msg}</div>
+                                                    `;
+
+                                                    stack.appendChild(card);
+
+                                                    requestAnimationFrame(() => {
+                                                        card.classList.add('show');
+                                                    });
+
+                                                    currentCardTimer = setTimeout(() => {
+                                                        card.classList.remove('show');
+                                                        setTimeout(() => {
+                                                            if (card && card.parentNode) card.remove();
+                                                        }, 600);
+                                                    }, 5000);
+                                                }, delayTime);
+                                            };
+                                        })();
+                                        // --- สิ้นสุดการคัดลอกเพียงเท่านี้ ---
                     
                     LobbySystem.init();
                 });
