@@ -1830,8 +1830,13 @@
                                                 // เพราะอาจทำให้การ์ดหาย / skip flag หาย / ตำแหน่งกลับไป
                                                 const isMyPlayer = (State.players[i].id === window.myId);
                                                 const myTurnActive = (window._isTurnRunning || window._waitingForPopup);
-                                                if(isMyPlayer && myTurnActive) {
-                                                    // อัปเดตเฉพาะ field ที่ไม่ใช่ game action ของตัวเอง
+                                                // ระหว่าง turn ที่กำลัง run อยู่ ห้าม overwrite cash/game state
+                                                // ของผู้เล่นที่กำลังเดินอยู่ (active player) เพราะ mid-turn sync มี cash เก่า
+                                                const activePlayerId = State.players[State.activeIdx] ? State.players[State.activeIdx].id : -1;
+                                                const isActivePlayer = (State.players[i].id === activePlayerId);
+                                                const anyTurnActive = (window._isTurnRunning || window._waitingForPopup);
+                                                if((isMyPlayer && myTurnActive) || (isActivePlayer && anyTurnActive)) {
+                                                    // อัปเดตเฉพาะ field ที่ไม่ใช่ game action
                                                     State.players[i].name = dp.name;
                                                     // ข้าม: pos, cash, extraIncome, laps, skip, inventory, funds
                                                 } else {
@@ -2548,7 +2553,6 @@
                             
                             EffectEngine.flashTileStep(p.pos);
                             UIEngine.drawPawns();
-                            FirebaseSystem.syncState();
                             await new Promise(r => setTimeout(r, SystemSettings.fastMode ? 80 : 250));
                             
                             if (reachedEnd) {
@@ -2620,6 +2624,8 @@
                             window._waitingForPopup = true;
                             this.advanceToNextPlayer(); // sync ไปบอกทุกคนว่าตาถัดไปแล้ว
                             await this.resolveTile(p, BoardMap[p.pos]); // รอ popup ของเราปิด
+                            // Sync state สุดท้ายหลัง resolveTile เสร็จ เพื่อให้ cash/inventory ที่เปลี่ยนไปถูก push ขึ้น Firebase
+                            FirebaseSystem.syncState();
                             UIEngine.updateHUD();
                             window._waitingForPopup = false;
                             window._isTurnRunning = false;
