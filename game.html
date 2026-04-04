@@ -181,6 +181,35 @@
             .hud-completed::after { font-size: 0.8rem; border-width: 2px; padding: 2px 5px; }
         }
 
+        .hud-lost {
+            filter: grayscale(100%) brightness(0.5);
+            opacity: 0.5;
+        }
+        
+        .hud-lost::after {
+            content: 'LOSS';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            color: rgba(220, 38, 38, 0.9);
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 4px solid rgba(220, 38, 38, 0.9);
+            padding: 4px 10px;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 50;
+            text-shadow: 0 0 8px rgba(220, 38, 38, 0.6);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.3), inset 0 0 15px rgba(220, 38, 38, 0.3);
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        @media (max-width: 767px) {
+            .hud-lost::after { font-size: 0.8rem; border-width: 2px; padding: 2px 5px; }
+        }
+
         .dice-container {
             position: absolute;
             inset: 0;
@@ -1090,6 +1119,9 @@
                 
                 <!-- Action buttons -->
                 <div class="flex flex-col sm:flex-row gap-3 md:gap-4 relative z-10 summary-card-enter" style="animation-delay: 0.6s;">
+                    <button onclick="location.href='evaluate.html'" class="group px-6 py-3 md:px-14 md:py-6 bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-500 text-black font-bold text-[0.75rem] md:text-xl rounded-full border-2 border-white/80 hover:scale-105 transition-all shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:shadow-[0_0_60px_rgba(6,182,212,0.8)] relative overflow-hidden" style="background-size: 200% auto; animation: summaryGradientMove 3s ease infinite;">
+                        <span class="relative z-10">ทำแบบประเมิน</span>
+                    </button>
                     <button onclick="SystemController.restartGame()" class="group px-6 py-3 md:px-14 md:py-6 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-black font-bold text-[0.75rem] md:text-xl rounded-full border-2 border-white/80 hover:scale-105 transition-all shadow-[0_0_30px_rgba(245,158,11,0.5)] hover:shadow-[0_0_60px_rgba(245,158,11,0.8)] relative overflow-hidden" style="background-size: 200% auto; animation: summaryGradientMove 3s ease infinite;">
                         <span class="relative z-10">ยุบห้องและเริ่มเกมใหม่</span>
                     </button>
@@ -1575,7 +1607,7 @@
                     };
 
             const DBConfig = {
-                TOTAL_TILES: 40, LAPS_TO_WIN: 3, BASE_SALARY: 336000, MONTHLY_SALARY: 27000
+                TOTAL_TILES: 40, LAPS_TO_WIN: 3, BASE_SALARY: 336000, MONTHLY_SALARY: 22000
             };
             
             // Flag: ใช้ใน multiplayer เพื่อบอกว่ากำลังรอ popup ปิดอยู่ → ห้ามคืนปุ่มทอย
@@ -1586,7 +1618,7 @@
             const CardData = {
                 Family: { color: '#3b82f6', items: [
                     { id: 'f1', title: 'จดทะเบียนสมรส', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', desc: 'จดทะเบียนสมรสตามกฎหมาย ได้สิทธิลดหย่อนภาษีเพิ่มเติม' },
-                    { id: 'f2', title: 'มีลูกคนแรก', cost: 50000, deduct: 30000, typeTag: 'ครอบครัว', desc: 'ค่าใช้จ่ายในการเลี้ยงดูบุตร สามารถนำมาลดหย่อนภาษีได้' },
+                    { id: 'f2', title: 'มีลูกคนแรก', cost: 80000, deduct: 30000, typeTag: 'ครอบครัว', desc: 'ค่าใช้จ่ายในการเลี้ยงดูบุตร สามารถนำมาลดหย่อนภาษีได้' },
                     { id: 'f3', title: 'อุปการะคนพิการ', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', stack: true, desc: 'ดูแลผู้พิการ ได้รับสิทธิลดหย่อนภาษีเพิ่มเติม' },
                     { id: 'f4', title: 'ดูแลพ่อแม่', cost: 15000, deduct: 30000, typeTag: 'ครอบครัว', stack: true, max: 2, desc: 'ดูแลพ่อแม่ ลดหย่อนได้ 30000 บาท สามารถสะสมได้สูงสุด 2 สิทธิ รวมเป็น 60000 บาท' }
                 ]},
@@ -1596,9 +1628,9 @@
                     { id: 'i3', title: 'ประกันสะสมทรัพย์', cost: 30000, deduct: 20000, shield: 'none', stack: true, typeTag: 'ประกัน', desc: 'ออมเงินผ่านประกันชีวิตเพื่อลดหย่อนภาษี ไม่มีผลเรื่องการป้องกันอุบัติเหตุ สะสมกี่ใบก็ได้' }
                 ]},
                 Fund: { color: '#10b981', items: [
-                    { id: 'u2', title: 'กองทุน SSF', cost: 10000, deduct: 5000, max: 3, typeTag: 'กองทุน', desc: 'นำเงินไปลงทุนเพื่อสะสมไว้ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
-                    { id: 'u3', title: 'กองทุน Thai ESG', cost: 10000, deduct: 3000, max: 3, typeTag: 'กองทุน', desc: 'ลงทุนในกองทุนรักษาสิ่งแวดล้อม ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
-                    { id: 'u4', title: 'กองทุน RMF', cost: 10000, deduct: 5000, max: 3, typeTag: 'กองทุน', desc: 'เก็บเงินไว้ใช้ตอนเกษียณ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' }
+                    { id: 'u2', title: 'กองทุน SSF', cost: 30000, deduct: 5000, max: 3, typeTag: 'กองทุน', desc: 'นำเงินไปลงทุนเพื่อสะสมไว้ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
+                    { id: 'u3', title: 'กองทุน Thai ESG', cost: 30000, deduct: 3000, max: 3, typeTag: 'กองทุน', desc: 'ลงทุนในกองทุนรักษาสิ่งแวดล้อม ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
+                    { id: 'u4', title: 'กองทุน RMF', cost: 30000, deduct: 5000, max: 3, typeTag: 'กองทุน', desc: 'เก็บเงินไว้ใช้ตอนเกษียณ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' }
                 ]},
                 Donation: { color: '#fb7185', items: [
                     { id: 'd1', title: 'บริจาคโรงพยาบาลรัฐ', cost: 5000, deduct: 10000, typeTag: 'บริจาค', desc: 'บริจาคเงินให้โรงพยาบาลรัฐ นำไปลดหย่อนได้ทวีคูณจากเงินที่บริจาค' },
@@ -1618,7 +1650,8 @@
                     { title: 'ทำของบริษัทพัง', val: -1500, desc: 'ทำอุปกรณ์ของบริษัทเสียหาย ต้องจ่ายค่าซ่อม', isIncome: false },
                     { title: 'ทำบุญผ้าป่า', val: -500, desc: 'ฝ่ายบุคคลมาขอให้ช่วยทำบุญผ้าป่า', isIncome: false },
                     { title: 'ไปสัมมนา', val: 0, desc: 'บริษัทส่งไปอบรม ต้องหยุดเดินในตาถัดไป 1 รอบ', skip: true, isIncome: false },
-                    { title: 'ย้ายแผนก', val: 0, desc: 'ถูกคำสั่งย้ายแผนก คุณถูกย้ายตำแหน่งเดินถอยหลัง 3 ช่อง', move: -3, isIncome: false }
+                    { title: 'ย้ายแผนก', val: 0, desc: 'ถูกคำสั่งย้ายแผนก คุณถูกย้ายตำแหน่งเดินถอยหลัง 3 ช่อง', move: -3, isIncome: false },
+                    { title: 'ได้รับโบนัส 1 เดือน', val: 28000, desc: 'บริษัทจ่ายโบนัสพิเศษให้ 1 เดือน ได้รับเงิน 28,000 บาท (ได้รับได้แค่ 1 ครั้งตลอดเกม)', isIncome: true, oncePerGame: true }
                 ]},
                 Destiny: { color: '#a855f7', events: [
                     { title: 'ถูกหวย', val: 2000, desc: 'ถูกลอตเตอรี่ ได้รับเงินเพิ่มและไม่ต้องนำไปคิดภาษี', isIncome: false },
@@ -1629,7 +1662,8 @@
                     { title: 'ค่ารักษาสัตว์เลี้ยง', val: -1500, desc: 'สัตว์เลี้ยงป่วย ต้องพาไปหาหมอ', isIncome: false },
                     { title: 'ทำบุญสะเดาะเคราะห์', val: -1000, desc: 'ไปวัดทำบุญเพื่อความสบายใจ', isIncome: false },
                     { title: 'โดนใบสั่ง', val: -500, desc: 'ขับรถเร็วเกินกำหนด โดนค่าปรับ', isIncome: false },
-                    { title: 'ลืมต่อทะเบียนรถ', val: 0, desc: 'ต้องรีบไปขนส่ง ถูกย้ายตำแหน่งเดินถอยหลัง 2 ช่อง', move: -2, isIncome: false }
+                    { title: 'ลืมต่อทะเบียนรถ', val: 0, desc: 'ต้องรีบไปขนส่ง ถูกย้ายตำแหน่งเดินถอยหลัง 2 ช่อง', move: -2, isIncome: false },
+                    { title: 'ค่าอุปกรณ์เลี้ยงดูบุตร', val: -5000, desc: 'ต้องซื้ออุปกรณ์สำหรับเลี้ยงดูบุตร เช่น นม ผ้าอ้อม ของใช้เด็ก', isIncome: false, requireChild: true }
                 ]}
             };
 
@@ -1645,20 +1679,20 @@
                 { id: 8, label: "ช้อปปิ้ง", type: "expense", val: 1000 },
                 { id: 9, label: "สุขภาพแม่", type: "insurance", ref: "i2" },
                 { id: 10, label: "วันเงินเดือนออก", type: "payday" },
-                { id: 11, label: "อุบัติเหตุฉุกเฉิน", type: "hazard", target: "self", val: 5000 },
-                { id: 12, label: "ซ่อมแซมบ้าน", type: "expense", val: 10000 },
+                { id: 11, label: "อุบัติเหตุฉุกเฉิน", type: "hazard", target: "self", val: 10000 },
+                { id: 12, label: "ซ่อมแซมบ้าน", type: "expense", val: 35000 },
                 { id: 13, label: "บริจาคพรรค", type: "donation", ref: "d4" },
                 { id: 14, label: "ฝ่ายบุคคล", type: "hr" },
                 { id: 15, label: "ดอกเบี้ยบ้าน", type: "expense", val: 10000 },
                 { id: 16, label: "โชคชะตา", type: "event" },
-                { id: 17, label: "เอกสารหาย", type: "action_skip" },
+                { id: 17, label: "ค่าน้ำ/ไฟ/น้ำมัน", type: "expense", val: 8000 },
                 { id: 18, label: "ใส่ซองงานบวช", type: "expense", val: 2000 },
                 { id: 19, label: "บริจาควัด", type: "donation", ref: "d3" },
                 { id: 20, label: "วันเงินเดือนออก", type: "payday" },
                 { id: 21, label: "กองทุน SSF", type: "fund", ref: "u2" },
                 { id: 22, label: "ฝ่ายบุคคล", type: "hr" },
                 { id: 23, label: "กองทุน Thai ESG", type: "fund", ref: "u3" },
-                { id: 24, label: "แม่อุบัติเหตุ", type: "hazard", target: "mother", val: 6000 },
+                { id: 24, label: "แม่อุบัติเหตุ", type: "hazard", target: "mother", val: 15000 },
                 { id: 25, label: "กองทุน RMF", type: "fund", ref: "u4" },
                 { id: 26, label: "โชคชะตา", type: "event" },
                 { id: 27, label: "สิทธิมีบุตร", type: "family", ref: "f2" },
@@ -1683,12 +1717,14 @@
                     this.colors = { 1: '#3b82f6', 2: '#f43f5e', 3: '#10b981', 4: '#f59e0b' };
                     this.color = this.colors[id];
                     this.pos = 0;
-                    this.cash = 27000;
+                    this.cash = 22000;
                     this.extraIncome = 0;
                     this.laps = 0;
                     this.skip = false;
                     this.inventory = [];
                     this.funds = {};
+                    this.usedOnceEvents = {};
+                    this.lost = false;
                 }
                 getDeductions() {
                     return this.inventory.reduce((sum, item) => sum + (item.deduct || 0), 0);
@@ -1900,7 +1936,8 @@
                             players: State.players.map(p => ({
                                 id: p.id, name: p.name, color: p.color, pos: p.pos, cash: p.cash,
                                 extraIncome: p.extraIncome, laps: p.laps, skip: p.skip,
-                                inventory: p.inventory || [], funds: p.funds || {}
+                                inventory: p.inventory || [], funds: p.funds || {},
+                                usedOnceEvents: p.usedOnceEvents || {}, lost: p.lost || false
                             })),
                             activeIdx: State.activeIdx,
                             ended: State.ended,
@@ -1957,6 +1994,8 @@
                                                     State.players[i].skip = dp.skip;
                                                     State.players[i].inventory = dp.inventory || [];
                                                     State.players[i].funds = dp.funds || {};
+                                                    State.players[i].usedOnceEvents = dp.usedOnceEvents || {};
+                                                    State.players[i].lost = dp.lost || false;
                                                 }
                                             }
                                         });
@@ -2012,6 +2051,17 @@
                                         }
                                     }
                                 });
+                            }
+                        });
+
+                        // Listen for dice rolls from other players
+                        db.ref('rooms/' + window.roomId + '/diceRoll').on('value', (diceSnap) => {
+                            const diceData = diceSnap.val();
+                            if(diceData && diceData.playerId !== window.myId) {
+                                if(!window._lastDiceTimestamp || diceData.timestamp > window._lastDiceTimestamp) {
+                                    window._lastDiceTimestamp = diceData.timestamp;
+                                    DiceSystem.roll(diceData.value);
+                                }
                             }
                         });
                     }
@@ -2353,7 +2403,11 @@
                             const lapsEl = document.getElementById(`laps-${p.id}`);
                                         
                             if(hud && lapsEl) {
-                                if (p.laps >= DBConfig.LAPS_TO_WIN) {
+                                if (p.lost) {
+                                    lapsEl.textContent = `พ่ายแพ้ - เงินหมด`;
+                                    hud.classList.remove('hud-completed', 'hud-active');
+                                    hud.classList.add('hud-lost');
+                                } else if (p.laps >= DBConfig.LAPS_TO_WIN) {
                                     lapsEl.textContent = `รอบบัญชี สำเร็จแล้ว`;
                                     hud.classList.add('hud-completed');
                                     hud.classList.remove('hud-active');
@@ -2618,7 +2672,7 @@
                                 if(window.roomId) window._isTurnRunning = true;
                                 const p = State.getCur();
                                 
-                                if (p.laps >= DBConfig.LAPS_TO_WIN) {
+                                if (p.laps >= DBConfig.LAPS_TO_WIN || p.lost) {
                                      window._isTurnRunning = false;
                                      this.advanceToNextPlayer();
                                      return;
@@ -2636,6 +2690,14 @@
                                 let roll1 = Math.floor(Math.random()*6)+1;
                                 const total = roll1;
 
+                                // Sync dice roll to Firebase for other players to see
+                                if(window.roomId) {
+                                    db.ref('rooms/' + window.roomId + '/diceRoll').set({
+                                        playerId: p.id,
+                                        value: roll1,
+                                        timestamp: Date.now()
+                                    });
+                                }
 
                                 await DiceSystem.roll(roll1);
 
@@ -2660,8 +2722,12 @@
                                     
                                     if((BoardMap[p.pos].type === 'payday' || p.pos === 0) && p.laps <= DBConfig.LAPS_TO_WIN) {
                                         if (!isLastStep || reachedEnd) {
-                                            p.cash += DBConfig.MONTHLY_SALARY;
+                                            let hasChildForPayday = p.inventory.some(c => c.id === 'f2');
+                                            let childDeduct = hasChildForPayday ? 5000 : 0;
+                                            p.cash += (DBConfig.MONTHLY_SALARY - childDeduct);
                                             payDaysCrossed++;
+                                            if(!p._paydayChildDeducted) p._paydayChildDeducted = 0;
+                                            p._paydayChildDeducted += childDeduct;
                                         }
                                     }
                                     
@@ -2708,16 +2774,21 @@
                                 }
 
                                 if(payDaysCrossed > 0) {
-                                    ActionLog.add(`${p.name} ได้รับเงินเดือนจากการเดินผ่าน ฿${(DBConfig.MONTHLY_SALARY * payDaysCrossed).toLocaleString()}`, '#34d399');
+                                    let hasChildWalkThru = p.inventory.some(c => c.id === 'f2');
+                                    let childDeductTotal = p._paydayChildDeducted || 0;
+                                    let actualReceived = (DBConfig.MONTHLY_SALARY * payDaysCrossed) - childDeductTotal;
+                                    let childText = hasChildWalkThru ? ' และหักค่าเลี้ยงดูบุตร 5,000' : '';
+                                    ActionLog.add(`${p.name} ได้รับเงินเดือนจากการเดินผ่าน ฿${actualReceived.toLocaleString()}`, '#34d399');
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "เงินเดือนเข้า",
                                         title: "รับเงินเดือน",
-                                        desc: `คุณเดินผ่านช่องเงินเดือนหรือจุดเริ่มต้น ได้รับเงินเดือนเพิ่ม ${payDaysCrossed} รอบ`,
+                                        desc: `คุณเดินผ่านช่องเงินเดือนหรือจุดเริ่มต้น ได้รับเงินเดือน ${payDaysCrossed} รอบ (เงินเดือน 28,000 หักประกันสังคม 750 หักณที่จ่าย 250 หักค่าดูแลพ่อแม่ 5,000${childText} เหลือสุทธิ ${(DBConfig.MONTHLY_SALARY - (hasChildWalkThru ? 5000 : 0)).toLocaleString()} บาท)`,
                                         colorHex: "#10b981",
                                         icon: "$",
-                                        financials: [{label:"รวมเงินที่ได้รับ", val:DBConfig.MONTHLY_SALARY * payDaysCrossed, color:"#34d399"}],
+                                        financials: [{label:"รวมเงินที่ได้รับ", val: actualReceived, color:"#34d399"}],
                                         btnText: "ตกลง"
                                     });
+                                    p._paydayChildDeducted = 0;
                                 }
                                 
                                 if(window.roomId) {
@@ -2746,7 +2817,7 @@
                             },
                             
                             advanceToNextPlayer() {
-                                let allDone = State.players.every(x => x.laps >= DBConfig.LAPS_TO_WIN);
+                                let allDone = State.players.every(x => x.laps >= DBConfig.LAPS_TO_WIN || x.lost);
                                 if(allDone) {
                                     ActionLog.add(`ผู้เล่นทุกคนเดินครบแล้ว ระบบกำลังเข้าสู่การประมวลผลภาษีประจำปี`, '#eab308');
                                     this.endGame();
@@ -2758,12 +2829,12 @@
                                 let nextP = State.getCur();
                                 
                                 let safeGuard = 0;
-                                while(nextP.laps >= DBConfig.LAPS_TO_WIN && safeGuard < State.players.length) {
+                                while((nextP.laps >= DBConfig.LAPS_TO_WIN || nextP.lost) && safeGuard < State.players.length) {
                                     State.activeIdx = (State.activeIdx + 1) % State.players.length;
                                     nextP = State.getCur();
                                     safeGuard++;
                                 }
-                                if(nextP.laps >= DBConfig.LAPS_TO_WIN) {
+                                if(nextP.laps >= DBConfig.LAPS_TO_WIN || nextP.lost) {
                                     ActionLog.add('ผู้เล่นทุกคนเดินครบแล้ว ระบบกำลังเข้าสู่การประมวลผลภาษีประจำปี', '#eab308');
                                     this.endGame();
                                     FirebaseSystem.syncState();
@@ -2949,6 +3020,7 @@
                                                 financials: [{label:"จ่ายเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
                                                 player: p
                                             });
+                                            await this.checkBankruptcy(p);
                                         }
                                     } else {
                                         p.cash -= tile.val;
@@ -2962,6 +3034,7 @@
                                             financials: [{label:"เสียเงินค่ารักษา", val:tile.val, color:"#ef4444"}],
                                             player: p
                                         });
+                                        await this.checkBankruptcy(p);
                                     }
                                 }
                                 else if(tile.type === 'expense') {
@@ -2977,6 +3050,7 @@
                                         financials: [{label: "จ่ายเงิน", val: tile.val, color: "#ef4444"}],
                                         player: p
                                     });
+                                    await this.checkBankruptcy(p);
                                 }
                                 else if(tile.type === 'action_skip') {
                                     p.skip = true;
@@ -3030,24 +3104,46 @@
                                     });
                                 }
                                 else if(tile.type === 'payday' || (tile.type === 'system' && tile.id === 0)) {
-                                    p.cash += DBConfig.MONTHLY_SALARY;
-                                    ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#34d399');
+                                    let hasChildPayday = p.inventory.some(c => c.id === 'f2');
+                                    let childDeductPayday = hasChildPayday ? 5000 : 0;
+                                    let netSalary = DBConfig.MONTHLY_SALARY - childDeductPayday;
+                                    p.cash += netSalary;
+                                    ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${netSalary.toLocaleString()}`, '#34d399');
                                     AudioEngine.playCoin();
-                                    EffectEngine.showToast(`💰 เงินเดือนเข้า! +฿${DBConfig.MONTHLY_SALARY.toLocaleString()}`, '#f59e0b', '💰');
+                                    EffectEngine.showToast(`💰 เงินเดือนเข้า! +฿${netSalary.toLocaleString()}`, '#f59e0b', '💰');
+                                    let paydayFinancials = [
+                                        {label: "เงินเดือนเต็ม", val: 28000, color: "#34d399"},
+                                        {label: "หักประกันสังคม", val: 750, color: "#ef4444"},
+                                        {label: "หักภาษี ณ ที่จ่าย", val: 250, color: "#ef4444"},
+                                        {label: "หักค่าดูแลพ่อแม่", val: 5000, color: "#ef4444"}
+                                    ];
+                                    if(hasChildPayday) {
+                                        paydayFinancials.push({label: "หักค่าเลี้ยงดูบุตร", val: 5000, color: "#ef4444"});
+                                    }
+                                    paydayFinancials.push({label: "เงินเดือนสุทธิที่ได้รับ", val: netSalary, color: "#34d399"});
+                                    let childDescPayday = hasChildPayday ? ' หักค่าเลี้ยงดูบุตร 5,000 บาท' : '';
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "ได้เงินเดือน",
                                         title: tile.label,
-                                        desc: "คุณเดินมาตกที่ช่องรับเงินเดือน หรือ ช่องจุดเริ่มต้นพอดี ได้รับเงินเดือนเข้ากระเป๋าเรียบร้อยแล้ว",
+                                        desc: `คุณได้รับเงินเดือน 28,000 บาท แต่ถูกหักประกันสังคม 750 บาท หักภาษี ณ ที่จ่าย 250 บาท หักค่าดูแลพ่อแม่ 5,000 บาท${childDescPayday} จึงเหลือเงินเดือนสุทธิ ${netSalary.toLocaleString()} บาท`,
                                         colorHex: "#f59e0b",
                                         icon: "$",
-                                        financials: [{label: "ได้รับเงิน", val: DBConfig.MONTHLY_SALARY, color: "#34d399"}],
+                                        financials: paydayFinancials,
                                         player: p
                                     });
                                 }
                                 else if(tile.type === 'income' || tile.type === 'hr' || tile.type === 'event') {
                                     let cat = tile.type === 'income' ? 'Income' : tile.type === 'hr' ? 'HR' : 'Destiny';
                                     let list = CardData[cat].events;
-                                    let ev = list[Math.floor(Math.random() * list.length)];
+                                    let hasChild = p.inventory.some(c => c.id === 'f2');
+                                    let filteredList = list.filter(ev => {
+                                        if(ev.requireChild && !hasChild) return false;
+                                        if(ev.oncePerGame && p.usedOnceEvents[ev.title]) return false;
+                                        return true;
+                                    });
+                                    if(filteredList.length === 0) filteredList = list.filter(ev => !ev.requireChild && !ev.oncePerGame);
+                                    let ev = filteredList[Math.floor(Math.random() * filteredList.length)];
+                                    if(ev.oncePerGame) p.usedOnceEvents[ev.title] = true;
                                     
                                     if(ev.val > 0) { p.cash += ev.val; AudioEngine.playCoin(); }
                                     if(ev.val < 0) { p.cash += ev.val; }
@@ -3086,7 +3182,32 @@
                                         financials: fins,
                                         player: p
                                     });
+                                    if(ev.val < 0) await this.checkBankruptcy(p);
                                 }
+                            },
+
+                            async checkBankruptcy(p) {
+                                if(p.cash <= 0 && !p.lost) {
+                                    p.lost = true;
+                                    p.cash = 0;
+                                    ActionLog.add(`${p.name} เงินหมด! พ่ายแพ้จากเกม`, '#dc2626');
+                                    EffectEngine.showToast(`💀 ${p.name} เงินหมด! แพ้แล้ว`, '#dc2626', '💀');
+                                    UIEngine.updateHUD();
+                                    FirebaseSystem.syncState();
+                                    if(p.id === window.myId) {
+                                        await UIEngine.triggerEventModal({
+                                            headerTitle: "พ่ายแพ้",
+                                            title: "เงินหมด!",
+                                            desc: "คุณหมดเงินแล้ว ถือว่าแพ้ในเกมนี้ กรุณารอผู้เล่นอื่นเล่นจบเพื่อดูผลสรุป",
+                                            colorHex: "#dc2626",
+                                            icon: "X",
+                                            btnText: "ตกลง",
+                                            player: p
+                                        });
+                                    }
+                                    return true;
+                                }
+                                return false;
                             },
 
                             endGame() {
@@ -3583,11 +3704,13 @@
                                                             status.style.color = "#34d399";
                                                             title.textContent = "ถึงตาคุณแล้ว";
                                                             title.style.color = "#ffffff";
+                                                            RightEventCard.show("ถึงตาคุณแล้ว ทอยลูกเต๋าได้เลย", "#34d399");
                                                         } else {
                                                             status.textContent = "ระบบกำลังประมวลผล";
                                                             status.style.color = "#fcd34d";
                                                             title.textContent = "รอผู้เล่น " + p.name + " ทอยลูกเต๋า";
                                                             title.style.color = "#94a3b8";
+                                                            RightEventCard.show("รอผู้เล่น " + p.name + " ทอยลูกเต๋า", "#fcd34d");
                                                         }
 
                                                         banner.classList.add('show');
@@ -3603,51 +3726,51 @@
                                             const originalActionLogAdd = ActionLog.add;
                                             let currentCardTimer = null;
                                             
+                                            // Separate function for right-side event card display
+                                            window.RightEventCard = {
+                                                show(msg, colorHex = '#94a3b8', delayTime = 0) {
+                                                    setTimeout(() => {
+                                                        const stack = document.getElementById('right-event-stack-container');
+                                                        if (!stack) return;
+                                                        
+                                                        if(currentCardTimer) {
+                                                            clearTimeout(currentCardTimer);
+                                                            currentCardTimer = null;
+                                                        }
+
+                                                        while(stack.firstChild) {
+                                                            stack.removeChild(stack.firstChild);
+                                                        }
+
+                                                        const card = document.createElement('div');
+                                                        card.className = "hologram-event-card";
+                                                        card.style.setProperty('--event-color', colorHex);
+
+                                                        card.innerHTML = `
+                                                            <div class="event-status-dot"></div>
+                                                            <div style="font-size: 0.85rem; font-weight: 600; color: #f8fafc; line-height: 1.5; text-shadow: 0 2px 5px rgba(0,0,0,1); z-index: 2;">${msg}</div>
+                                                        `;
+
+                                                        stack.appendChild(card);
+
+                                                        requestAnimationFrame(() => {
+                                                            card.classList.add('show');
+                                                        });
+
+                                                        currentCardTimer = setTimeout(() => {
+                                                            card.classList.remove('show');
+                                                            setTimeout(() => {
+                                                                if (card && card.parentNode) card.remove();
+                                                            }, 600);
+                                                        }, 5000);
+                                                    }, delayTime);
+                                                }
+                                            };
+
+                                            // ActionLog.add only writes to the bottom log panel (log-container)
+                                            // No longer coupled with right-event-stack
                                             ActionLog.add = function(msg, colorHex = '#94a3b8') {
                                                 originalActionLogAdd.call(this, msg, colorHex);
-
-                                                if(msg.includes('ระบบเตรียมความพร้อมเสร็จสิ้น')) return;
-                                                
-                                                let delayTime = 0;
-                                                if(msg.includes('ทอยลูกเต๋าได้')) {
-                                                    delayTime = SystemSettings.fastMode ? 600 : 2000;
-                                                }
-
-                                                setTimeout(() => {
-                                                    const stack = document.getElementById('right-event-stack-container');
-                                                    if (!stack) return;
-                                                    
-                                                    if(currentCardTimer) {
-                                                        clearTimeout(currentCardTimer);
-                                                        currentCardTimer = null;
-                                                    }
-
-                                                    while(stack.firstChild) {
-                                                        stack.removeChild(stack.firstChild);
-                                                    }
-
-                                                    const card = document.createElement('div');
-                                                    card.className = "hologram-event-card";
-                                                    card.style.setProperty('--event-color', colorHex);
-
-                                                    card.innerHTML = `
-                                                        <div class="event-status-dot"></div>
-                                                        <div style="font-size: 0.85rem; font-weight: 600; color: #f8fafc; line-height: 1.5; text-shadow: 0 2px 5px rgba(0,0,0,1); z-index: 2;">${msg}</div>
-                                                    `;
-
-                                                    stack.appendChild(card);
-
-                                                    requestAnimationFrame(() => {
-                                                        card.classList.add('show');
-                                                    });
-
-                                                    currentCardTimer = setTimeout(() => {
-                                                        card.classList.remove('show');
-                                                        setTimeout(() => {
-                                                            if (card && card.parentNode) card.remove();
-                                                        }, 600);
-                                                    }, 5000);
-                                                }, delayTime);
                                             };
                                         })();
                                         // --- สิ้นสุดการคัดลอกเพียงเท่านี้ ---
