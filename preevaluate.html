@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TAXOPIA - แบบประเมินก่อนเล่น</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800;900&display=swap');
+
+        body {
+            margin: 0;
+            background-color: #020617;
+            font-family: Kanit, sans-serif;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        .bg-cyber-grid {
+            background-size: 50px 50px;
+            background-image:
+                linear-gradient(to right, rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+            animation: pan-bg 60s linear infinite;
+            transform-origin: center;
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        @keyframes pan-bg {
+            0% { background-position: 0 0; }
+            100% { background-position: 500px 500px; }
+        }
+
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(2, 6, 23, 0.95) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(56, 189, 248, 0.05);
+        }
+
+        .text-glow-gold {
+            color: #eab308;
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.6);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(2, 6, 23, 0.8); }
+        ::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+
+        .question-card, .info-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-card:hover, .info-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(56, 189, 248, 0.05);
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            background: rgba(2, 6, 23, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+
+        .option-label:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #38bdf8;
+        }
+
+        .option-input { display: none; }
+
+        .option-input:checked + .option-custom-box {
+            background-color: #0ea5e9;
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+        }
+
+        .option-input:checked ~ .option-text {
+            color: #38bdf8;
+            font-weight: 700;
+        }
+
+        .option-label.selected {
+            background: rgba(14, 165, 233, 0.15);
+            border-color: #38bdf8;
+        }
+
+        .option-custom-box {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #64748b;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-custom-box::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .option-input:checked + .option-custom-box::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .glow-button {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            border: 2px solid #38bdf8;
+            color: white;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .glow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.6);
+        }
+
+        .result-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card.correct {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.1);
+        }
+
+        .result-card.incorrect {
+            border-color: rgba(244, 63, 94, 0.5);
+            box-shadow: inset 0 0 20px rgba(244, 63, 94, 0.1);
+        }
+
+        .explanation-box {
+            background: rgba(2, 6, 23, 0.7);
+            border-left: 4px solid #eab308;
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-top: 1.5rem;
+        }
+
+        .admin-row:hover {
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        input[type="text"] {
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-cyber-grid"></div>
+
+    <div class="relative z-10 min-h-screen flex flex-col">
+        <header class="glass-panel sticky top-0 z-50 px-6 py-5 border-b border-slate-700/50 flex justify-between items-center shadow-2xl">
+            <div>
+                <h1 class="text-xl md:text-3xl font-black text-glow-gold tracking-widest uppercase m-0">TAXOPIA</h1>
+                <p class="text-cyan-400 text-xs md:text-sm font-bold tracking-wide mt-1">แบบประเมินความรู้ก่อนการเล่นเกม</p>
+            </div>
+            <button onclick="location.href='index.html'" class="px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-600 text-slate-300 font-bold text-sm hover:text-white hover:border-cyan-400 transition-all shadow-lg">กลับสู่หน้าเริ่มต้น</button>
+        </header>
+
+        <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8 relative">
+            
+            <div id="evaluation-form-container" class="opacity-100 transition-opacity duration-700">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg leading-tight">ทดสอบความรู้พื้นฐานเรื่องภาษีก่อนเล่น</h2>
+                    <p class="text-base md:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto">
+                        ก่อนที่เราจะไปสนุกกับเกมจำลองภาษี เรามาลองทดสอบความรู้พื้นฐานกันสักนิด ไม่ต้องซีเรียสถ้ายังไม่ทราบคำตอบ ระบบจะทำการบันทึกเพื่อประเมินศักยภาพของคุณ และจะอธิบายเหตุผลให้ฟังอย่างละเอียดหลังส่งคำตอบ
+                    </p>
+                </div>
+
+                <div class="info-card border-t-4 border-t-cyan-500 mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                    <div class="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
+                        <div class="w-12 h-12 rounded-full bg-cyan-950/50 border border-cyan-500/50 flex items-center justify-center text-cyan-400 font-bold text-xl">1</div>
+                        <h3 class="text-2xl md:text-3xl font-bold text-white tracking-wide">ข้อมูลประวัติส่วนตัว</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-slate-400 font-bold mb-3 text-lg">ชื่อ และ นามสกุล</label>
+                            <input type="text" id="user-fullname" placeholder="ระบุชื่อและนามสกุลของคุณที่นี่" class="w-full bg-black/60 border-2 border-slate-700/80 rounded-xl p-4 text-white font-bold text-lg outline-none focus:border-cyan-400 hover:border-slate-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-400 font-bold mb-3 text-lg">คณะที่กำลังศึกษา</label>
+                            <input type="text" id="user-faculty" placeholder="ระบุชื่อคณะที่คุณสังกัด" class="w-full bg-black/60 border-2 border-slate-700/80 rounded-xl p-4 text-white font-bold text-lg outline-none focus:border-cyan-400 hover:border-slate-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 font-bold mb-3 text-lg">ระดับชั้นปีที่กำลังศึกษา</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="year-selection-group">
+                            <label class="option-label m-0 py-3 justify-center" onclick="EvaluationSystem.selectYear(this)">
+                                <input type="radio" name="user-year" value="1" class="option-input">
+                                <div class="option-text text-center w-full">ชั้นปีที่ 1</div>
+                            </label>
+                            <label class="option-label m-0 py-3 justify-center" onclick="EvaluationSystem.selectYear(this)">
+                                <input type="radio" name="user-year" value="2" class="option-input">
+                                <div class="option-text text-center w-full">ชั้นปีที่ 2</div>
+                            </label>
+                            <label class="option-label m-0 py-3 justify-center" onclick="EvaluationSystem.selectYear(this)">
+                                <input type="radio" name="user-year" value="3" class="option-input">
+                                <div class="option-text text-center w-full">ชั้นปีที่ 3</div>
+                            </label>
+                            <label class="option-label m-0 py-3 justify-center" onclick="EvaluationSystem.selectYear(this)">
+                                <input type="radio" name="user-year" value="4" class="option-input">
+                                <div class="option-text text-center w-full">ชั้นปีที่ 4 ขึ้นไป</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 mb-6 ml-2">
+                    <div class="w-12 h-12 rounded-full bg-emerald-950/50 border border-emerald-500/50 flex items-center justify-center text-emerald-400 font-bold text-xl">2</div>
+                    <h3 class="text-2xl md:text-3xl font-bold text-white tracking-wide">ส่วนของการทดสอบความรู้</h3>
+                </div>
+
+                <div id="questions-container"></div>
+
+                <div class="mt-10 flex flex-col items-center justify-center gap-4 border-t border-slate-800 pt-10">
+                    <p class="text-slate-400 text-center mb-2">เมื่อตรวจสอบข้อมูลและคำตอบครบถ้วนแล้ว สามารถส่งผลการประเมินได้เลย</p>
+                    <button onclick="EvaluationSystem.promptSubmit()" class="glow-button px-10 py-5 rounded-full font-bold text-xl tracking-wide w-full md:w-auto text-center">
+                        ส่งคำตอบเพื่อดูผลการวิเคราะห์
+                    </button>
+                </div>
+            </div>
+
+            <div id="evaluation-results-container" class="hidden opacity-0 transition-opacity duration-700 pb-20">
+                <div class="text-center mb-10 glass-panel p-8 rounded-2xl border-t-4 border-t-emerald-500">
+                    <h2 class="text-3xl md:text-5xl font-black text-white mb-3 drop-shadow-lg">สรุปผลความเข้าใจของคุณ</h2>
+                    <p class="text-lg text-slate-300 mb-6">ระบบได้ทำการบันทึกข้อมูลและตรวจคำตอบให้เรียบร้อยแล้ว มาดูกันว่าคุณมีพื้นฐานความรู้เรื่องภาษีมากน้อยแค่ไหน</p>
+                    <div class="inline-block bg-black/60 border-2 border-emerald-500/50 rounded-2xl px-10 py-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                        <div class="text-slate-400 font-bold text-sm uppercase tracking-widest mb-2">คะแนนที่คุณทำได้</div>
+                        <div class="text-6xl font-black text-emerald-400 font-mono" id="score-display">0/0</div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-cyan-400 border-b border-slate-700 pb-3">มาดูเฉลยและคำอธิบายแบบเจาะลึกกันเลย</h3>
+                </div>
+
+                <div id="results-breakdown-container"></div>
+
+                <div class="mt-12 flex justify-center">
+                    <button onclick="location.href='index.html'" class="glow-button px-12 py-4 rounded-full font-bold text-xl tracking-wide">
+                        เข้าใจแล้ว กลับหน้าแรกเพื่อเริ่มเกม
+                    </button>
+                </div>
+            </div>
+
+            <div id="admin-dashboard-container" class="hidden opacity-0 transition-opacity duration-700 pb-20">
+                <div class="flex justify-between items-center mb-8 border-b-2 border-rose-500 pb-4">
+                    <div>
+                        <h2 class="text-3xl font-black text-rose-500 drop-shadow-lg">ระบบจัดเก็บข้อมูลการประเมินก่อนเล่น</h2>
+                        <p class="text-slate-400 font-bold mt-1">ข้อมูลผู้ตอบแบบประเมินทั้งหมด</p>
+                    </div>
+                    <button onclick="AdminSystem.closeDashboard()" class="px-6 py-2 rounded-xl bg-slate-800 border border-slate-600 text-slate-300 font-bold hover:text-white transition-all">ปิดและกลับหน้าแรก</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-l-cyan-500 text-center">
+                        <div class="text-slate-400 font-bold text-sm mb-2">จำนวนผู้ทำแบบประเมินทั้งหมด</div>
+                        <div class="text-4xl font-black text-cyan-400" id="admin-total-responses">0</div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-l-emerald-500 text-center">
+                        <div class="text-slate-400 font-bold text-sm mb-2">คะแนนเฉลี่ยโดยรวม</div>
+                        <div class="text-4xl font-black text-emerald-400" id="admin-avg-score">0.0</div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-l-amber-500 text-center">
+                        <div class="text-slate-400 font-bold text-sm mb-2">ข้อที่ตอบผิดบ่อยที่สุด</div>
+                        <div class="text-2xl font-black text-amber-400 mt-2" id="admin-hardest-question">-</div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 border-b border-slate-700 text-cyan-400 font-bold text-sm">
+                                    <th class="p-4 w-12 text-center">ลำดับ</th>
+                                    <th class="p-4">ชื่อผู้ตอบ</th>
+                                    <th class="p-4">คณะ และ ชั้นปี</th>
+                                    <th class="p-4 w-24 text-center">คะแนน</th>
+                                    <th class="p-4 w-40 text-center">วันเวลาที่ส่ง</th>
+                                    <th class="p-4 w-48 text-center">การจัดการระบบ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-responses-list" class="text-slate-300 font-medium text-sm md:text-base">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12 pb-6">
+                <button onclick="AdminSystem.promptLogin()" class="text-slate-600 hover:text-slate-400 text-xs font-bold transition-colors">เข้าสู่ระบบดูคำตอบผู้ดูแล</button>
+            </div>
+            
+        </main>
+    </div>
+
+    <div id="alert-modal" class="fixed inset-0 z-[200] hidden items-center justify-center opacity-0 transition-opacity duration-300 bg-black/80 backdrop-blur-sm">
+        <div class="bg-slate-900 border-2 border-rose-500 p-8 rounded-2xl max-w-md w-full mx-4 shadow-[0_0_50px_rgba(244,63,94,0.3)] transform scale-95 transition-transform duration-300 text-center" id="alert-content">
+            <h3 class="text-3xl font-bold text-rose-500 mb-4">แจ้งเตือนจากระบบ</h3>
+            <p class="text-lg text-slate-300 mb-8 leading-relaxed" id="alert-text">ข้อมูลยังไม่ครบถ้วน</p>
+            <button onclick="EvaluationSystem.closeAlert()" class="w-full py-4 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xl rounded-xl transition-colors">รับทราบและแก้ไข</button>
+        </div>
+    </div>
+
+    <div id="admin-detail-modal" class="fixed inset-0 z-[200] hidden items-center justify-center opacity-0 transition-opacity duration-300 bg-black/90 backdrop-blur-md">
+        <div class="bg-slate-900 border-2 border-cyan-500 rounded-2xl max-w-3xl w-full h-[90vh] mx-4 shadow-[0_0_50px_rgba(6,182,212,0.3)] transform scale-95 transition-transform duration-300 flex flex-col" id="admin-detail-content">
+            <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-950 rounded-t-2xl">
+                <div>
+                    <h3 class="text-2xl font-bold text-cyan-400" id="detail-name">รายละเอียดคำตอบ</h3>
+                    <p class="text-emerald-400 font-bold text-sm mt-2" id="detail-education">คณะ - ชั้นปี</p>
+                    <p class="text-slate-400 text-sm mt-1" id="detail-meta">คะแนน 0/0 ส่งเมื่อ</p>
+                </div>
+                <button onclick="AdminSystem.closeDetailModal()" class="w-12 h-12 rounded-full bg-slate-800 border border-slate-600 text-slate-300 hover:bg-rose-600 hover:text-white hover:border-rose-500 font-bold text-xl flex items-center justify-center transition-all">X</button>
+            </div>
+            <div class="p-6 flex-1 overflow-y-auto scrollbar-hide" id="detail-answers-container">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYOYjBUlf7n5PF5aNsn0pIE78qu7kZmDc",
+            authDomain: "taxopia-8e165.firebaseapp.com",
+            databaseURL: "https://taxopia-8e165-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "taxopia-8e165",
+            storageBucket: "taxopia-8e165.firebasestorage.app",
+            messagingSenderId: "579124241021",
+            appId: "1:579124241021:web:339058cab95ec682ea0714",
+            measurementId: "G-HE09N93JMJ"
+        };
+
+        let firebaseApp;
+        let db;
+
+        if (!firebase.apps.length) {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } else {
+            firebaseApp = firebase.app();
+            db = firebase.database();
+        }
+
+        const EvaluationData = [
+            {
+                question: "บุคคลในข้อใดมีหน้าที่ต้องเสียภาษีเงินได้บุคคลธรรมดา",
+                options: [
+                    "ผู้ที่มีอายุ 20 ปีบริบูรณ์ขึ้นไปทุกคน",
+                    "ผู้ที่มีรายได้ถึงเกณฑ์ที่กฎหมายกำหนด",
+                    "เฉพาะผู้ที่ทำงานในบริษัทเอกชนเท่านั้น",
+                    "เฉพาะข้าราชการและพนักงานรัฐวิสาหกิจ"
+                ],
+                correctIndex: 1,
+                explanation: "ตามหลักการแล้ว หน้าที่ในการเสียภาษีจะเกิดขึ้นก็ต่อเมื่อบุคคลนั้นมีเงินได้พึงประเมินในระหว่างปีภาษีถึงเกณฑ์ขั้นต่ำตามที่กฎหมายระบุข้อบังคับเอาไว้ ไม่ได้ขึ้นอยู่กับอายุหรือสายอาชีพเพียงอย่างเดียว"
+            },
+            {
+                question: "หน่วยงานหลักของรัฐที่มีหน้าที่จัดเก็บภาษีเงินได้บุคคลธรรมดาและภาษีมูลค่าเพิ่ม คือหน่วยงานใด",
+                options: [
+                    "กรมศุลกากร",
+                    "กรมสรรพสามิต",
+                    "กรมสรรพากร",
+                    "กระทรวงพาณิชย์"
+                ],
+                correctIndex: 2,
+                explanation: "กรมสรรพากรเป็นหน่วยงานหลักที่มีหน้าที่โดยตรงในการจัดเก็บภาษีเงินได้และภาษีมูลค่าเพิ่ม เพื่อนำรายได้ส่งเข้าเป็นงบประมาณแผ่นดินในการพัฒนาประเทศ"
+            },
+            {
+                question: "ในการคำนวณภาษีเงินได้บุคคลธรรมดาแบบก้าวหน้า รายได้สุทธิในข้อใดที่ได้รับการยกเว้น ไม่ต้องเสียภาษีในอัตรา 0 เปอร์เซ็นต์",
+                options: [
+                    "50,000 บาทแรก",
+                    "100,000 บาทแรก",
+                    "300,000 บาทแรก",
+                    "150,000 บาทแรก"
+                ],
+                correctIndex: 3,
+                explanation: "หากพิจารณาตามโครงสร้างภาษีในปัจจุบัน รายได้สุทธิตั้งแต่ 1 บาท จนถึง 150,000 บาท จะได้รับการยกเว้นภาษีอย่างสมบูรณ์แบบ ทั้งนี้เพื่อเป็นการช่วยบรรเทาภาระค่าใช้จ่ายพื้นฐานของการดำรงชีวิตของประชาชนทุกคน"
+            },
+            {
+                question: "ในสมการคำนวณภาษี คำว่า เงินได้สุทธิ หมายถึงข้อใด",
+                options: [
+                    "เงินเดือนรวม 12 เดือน หักด้วยประกันสังคมเท่านั้น",
+                    "ยอดเงินคงเหลือในบัญชีธนาคาร ณ วันสิ้นปี",
+                    "รายได้ทั้งหมดรวมกันตลอดทั้งปี",
+                    "รายได้รวม หักด้วยค่าใช้จ่าย และหักด้วยค่าลดหย่อน"
+                ],
+                correctIndex: 3,
+                explanation: "เงินได้สุทธิคือฐานเงินที่แท้จริงที่จะถูกนำไปคูณกับอัตราภาษีก้าวหน้า ซึ่งเกิดจากการนำรายได้ตั้งต้นมาหักลบต้นทุนและสิทธิลดหย่อนออกไปจนครบถ้วนตามที่กฎหมายกำหนด"
+            },
+            {
+                question: "โดยทั่วไป กำหนดการยื่นแบบแสดงรายการภาษีเงินได้บุคคลธรรมดาประจำปี ในรูปแบบกระดาษ จะสิ้นสุดในเดือนใดของปีถัดไป",
+                options: [
+                    "เดือนมกราคม",
+                    "เดือนมีนาคม",
+                    "เดือนพฤษภาคม",
+                    "เดือนธันวาคม"
+                ],
+                correctIndex: 1,
+                explanation: "หากบุคคลดำเนินการยื่นแบบกระดาษที่สำนักงานสรรพากรพื้นที่ กำหนดการจะหมดเขตในวันสิ้นเดือนมีนาคม แต่ในทางกลับกัน ถ้ายื่นระบบออนไลน์ผ่านเว็บไซต์สรรพากร มักจะได้รับการขยายเวลาออกไปจนถึงช่วงต้นเดือนเมษายน"
+            },
+            {
+                question: "รายการค่าใช้จ่ายในข้อใดต่อไปนี้ สามารถนำมาใช้ลดหย่อนภาษีเงินได้บุคคลธรรมดาได้ตามกฎหมาย",
+                options: [
+                    "ค่าปรับจราจร",
+                    "เบี้ยประกันชีวิต ตามเงื่อนไขที่กำหนด",
+                    "ค่าอาหารและอุปกรณ์สัตว์เลี้ยง",
+                    "ค่าสมาชิกฟิตเนส"
+                ],
+                correctIndex: 1,
+                explanation: "รัฐบาลมีนโยบายส่งเสริมให้ประชาชนมีการวางแผนความมั่นคงในชีวิต จึงอนุญาตให้นำค่าเบี้ยประกันชีวิตมาใช้เป็นสิทธิลดหย่อนภาษีได้ตามเงื่อนไข ส่วนค่าใช้จ่ายอื่นๆ ถือเป็นรายจ่ายส่วนตัวที่ไม่สามารถลดหย่อนได้"
+            },
+            {
+                question: "ข้อใดต่อไปนี้ ที่สามารถนำมาใช้เป็นค่าลดหย่อนภาษีเพื่อนำไปหักออกจากรายได้ได้ทั้งหมด",
+                options: [
+                    "กองทุนรวมเพื่อการออม กองทุนรวมเพื่อการเลี้ยงชีพ กองทุนรวมไทยเพื่อความยั่งยืน",
+                    "การทำประกันชีวิต การทำประกันสุขภาพ ค่าผ่อนรถยนต์",
+                    "เงินเข้ากองทุนสำรองเลี้ยงชีพ ซื้อลอตเตอรี่ บริจาคเงินให้วัด",
+                    "บริจาคให้โรงพยาบาลรัฐ จ่ายค่าบริการอินเทอร์เน็ต ซื้อของขวัญปีใหม่"
+                ],
+                correctIndex: 0,
+                explanation: "กองทุนทั้งสามประเภทนี้จัดเป็นหมวดหมู่การลงทุนที่ภาครัฐสนับสนุนอย่างเป็นทางการ ซึ่งสามารถนำมาใช้เป็นสิทธิลดหย่อนภาษีได้จริงตามกฎหมาย ตรงกับกลไกของเกมที่เป็นช่องสีเขียว"
+            },
+            {
+                question: "ค่าใช้จ่ายในข้อใด ไม่สามารถ นำมาใช้สิทธิลดหย่อนภาษีได้ตามกฎหมาย",
+                options: [
+                    "ค่าดูแลพ่อแม่ และ ค่าอุปการะคนพิการ",
+                    "ค่าประกันสุขภาพตัวเอง และ ประกันชีวิตแบบสะสมทรัพย์",
+                    "ค่าซื้อลอตเตอรี่ ค่าผ่อนรถ และ ค่าบริการอินเทอร์เน็ต",
+                    "ดอกเบี้ยบ้าน และ เงินเข้ากองทุนสำรองเลี้ยงชีพ"
+                ],
+                correctIndex: 2,
+                explanation: "ภายในเกมได้มีการใส่ช่องรายจ่ายเหล่านี้ปะปนเอาไว้เพื่อเป็นกลลวงหลอกผู้เล่น เนื่องจากในชีวิตจริง ค่าใช้จ่ายเกี่ยวกับการเสี่ยงโชค ค่ารถ และค่าอินเทอร์เน็ต เป็นรายจ่ายส่วนตัวที่ไม่สามารถนำมาใช้สิทธิลดหย่อนภาษีได้เลย"
+            },
+            {
+                question: "การมีบุตร และ การจดทะเบียนสมรส รายการเหล่านี้ถูกจัดอยู่ในหมวดหมู่ใดของการวางแผนภาษี",
+                options: [
+                    "หมวดรายได้พึงประเมินที่ต้องนำไปบวกเพิ่ม",
+                    "หมวดค่าใช้จ่ายส่วนตัวที่หักภาษีไม่ได้",
+                    "หมวดค่าลดหย่อนส่วนตัวและครอบครัว",
+                    "หมวดภาษีหัก ณ ที่จ่าย"
+                ],
+                correctIndex: 2,
+                explanation: "สิ่งเหล่านี้ถือเป็นสิทธิลดหย่อนขั้นพื้นฐานที่กรมสรรพากรกำหนดขึ้น เพื่อมุ่งหวังที่จะช่วยแบ่งเบาภาระค่าใช้จ่ายในการดูแลอภิบาลสมาชิกในครอบครัวของผู้เสียภาษี"
+            },
+            {
+                question: "การบริจาควัด และ การบริจาคโรงพยาบาลรัฐ ตามกฎหมายภาษีของจริง การบริจาคให้สถานที่ใดมีสิทธิได้รับความคุ้มค่าทางภาษีมากกว่ากัน",
+                options: [
+                    "บริจาคให้วัด ซึ่งได้สิทธิลดหย่อน 2 เท่าของเงินบริจาค",
+                    "บริจาคให้โรงพยาบาลรัฐ ซึ่งได้สิทธิลดหย่อน 2 เท่าของเงินบริจาค",
+                    "ไม่สามารถนำมาลดหย่อนได้ทั้งคู่ เพราะถือเป็นการทำบุญด้วยความสมัครใจ",
+                    "ทั้งสองแห่งมีความคุ้มค่าเท่ากัน คือลดหย่อนได้ 1 เท่าเหมือนกัน"
+                ],
+                correctIndex: 1,
+                explanation: "กฎหมายมีนโยบายสนับสนุนการช่วยเหลือสถานพยาบาลของทางราชการ จึงได้มอบสิทธิพิเศษให้ผู้บริจาคสามารถนำยอดเงินไปหักลดหย่อนได้สูงถึง 2 เท่า แต่มีข้อกำหนดควบคุมไว้ว่ายอดรวมต้องไม่เกิน 10 เปอร์เซ็นต์ของเงินได้สุทธิ"
+            },
+            {
+                question: "การดูแลพ่อแม่ และ ประกันสุขภาพคุณแม่ อายุ 60 ปีขึ้นไปในชีวิตจริง หากต้องการนำค่าใช้จ่ายส่วนนี้มาลดหย่อนภาษี บิดามารดาจะต้องมีอายุเท่าใดขึ้นไป",
+                options: [
+                    "55 ปีบริบูรณ์",
+                    "60 ปีบริบูรณ์",
+                    "50 ปีบริบูรณ์",
+                    "65 ปีบริบูรณ์"
+                ],
+                correctIndex: 1,
+                explanation: "อ้างอิงตามข้อกำหนดของกฎหมายภาษี การจะใช้สิทธิลดหย่อนค่าอุปการะเลี้ยงดูบิดามารดาได้อย่างถูกต้อง ท่านทั้งสองจะต้องมีอายุ 60 ปีบริบูรณ์ขึ้นไป และต้องมีเงินได้รวมทั้งปีไม่เกินเกณฑ์ความยากจนที่กำหนดไว้"
+            },
+            {
+                question: "การจ่ายดอกเบี้ยบ้าน หากผู้เล่นจ่ายดอกเบี้ยเพื่อผ่อนบ้านในชีวิตจริง ค่าใช้จ่ายส่วนนี้ส่งผลอย่างไรต่อการเสียภาษี",
+                options: [
+                    "ไม่สามารถนำมาทำอะไรได้เลย เพราะถือเป็นภาระหนี้สินและค่าใช้จ่ายส่วนตัว",
+                    "สามารถนำมาหักลบออกจากภาษีที่ต้องจ่ายได้โดยตรง หรือเครดิตภาษี",
+                    "สามารถนำมาใช้เป็นค่าลดหย่อนภาษีได้ตามที่จ่ายจริง แต่สูงสุดไม่เกิน 100,000 บาท",
+                    "ต้องนำไปบวกเพิ่มเป็นรายได้ เพื่อนำมาคำนวณภาษีให้สรรพากรเพิ่มเติม"
+                ],
+                correctIndex: 2,
+                explanation: "ตามเจตนารมณ์ของกฎหมายที่ต้องการให้ประชาชนมีที่อยู่อาศัย ผู้เสียภาษีสามารถนำดอกเบี้ยกู้ยืมเพื่อซื้อหรือสร้างที่อยู่อาศัยมาใช้เป็นค่าลดหย่อนได้ตามจำนวนเงินที่จ่ายไปจริง โดยมีการตั้งเพดานสูงสุดไว้ที่ไม่เกิน 100,000 บาทต่อปี"
+            },
+            {
+                question: "เงินเดือนขั้นต่ำ 28,000 บาท ในทางกฎหมายภาษี ตัวเลขเงินเดือนระดับนี้มีความสำคัญอย่างไรสำหรับคนโสดที่ไม่มีค่าลดหย่อนอื่นเพิ่มเติม",
+                options: [
+                    "เป็นเกณฑ์รายได้ที่สรรพากรอนุโลมให้ ไม่ต้องยื่นแบบแสดงรายการภาษีประจำปี",
+                    "เป็นฐานเงินเดือนขั้นต่ำที่กฎหมายอนุญาตให้ซื้อกองทุนเพื่อการออมได้",
+                    "เป็นจุดเริ่มต้นที่ทำให้เงินได้สุทธิทะลุ 150,000 บาทต่อปี และทำให้ต้องเริ่มเสียภาษี",
+                    "เป็นเกณฑ์รายได้ที่บังคับให้บุคคลธรรมดาต้องจดทะเบียนภาษีมูลค่าเพิ่ม"
+                ],
+                correctIndex: 2,
+                explanation: "จากการประเมินทางคณิตศาสตร์ เมื่อนำเงินเดือน 28,000 คูณด้วย 12 เดือน แล้วทำการหักลบค่าใช้จ่ายแบบเหมาจ่ายและค่าลดหย่อนส่วนตัว จะส่งผลให้เหลือเงินได้สุทธิเกินกว่า 150,000 บาทพอดี ซึ่งถือเป็นจุดเริ่มต้นของการก้าวเข้าสู่ฐานภาษี 5 เปอร์เซ็นต์"
+            },
+            {
+                question: "หากมีเงินได้สุทธิหลังหักค่าใช้จ่ายและลดหย่อนของตนเองได้ 700,000 บาท ตามตารางอัตราภาษี ผู้เสียภาษีจะต้องเสียภาษีในอัตราสูงสุด หรือที่เรียกว่าฐานภาษี ที่ร้อยละเท่าใด",
+                options: [
+                    "15 เปอร์เซ็นต์",
+                    "25 เปอร์เซ็นต์",
+                    "20 เปอร์เซ็นต์",
+                    "10 เปอร์เซ็นต์"
+                ],
+                correctIndex: 0,
+                explanation: "จำนวนเงินได้สุทธิที่ระดับ 700,000 บาทนั้น จะตกลงไปอยู่ในช่วงบันไดระหว่าง 500,001 บาท ถึง 750,000 บาท ซึ่งเมื่อนำไปเปรียบเทียบตามตารางโครงสร้างภาษีแล้ว จะต้องเสียภาษีในส่วนนี้ที่อัตรา 15 เปอร์เซ็นต์"
+            },
+            {
+                question: "จากกฎการคำนวณภาษี เงินได้สุทธิช่วงใดที่ได้รับสิทธิยกเว้นภาษี หรือคิดเป็นการเสียภาษี 0 เปอร์เซ็นต์",
+                options: [
+                    "1 ถึง 100,000 บาท",
+                    "1 ถึง 150,000 บาท",
+                    "150,001 ถึง 300,000 บาท",
+                    "300,001 ถึง 500,000 บาท"
+                ],
+                correctIndex: 1,
+                explanation: "ช่วงรายได้จำนวน 1 ถึง 150,000 บาทแรกนี้จะได้รับการละเว้นภาษี ซึ่งสามารถตรวจสอบโครงสร้างเหล่านี้ได้อย่างละเอียดจากข้อมูลของกรมสรรพากร เพื่อเป็นการลดภาระให้แก่ประชาชนทุกคน"
+            }
+        ];
+
+        const EvaluationSystem = {
+            userAnswers: {},
+
+            init() {
+                this.renderQuestions();
+            },
+
+            selectYear(element) {
+                const group = document.getElementById('year-selection-group');
+                const labels = group.querySelectorAll('.option-label');
+                labels.forEach(label => {
+                    label.classList.remove('selected', 'bg-cyan-900/30', 'border-cyan-400');
+                    label.classList.add('bg-black/60', 'border-slate-700/80');
+                    label.querySelector('.option-text').classList.remove('text-cyan-400', 'font-bold');
+                });
+
+                element.classList.add('selected', 'bg-cyan-900/30', 'border-cyan-400');
+                element.classList.remove('bg-black/60', 'border-slate-700/80');
+                element.querySelector('.option-text').classList.add('text-cyan-400', 'font-bold');
+            },
+
+            renderQuestions() {
+                const container = document.getElementById('questions-container');
+                container.innerHTML = '';
+
+                EvaluationData.forEach((q, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'question-card';
+                    card.id = `question-card-${index}`;
+
+                    const headerHtml = `
+                        <div class="mb-5">
+                            <span class="inline-block px-4 py-1.5 rounded-full border border-cyan-500/50 bg-cyan-950/30 text-cyan-400 font-bold text-sm tracking-widest mb-3">
+                                ข้อที่ ${index + 1}
+                            </span>
+                            <h3 class="text-xl md:text-2xl font-bold text-white leading-relaxed">
+                                ${q.question}
+                            </h3>
+                        </div>
+                        <div class="options-group flex flex-col gap-2" id="options-group-${index}">
+                    `;
+
+                    let optionsHtml = '';
+                    q.options.forEach((opt, optIndex) => {
+                        optionsHtml += `
+                            <label class="option-label" id="label-${index}-${optIndex}">
+                                <input type="radio" name="question-${index}" value="${optIndex}" class="option-input" onchange="EvaluationSystem.selectOption(${index}, ${optIndex})">
+                                <div class="option-custom-box"></div>
+                                <div class="option-text">${opt}</div>
+                            </label>
+                        `;
+                    });
+
+                    card.innerHTML = headerHtml + optionsHtml + `</div>`;
+                    container.appendChild(card);
+                });
+            },
+
+            selectOption(qIndex, optIndex) {
+                this.userAnswers[qIndex] = optIndex;
+                const group = document.getElementById(`options-group-${qIndex}`);
+                const labels = group.querySelectorAll('.option-label');
+                labels.forEach(label => label.classList.remove('selected'));
+                const selectedLabel = document.getElementById(`label-${qIndex}-${optIndex}`);
+                selectedLabel.classList.add('selected');
+            },
+
+            showAlert(message) {
+                const modal = document.getElementById('alert-modal');
+                const content = document.getElementById('alert-content');
+                document.getElementById('alert-text').textContent = message;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                    content.classList.add('scale-100');
+                }, 10);
+            },
+
+            closeAlert() {
+                const modal = document.getElementById('alert-modal');
+                const content = document.getElementById('alert-content');
+                modal.classList.add('opacity-0');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            },
+
+            promptSubmit() {
+                const nameInput = document.getElementById('user-fullname').value.trim();
+                const facultyInput = document.getElementById('user-faculty').value.trim();
+                const yearInput = document.querySelector('input[name="user-year"]:checked');
+
+                if (!nameInput || !facultyInput || !yearInput) {
+                    this.showAlert("โปรดระบุข้อมูลส่วนตัวให้ครบถ้วน ทั้งชื่อ คณะ และชั้นปี ก่อนส่งคำตอบนะครับ");
+                    return;
+                }
+
+                const totalQuestions = EvaluationData.length;
+                const answeredQuestions = Object.keys(this.userAnswers).length;
+
+                if (answeredQuestions < totalQuestions) {
+                    this.showAlert("โปรดตอบคำถามให้ครบทุกข้อก่อนกดส่ง เพื่อให้ระบบประมวลผลได้อย่างแม่นยำครับ");
+                    return;
+                }
+
+                this.processSubmission(nameInput, facultyInput, yearInput.value);
+            },
+
+            processSubmission(name, faculty, year) {
+                let score = 0;
+                EvaluationData.forEach((q, index) => {
+                    if (this.userAnswers[index] === q.correctIndex) {
+                        score++;
+                    }
+                });
+
+                const submissionData = {
+                    name: name,
+                    faculty: faculty,
+                    year: year,
+                    score: score,
+                    total: EvaluationData.length,
+                    answers: this.userAnswers,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                const newRef = db.ref('preevaluations').push();
+                newRef.set(submissionData).then(() => {
+                    this.showResults(score);
+                }).catch((error) => {
+                    alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล ลองใหม่อีกครั้งนะครับ');
+                    console.error(error);
+                });
+            },
+
+            showResults(score) {
+                const formContainer = document.getElementById('evaluation-form-container');
+                const resultsContainer = document.getElementById('evaluation-results-container');
+                
+                formContainer.classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    formContainer.classList.add('hidden');
+                    this.renderResultsBreakdown();
+                    
+                    document.getElementById('score-display').textContent = `${score}/${EvaluationData.length}`;
+                    
+                    resultsContainer.classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    setTimeout(() => {
+                        resultsContainer.classList.remove('opacity-0');
+                    }, 50);
+                }, 700);
+            },
+
+            renderResultsBreakdown() {
+                const container = document.getElementById('results-breakdown-container');
+                container.innerHTML = '';
+
+                EvaluationData.forEach((q, index) => {
+                    const userAnswer = this.userAnswers[index];
+                    const isCorrect = userAnswer === q.correctIndex;
+                    
+                    const card = document.createElement('div');
+                    card.className = `result-card ${isCorrect ? 'correct' : 'incorrect'}`;
+
+                    let statusBadge = isCorrect
+                        ? `<span class="inline-block px-4 py-1.5 rounded-full bg-emerald-950/50 text-emerald-400 font-bold border border-emerald-500/50 mb-4 tracking-wide text-sm">[ ตอบได้ถูกต้อง ]</span>`
+                        : `<span class="inline-block px-4 py-1.5 rounded-full bg-rose-950/50 text-rose-400 font-bold border border-rose-500/50 mb-4 tracking-wide text-sm">[ ยังไม่ถูกต้อง ]</span>`;
+
+                    let optionsReview = `<div class="mt-5 flex flex-col gap-2">`;
+                    q.options.forEach((opt, optIndex) => {
+                        let rowClass = "p-4 rounded-xl border border-slate-700/50 bg-black/40 text-slate-400 text-lg";
+                        let iconText = "";
+                        
+                        if (optIndex === q.correctIndex) {
+                            rowClass = "p-4 rounded-xl border-2 border-emerald-500 bg-emerald-950/30 text-emerald-300 font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)] text-lg";
+                            iconText = `<span class="float-right text-emerald-400">คำตอบที่ถูก</span>`;
+                        } else if (optIndex === userAnswer && !isCorrect) {
+                            rowClass = "p-4 rounded-xl border-2 border-rose-500 bg-rose-950/30 text-rose-300 font-bold shadow-[0_0_15px_rgba(244,63,94,0.2)] text-lg";
+                            iconText = `<span class="float-right text-rose-400">ที่คุณเลือก</span>`;
+                        }
+
+                        optionsReview += `<div class="${rowClass}">${opt} ${iconText}</div>`;
+                    });
+                    optionsReview += `</div>`;
+
+                    card.innerHTML = `
+                        ${statusBadge}
+                        <h4 class="text-xl md:text-2xl font-bold text-white leading-relaxed">
+                            <strong class="text-cyan-400">ข้อที่ ${index + 1}:</strong> ${q.question}
+                        </h4>
+                        ${optionsReview}
+                        <div class="explanation-box">
+                            <h5 class="text-lg font-bold text-amber-400 mb-2">คำอธิบายเพิ่มเติม</h5>
+                            <p class="text-slate-300 leading-relaxed text-base md:text-lg">
+                                ${q.explanation}
+                            </p>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+            }
+        };
+
+        const AdminSystem = {
+            allResponses: [],
+
+            promptLogin() {
+                const pwd = prompt("ระบุรหัสผ่านเพื่อเข้าสู่ระบบจัดเก็บข้อมูล");
+                if(pwd !== null && btoa(pwd) === "NDE2OA==") {
+                    this.loadDashboard();
+                } else if (pwd !== null) {
+                    alert("รหัสผ่านไม่ถูกต้อง การเข้าถึงถูกปฏิเสธ");
+                }
+            },
+
+            loadDashboard() {
+                const formContainer = document.getElementById('evaluation-form-container');
+                const resultsContainer = document.getElementById('evaluation-results-container');
+                const adminContainer = document.getElementById('admin-dashboard-container');
+
+                formContainer.classList.add('hidden');
+                resultsContainer.classList.add('hidden');
+                
+                adminContainer.classList.remove('hidden');
+                setTimeout(() => adminContainer.classList.remove('opacity-0'), 50);
+
+                db.ref('preevaluations').on('value', (snapshot) => {
+                    this.allResponses = [];
+                    const data = snapshot.val();
+                    if(data) {
+                        Object.keys(data).forEach(key => {
+                            this.allResponses.push({
+                                id: key,
+                                ...data[key]
+                            });
+                        });
+                        this.allResponses.sort((a, b) => b.timestamp - a.timestamp);
+                    }
+                    this.renderDashboard();
+                });
+            },
+
+            closeDashboard() {
+                db.ref('preevaluations').off();
+                const adminContainer = document.getElementById('admin-dashboard-container');
+                const formContainer = document.getElementById('evaluation-form-container');
+
+                adminContainer.classList.add('opacity-0');
+                setTimeout(() => {
+                    adminContainer.classList.add('hidden');
+                    formContainer.classList.remove('hidden');
+                    setTimeout(() => formContainer.classList.remove('opacity-0'), 50);
+                }, 500);
+            },
+
+            renderDashboard() {
+                const listEl = document.getElementById('admin-responses-list');
+                listEl.innerHTML = '';
+
+                let totalScore = 0;
+                let questionErrors = new Array(EvaluationData.length).fill(0);
+
+                document.getElementById('admin-total-responses').textContent = this.allResponses.length;
+
+                if(this.allResponses.length === 0) {
+                    listEl.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-500">ยังไม่มีข้อมูลผู้ทำแบบประเมินในระบบ</td></tr>';
+                    document.getElementById('admin-avg-score').textContent = "0.0";
+                    document.getElementById('admin-hardest-question').textContent = "-";
+                    return;
+                }
+
+                this.allResponses.forEach((res, idx) => {
+                    totalScore += res.score;
+                    
+                    EvaluationData.forEach((q, qIdx) => {
+                        if(res.answers[qIdx] !== q.correctIndex) {
+                            questionErrors[qIdx]++;
+                        }
+                    });
+
+                    const date = new Date(res.timestamp);
+                    const timeStr = `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+                    const facultyText = res.faculty || "ไม่ได้ระบุคณะ";
+                    const yearText = res.year ? `ชั้นปีที่ ${res.year}` : "ไม่ได้ระบุชั้นปี";
+
+                    listEl.innerHTML += `
+                        <tr class="border-b border-slate-700/50 admin-row transition-colors">
+                            <td class="p-4 text-center">${this.allResponses.length - idx}</td>
+                            <td class="p-4 text-white font-bold">${res.name}</td>
+                            <td class="p-4 text-cyan-300">${facultyText}<br><span class="text-xs text-slate-400">${yearText}</span></td>
+                            <td class="p-4 text-center text-emerald-400 font-bold text-lg">${res.score}/${res.total}</td>
+                            <td class="p-4 text-center text-slate-400 text-sm">${timeStr}</td>
+                            <td class="p-4 flex gap-2 justify-center items-center h-full pt-4">
+                                <button onclick="AdminSystem.viewDetails('${res.id}')" class="px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700 text-cyan-300 font-bold rounded-lg text-sm border border-cyan-700 transition-colors flex-1">ตรวจคำตอบ</button>
+                                <button onclick="AdminSystem.deleteResponse('${res.id}', '${res.name}')" class="px-4 py-2 bg-rose-900/50 hover:bg-rose-700 text-rose-300 font-bold rounded-lg text-sm border border-rose-700 transition-colors flex-1">ลบข้อมูล</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                const avg = (totalScore / this.allResponses.length).toFixed(1);
+                document.getElementById('admin-avg-score').textContent = avg;
+
+                let maxErrors = -1;
+                let hardestQ = -1;
+                questionErrors.forEach((errCount, idx) => {
+                    if(errCount > maxErrors) {
+                        maxErrors = errCount;
+                        hardestQ = idx;
+                    }
+                });
+
+                if(maxErrors > 0) {
+                    document.getElementById('admin-hardest-question').textContent = `ข้อ ${hardestQ + 1} (ผิด ${maxErrors} คน)`;
+                } else {
+                    document.getElementById('admin-hardest-question').textContent = "ไม่มี";
+                }
+            },
+
+            viewDetails(id) {
+                const res = this.allResponses.find(x => x.id === id);
+                if(!res) return;
+
+                document.getElementById('detail-name').textContent = res.name;
+                const facultyText = res.faculty || "ไม่ได้ระบุคณะ";
+                const yearText = res.year ? `ชั้นปีที่ ${res.year}` : "ไม่ได้ระบุชั้นปี";
+                document.getElementById('detail-education').textContent = `${facultyText} - ${yearText}`;
+
+                const date = new Date(res.timestamp);
+                const timeStr = `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+                document.getElementById('detail-meta').textContent = `ได้คะแนน ${res.score}/${res.total} ส่งเมื่อ ${timeStr}`;
+
+                const container = document.getElementById('detail-answers-container');
+                container.innerHTML = '';
+
+                EvaluationData.forEach((q, idx) => {
+                    const uAns = res.answers[idx];
+                    const isCorrect = uAns === q.correctIndex;
+                    
+                    let bgClass = isCorrect ? 'bg-emerald-950/20 border-emerald-900/50' : 'bg-rose-950/20 border-rose-900/50';
+                    let textClass = isCorrect ? 'text-emerald-400' : 'text-rose-400';
+                    let icon = isCorrect ? '[ ถูก ]' : '[ ผิด ]';
+
+                    let uAnsText = q.options[uAns] !== undefined ? q.options[uAns] : "ไม่ได้ตอบ";
+                    let cAnsText = q.options[q.correctIndex];
+
+                    container.innerHTML += `
+                        <div class="mb-4 p-4 rounded-xl border ${bgClass}">
+                            <div class="font-bold text-slate-300 mb-2 text-lg">ข้อ ${idx + 1}: ${q.question}</div>
+                            <div class="flex flex-col gap-2 text-base">
+                                <div class="${textClass} font-bold">${icon} ตอบ: ${uAnsText}</div>
+                                ${!isCorrect ? `<div class="text-emerald-400 font-bold">[ เฉลย ] ${cAnsText}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                const modal = document.getElementById('admin-detail-modal');
+                const content = document.getElementById('admin-detail-content');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                    content.classList.add('scale-100');
+                }, 10);
+            },
+
+            closeDetailModal() {
+                const modal = document.getElementById('admin-detail-modal');
+                const content = document.getElementById('admin-detail-content');
+                modal.classList.add('opacity-0');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            },
+
+            deleteResponse(id, name) {
+                if (confirm(`คุณต้องการที่จะลบข้อมูลการประเมินของ ${name} ออกจากระบบฐานข้อมูลอย่างถาวรใช่หรือไม่ ข้อมูลที่ถูกลบจะไม่สามารถกู้คืนได้อีก`)) {
+                    db.ref('preevaluations/' + id).remove()
+                        .then(() => {
+                            alert(`ดำเนินการลบข้อมูลของ ${name} ออกจากระบบฐานข้อมูลเรียบร้อยแล้วครับ`);
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            alert(`ระบบเกิดปัญหาขัดข้อง ไม่สามารถลบข้อมูลได้ในขณะนี้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองใหม่อีกครั้งนะครับ`);
+                        });
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            EvaluationSystem.init();
+        });
+    </script>
+</body>
+</html>
