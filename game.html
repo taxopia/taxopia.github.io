@@ -1620,7 +1620,7 @@
                     { id: 'f1', title: 'จดทะเบียนสมรส', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', desc: 'จดทะเบียนสมรสตามกฎหมาย ได้สิทธิลดหย่อนภาษีเพิ่มเติม' },
                     { id: 'f2', title: 'มีลูกคนแรก', cost: 80000, deduct: 30000, typeTag: 'ครอบครัว', desc: 'ค่าใช้จ่ายในการเลี้ยงดูบุตร สามารถนำมาลดหย่อนภาษีได้' },
                     { id: 'f3', title: 'อุปการะคนพิการ', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', stack: true, desc: 'ดูแลผู้พิการ ได้รับสิทธิลดหย่อนภาษีเพิ่มเติม' },
-                    { id: 'f4', title: 'ดูแลพ่อแม่', cost: 15000, deduct: 30000, typeTag: 'ครอบครัว', stack: true, max: 2, desc: 'ดูแลพ่อแม่ ลดหย่อนได้ 30000 บาท สามารถสะสมได้สูงสุด 2 สิทธิ รวมเป็น 60000 บาท' }
+                    { id: 'f4', title: 'ดูแลพ่อแม่', cost: 15000, deduct: 15000, typeTag: 'ครอบครัว', desc: 'ดูแลพ่อแม่ ลดหย่อนได้ 15,000 บาท และจะถูกหักค่าดูแลพ่อแม่ 5,000 บาทจากเงินเดือนทุกรอบ ซื้อได้ครั้งเดียว' }
                 ]},
                 Insurance: { color: '#ec4899', items: [
                     { id: 'i1', title: 'ประกันสุขภาพตนเอง', cost: 15000, deduct: 15000, shield: 'self', stack: false, typeTag: 'ประกัน', desc: 'ซื้อประกันสุขภาพให้ตัวเอง ลดหย่อนภาษีได้ 15000 บาท และยังใช้ป้องกันการเสียเงินเมื่อตกช่องอุบัติเหตุได้ด้วย ซื้อได้แค่ครั้งเดียว' },
@@ -2783,17 +2783,32 @@
                                     let childDeductTotal = p._paydayChildDeducted || 0;
                                     let parentDeductTotal = p._paydayParentDeducted || 0;
                                     let actualReceived = (DBConfig.MONTHLY_SALARY * payDaysCrossed) - childDeductTotal - parentDeductTotal;
-                                    let parentText = hasParentWalkThru ? ' หักค่าดูแลพ่อแม่ 5,000' : '';
-                                    let childText = hasChildWalkThru ? ' หักค่าเลี้ยงดูบุตร 5,000' : '';
-                                    let perRoundNet = DBConfig.MONTHLY_SALARY - (hasChildWalkThru ? 5000 : 0) - (hasParentWalkThru ? 5000 : 0);
+                                    let perRoundNet = DBConfig.MONTHLY_SALARY - (hasParentWalkThru ? 5000 : 0) - (hasChildWalkThru ? 5000 : 0);
                                     ActionLog.add(`${p.name} ได้รับเงินเดือนจากการเดินผ่าน ฿${actualReceived.toLocaleString()}`, '#34d399');
+                                    let walkFinancials = [
+                                        {label: "เงินเดือนเต็ม", val: 28000, color: "#34d399"},
+                                        {label: "หักประกันสังคม", val: 750, color: "#ef4444"},
+                                        {label: "หักภาษี ณ ที่จ่าย", val: 250, color: "#ef4444"}
+                                    ];
+                                    if(hasParentWalkThru) {
+                                        walkFinancials.push({label: "หักค่าดูแลพ่อแม่", val: 5000, color: "#ef4444"});
+                                    }
+                                    if(hasChildWalkThru) {
+                                        walkFinancials.push({label: "หักค่าเลี้ยงดูบุตร", val: 5000, color: "#ef4444"});
+                                    }
+                                    walkFinancials.push({label: "เงินเดือนสุทธิต่อรอบ", val: perRoundNet, color: "#34d399"});
+                                    if(payDaysCrossed > 1) {
+                                        walkFinancials.push({label: `รวม ${payDaysCrossed} รอบ ได้รับทั้งหมด`, val: actualReceived, color: "#34d399"});
+                                    }
+                                    let parentDescWalk = hasParentWalkThru ? ' หักค่าดูแลพ่อแม่ 5,000 บาท' : '';
+                                    let childDescWalk = hasChildWalkThru ? ' หักค่าเลี้ยงดูบุตร 5,000 บาท' : '';
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "เงินเดือนเข้า",
                                         title: "รับเงินเดือน",
-                                        desc: `คุณเดินผ่านช่องเงินเดือนหรือจุดเริ่มต้น ได้รับเงินเดือน ${payDaysCrossed} รอบ (เงินเดือน 28,000 หักประกันสังคม 750 หักณที่จ่าย 250${parentText}${childText} เหลือสุทธิ ${perRoundNet.toLocaleString()} บาท)`,
+                                        desc: `คุณเดินผ่านช่องเงินเดือนหรือจุดเริ่มต้น ได้รับเงินเดือน ${payDaysCrossed} รอบ (เงินเดือน 28,000 บาท หักประกันสังคม 750 บาท หักภาษี ณ ที่จ่าย 250 บาท${parentDescWalk}${childDescWalk} เหลือสุทธิ ${perRoundNet.toLocaleString()} บาท)`,
                                         colorHex: "#10b981",
                                         icon: "$",
-                                        financials: [{label:"รวมเงินที่ได้รับ", val: actualReceived, color:"#34d399"}],
+                                        financials: walkFinancials,
                                         btnText: "ตกลง"
                                     });
                                     p._paydayChildDeducted = 0;
