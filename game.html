@@ -1607,7 +1607,7 @@
                     };
 
             const DBConfig = {
-                TOTAL_TILES: 40, LAPS_TO_WIN: 3, BASE_SALARY: 336000, MONTHLY_SALARY: 22000
+                TOTAL_TILES: 40, LAPS_TO_WIN: 3, BASE_SALARY: 336000, MONTHLY_SALARY: 27000
             };
             
             // Flag: ใช้ใน multiplayer เพื่อบอกว่ากำลังรอ popup ปิดอยู่ → ห้ามคืนปุ่มทอย
@@ -1717,7 +1717,7 @@
                     this.colors = { 1: '#3b82f6', 2: '#f43f5e', 3: '#10b981', 4: '#f59e0b' };
                     this.color = this.colors[id];
                     this.pos = 0;
-                    this.cash = 22000;
+                    this.cash = 27000;
                     this.extraIncome = 0;
                     this.laps = 0;
                     this.skip = false;
@@ -2723,11 +2723,15 @@
                                     if((BoardMap[p.pos].type === 'payday' || p.pos === 0) && p.laps <= DBConfig.LAPS_TO_WIN) {
                                         if (!isLastStep || reachedEnd) {
                                             let hasChildForPayday = p.inventory.some(c => c.id === 'f2');
+                                            let hasParentCareForPayday = p.inventory.some(c => c.id === 'f4');
                                             let childDeduct = hasChildForPayday ? 5000 : 0;
-                                            p.cash += (DBConfig.MONTHLY_SALARY - childDeduct);
+                                            let parentDeduct = hasParentCareForPayday ? 5000 : 0;
+                                            p.cash += (DBConfig.MONTHLY_SALARY - childDeduct - parentDeduct);
                                             payDaysCrossed++;
                                             if(!p._paydayChildDeducted) p._paydayChildDeducted = 0;
+                                            if(!p._paydayParentDeducted) p._paydayParentDeducted = 0;
                                             p._paydayChildDeducted += childDeduct;
+                                            p._paydayParentDeducted += parentDeduct;
                                         }
                                     }
                                     
@@ -2775,20 +2779,25 @@
 
                                 if(payDaysCrossed > 0) {
                                     let hasChildWalkThru = p.inventory.some(c => c.id === 'f2');
+                                    let hasParentWalkThru = p.inventory.some(c => c.id === 'f4');
                                     let childDeductTotal = p._paydayChildDeducted || 0;
-                                    let actualReceived = (DBConfig.MONTHLY_SALARY * payDaysCrossed) - childDeductTotal;
-                                    let childText = hasChildWalkThru ? ' และหักค่าเลี้ยงดูบุตร 5,000' : '';
+                                    let parentDeductTotal = p._paydayParentDeducted || 0;
+                                    let actualReceived = (DBConfig.MONTHLY_SALARY * payDaysCrossed) - childDeductTotal - parentDeductTotal;
+                                    let parentText = hasParentWalkThru ? ' หักค่าดูแลพ่อแม่ 5,000' : '';
+                                    let childText = hasChildWalkThru ? ' หักค่าเลี้ยงดูบุตร 5,000' : '';
+                                    let perRoundNet = DBConfig.MONTHLY_SALARY - (hasChildWalkThru ? 5000 : 0) - (hasParentWalkThru ? 5000 : 0);
                                     ActionLog.add(`${p.name} ได้รับเงินเดือนจากการเดินผ่าน ฿${actualReceived.toLocaleString()}`, '#34d399');
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "เงินเดือนเข้า",
                                         title: "รับเงินเดือน",
-                                        desc: `คุณเดินผ่านช่องเงินเดือนหรือจุดเริ่มต้น ได้รับเงินเดือน ${payDaysCrossed} รอบ (เงินเดือน 28,000 หักประกันสังคม 750 หักณที่จ่าย 250 หักค่าดูแลพ่อแม่ 5,000${childText} เหลือสุทธิ ${(DBConfig.MONTHLY_SALARY - (hasChildWalkThru ? 5000 : 0)).toLocaleString()} บาท)`,
+                                        desc: `คุณเดินผ่านช่องเงินเดือนหรือจุดเริ่มต้น ได้รับเงินเดือน ${payDaysCrossed} รอบ (เงินเดือน 28,000 หักประกันสังคม 750 หักณที่จ่าย 250${parentText}${childText} เหลือสุทธิ ${perRoundNet.toLocaleString()} บาท)`,
                                         colorHex: "#10b981",
                                         icon: "$",
                                         financials: [{label:"รวมเงินที่ได้รับ", val: actualReceived, color:"#34d399"}],
                                         btnText: "ตกลง"
                                     });
                                     p._paydayChildDeducted = 0;
+                                    p._paydayParentDeducted = 0;
                                 }
                                 
                                 if(window.roomId) {
@@ -3105,8 +3114,10 @@
                                 }
                                 else if(tile.type === 'payday' || (tile.type === 'system' && tile.id === 0)) {
                                     let hasChildPayday = p.inventory.some(c => c.id === 'f2');
+                                    let hasParentPayday = p.inventory.some(c => c.id === 'f4');
                                     let childDeductPayday = hasChildPayday ? 5000 : 0;
-                                    let netSalary = DBConfig.MONTHLY_SALARY - childDeductPayday;
+                                    let parentDeductPayday = hasParentPayday ? 5000 : 0;
+                                    let netSalary = DBConfig.MONTHLY_SALARY - childDeductPayday - parentDeductPayday;
                                     p.cash += netSalary;
                                     ActionLog.add(`${p.name} ได้รับเงินเดือน ฿${netSalary.toLocaleString()}`, '#34d399');
                                     AudioEngine.playCoin();
@@ -3114,18 +3125,21 @@
                                     let paydayFinancials = [
                                         {label: "เงินเดือนเต็ม", val: 28000, color: "#34d399"},
                                         {label: "หักประกันสังคม", val: 750, color: "#ef4444"},
-                                        {label: "หักภาษี ณ ที่จ่าย", val: 250, color: "#ef4444"},
-                                        {label: "หักค่าดูแลพ่อแม่", val: 5000, color: "#ef4444"}
+                                        {label: "หักภาษี ณ ที่จ่าย", val: 250, color: "#ef4444"}
                                     ];
+                                    if(hasParentPayday) {
+                                        paydayFinancials.push({label: "หักค่าดูแลพ่อแม่", val: 5000, color: "#ef4444"});
+                                    }
                                     if(hasChildPayday) {
                                         paydayFinancials.push({label: "หักค่าเลี้ยงดูบุตร", val: 5000, color: "#ef4444"});
                                     }
                                     paydayFinancials.push({label: "เงินเดือนสุทธิที่ได้รับ", val: netSalary, color: "#34d399"});
+                                    let parentDescPayday = hasParentPayday ? ' หักค่าดูแลพ่อแม่ 5,000 บาท' : '';
                                     let childDescPayday = hasChildPayday ? ' หักค่าเลี้ยงดูบุตร 5,000 บาท' : '';
                                     await UIEngine.triggerEventModal({
                                         headerTitle: "ได้เงินเดือน",
                                         title: tile.label,
-                                        desc: `คุณได้รับเงินเดือน 28,000 บาท แต่ถูกหักประกันสังคม 750 บาท หักภาษี ณ ที่จ่าย 250 บาท หักค่าดูแลพ่อแม่ 5,000 บาท${childDescPayday} จึงเหลือเงินเดือนสุทธิ ${netSalary.toLocaleString()} บาท`,
+                                        desc: `คุณได้รับเงินเดือน 28,000 บาท แต่ถูกหักประกันสังคม 750 บาท หักภาษี ณ ที่จ่าย 250 บาท${parentDescPayday}${childDescPayday} จึงเหลือเงินเดือนสุทธิ ${netSalary.toLocaleString()} บาท`,
                                         colorHex: "#f59e0b",
                                         icon: "$",
                                         financials: paydayFinancials,
