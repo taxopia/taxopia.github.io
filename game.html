@@ -13,19 +13,27 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800;900&display=swap');
 
-        body {
-            position: fixed;
+        html {
             width: 100%;
             height: 100%;
-            touch-action: none;
+            background-color: #082f49;
+            overflow: hidden;
+        }
+
+        body {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             margin: 0;
+            padding: 0;
             overflow: hidden;
             background: radial-gradient(circle at 50% 0%, #38bdf8 0%, #0284c7 50%, #082f49 100%);
             font-family: Kanit, sans-serif;
             color: #1e293b;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none;
+            overscroll-behavior: none;
         }
 
         .bg-grid-pattern {
@@ -715,12 +723,14 @@
     
     <main id="screen-game" class="absolute inset-0 z-10 overflow-hidden flex items-center justify-center hidden opacity-0 transition-opacity duration-1000">
         
-        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 z-[300] flex gap-2 pt-2">
-            <button onclick="SysMenu.open()" class="px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-white/90 backdrop-blur-sm border-2 md:border-4 border-slate-200 text-slate-600 font-black text-[0.65rem] md:text-xs hover:border-sky-400 hover:text-sky-500 transition-all shadow-md active:translate-y-1">ตั้งค่า</button>
-            <button onclick="AdminSystem.prompt()" class="px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-white/90 backdrop-blur-sm border-2 md:border-4 border-rose-200 text-rose-500 font-black text-[0.65rem] md:text-xs hover:bg-rose-50 hover:border-rose-400 transition-all shadow-md active:translate-y-1">ผู้ดูแล</button>
-            <div id="room-id-badge" class="px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-indigo-50/90 backdrop-blur-sm border-2 md:border-4 border-indigo-200 text-indigo-600 font-black text-[0.65rem] md:text-xs shadow-md flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-inner"></div>
-                <span id="room-id-display" class="truncate max-w-[80px] sm:max-w-none">กำลังประมวลผล</span>
+        <div class="absolute top-0 left-0 w-full z-[300] flex flex-wrap justify-center items-start gap-1.5 md:gap-2 pt-2 px-2 pointer-events-none">
+                    <button onclick="SysMenu.open()" class="pointer-events-auto px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-white/90 backdrop-blur-sm border-2 md:border-4 border-slate-200 text-slate-600 font-black text-[0.65rem] md:text-xs hover:border-sky-400 hover:text-sky-500 transition-all shadow-md active:translate-y-1">ตั้งค่า</button>
+                    <button onclick="AdminSystem.prompt()" class="pointer-events-auto px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-white/90 backdrop-blur-sm border-2 md:border-4 border-rose-200 text-rose-500 font-black text-[0.65rem] md:text-xs hover:bg-rose-50 hover:border-rose-400 transition-all shadow-md active:translate-y-1">ผู้ดูแล</button>
+                    <div id="room-id-badge" class="pointer-events-auto px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-indigo-50/90 backdrop-blur-sm border-2 md:border-4 border-indigo-200 text-indigo-600 font-black text-[0.65rem] md:text-xs shadow-md flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-inner"></div>
+                        <span id="room-id-display" class="truncate max-w-[80px] sm:max-w-none">กำลังประมวลผล</span>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -750,9 +760,9 @@
             <div id="pawn-container" class="absolute inset-0 pointer-events-none z-[50]"></div>
         </div>
         
-        <div id="hud-1" class="player-hud top-[5vh] left-[2vw] lg:top-8 lg:left-8 hidden glass-panel rounded-xl p-2 md:p-3 border-[3px] md:border-4 w-[46vw] md:w-[160px] lg:w-[240px]" style="border-color: #3b82f6;">
+        <div id="hud-1" class="player-hud top-[2vh] left-[2vw] lg:top-4 lg:left-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #3b82f6;">
             <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2">
-                <div class="w-8 h-8 lg:w-12 lg:h-12 rounded-full flex items-center justify-center font-black text-white text-sm lg:text-xl shadow-[0_4px_10px_rgba(59,130,246,0.5)] border-[3px] border-white" style="background: linear-gradient(135deg, #60a5fa, #2563eb);">P1</div>
+                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(59,130,246,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #60a5fa, #2563eb);">P1</div>
                 <div class="flex-1 min-w-0">
                     <div id="name-1" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
                     <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-1">รอบที่ 0</div>
@@ -771,9 +781,9 @@
             <button onclick="UIEngine.openInventory(1)" class="w-full bg-white hover:bg-slate-50 rounded-lg text-[0.65rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
         </div>
         
-        <div id="hud-2" class="player-hud top-[5vh] right-[2vw] lg:top-8 lg:right-8 hidden glass-panel rounded-xl p-2 md:p-3 border-[3px] md:border-4 w-[46vw] md:w-[160px] lg:w-[240px]" style="border-color: #f43f5e;">
+        <div id="hud-2" class="player-hud top-[2vh] right-[2vw] lg:top-4 lg:right-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #f43f5e;">
             <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2 flex-row-reverse text-right">
-                <div class="w-8 h-8 lg:w-12 lg:h-12 rounded-full flex items-center justify-center font-black text-white text-sm lg:text-xl shadow-[0_4px_10px_rgba(244,63,94,0.5)] border-[3px] border-white" style="background: linear-gradient(135deg, #fb7185, #e11d48);">P2</div>
+                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(244,63,94,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #fb7185, #e11d48);">P2</div>
                 <div class="flex-1 min-w-0">
                     <div id="name-2" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
                     <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-2">รอบที่ 0</div>
@@ -792,9 +802,9 @@
             <button onclick="UIEngine.openInventory(2)" class="w-full bg-white hover:bg-slate-50 rounded-lg text-[0.65rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
         </div>
         
-        <div id="hud-3" class="player-hud bottom-[5vh] left-[2vw] lg:bottom-8 lg:left-8 hidden glass-panel rounded-xl p-2 md:p-3 border-[3px] md:border-4 w-[46vw] md:w-[160px] lg:w-[240px]" style="border-color: #10b981;">
+        <div id="hud-3" class="player-hud bottom-[2vh] left-[2vw] lg:bottom-4 lg:left-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #10b981;">
             <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2">
-                <div class="w-8 h-8 lg:w-12 lg:h-12 rounded-full flex items-center justify-center font-black text-white text-sm lg:text-xl shadow-[0_4px_10px_rgba(16,185,129,0.5)] border-[3px] border-white" style="background: linear-gradient(135deg, #34d399, #059669);">P3</div>
+                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(16,185,129,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #34d399, #059669);">P3</div>
                 <div class="flex-1 min-w-0">
                     <div id="name-3" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
                     <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-3">รอบที่ 0</div>
@@ -813,9 +823,9 @@
             <button onclick="UIEngine.openInventory(3)" class="w-full bg-white hover:bg-slate-50 rounded-lg text-[0.65rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
         </div>
         
-        <div id="hud-4" class="player-hud bottom-[5vh] right-[2vw] lg:bottom-8 lg:right-8 hidden glass-panel rounded-xl p-2 md:p-3 border-[3px] md:border-4 w-[46vw] md:w-[160px] lg:w-[240px]" style="border-color: #f59e0b;">
+        <div id="hud-4" class="player-hud bottom-[2vh] right-[2vw] lg:bottom-4 lg:right-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #f59e0b;">
             <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2 flex-row-reverse text-right">
-                <div class="w-8 h-8 lg:w-12 lg:h-12 rounded-full flex items-center justify-center font-black text-white text-sm lg:text-xl shadow-[0_4px_10px_rgba(245,158,11,0.5)] border-[3px] border-white" style="background: linear-gradient(135deg, #fbbf24, #d97706);">P4</div>
+                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(245,158,11,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #fbbf24, #d97706);">P4</div>
                 <div class="flex-1 min-w-0">
                     <div id="name-4" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
                     <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-4">รอบที่ 0</div>
@@ -1003,37 +1013,39 @@
         </div>
 
     <div id="card-modal-overlay" class="absolute inset-0 z-[400] hidden bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center p-2 md:p-4 opacity-0 transition-opacity duration-300 pointer-events-auto">
-        <div class="text-center mb-4 z-10 w-full px-2 shrink-0">
-            <h3 id="card-modal-header" class="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-wide drop-shadow-md">ค้นพบการ์ดใหม่</h3>
-            <p id="card-modal-sub" class="text-xs md:text-sm text-white mt-1 font-bold bg-black/40 inline-block px-4 py-1 rounded-full border border-white/30">สิทธิประโยชน์พิเศษสำหรับคุณ</p>
-        </div>
-        
-        <div id="card-3d-wrapper" class="card-3d-container shrink-0">
-            <div class="card-3d-inner" id="card-inner-flip">
-                <div class="card-face card-front">
-                    <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white border-[4px] md:border-[6px] border-sky-200 flex items-center justify-center text-3xl md:text-5xl font-black text-sky-400 mb-4 shadow-[0_5px_10px_rgba(0,0,0,0.1)]">?</div>
-                    <h4 class="text-lg md:text-2xl font-black text-white tracking-wide">กำลังเตรียมข้อมูล</h4>
-                </div>
-                
-                <div class="card-face card-back" id="card-back-face">
-                    <div class="dots-pattern" style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(148,163,184,0.08) 1px,transparent 1px);background-size:14px 14px;pointer-events:none;z-index:1;border-radius:inherit;"></div>
-                    <div class="flex-1 flex flex-col items-center justify-center p-3 md:p-4 w-full text-center relative z-10 min-h-0">
-                        <div id="card-icon-display" class="w-12 h-12 md:w-16 md:h-16 shrink-0 rounded-full border-[4px] shadow-[0_5px_10px_rgba(0,0,0,0.1)] mb-2 flex items-center justify-center text-xl md:text-3xl font-black bg-white">!</div>
-                        <h4 id="card-title-display" class="text-lg md:text-2xl font-black mb-2 tracking-wide text-slate-800 shrink-0">ชื่อการ์ด</h4>
-                        <div class="flex-1 overflow-y-auto w-full min-h-0 scrollbar-hide">
-                            <p id="card-desc-display" class="text-xs md:text-sm text-slate-600 font-bold leading-snug bg-gradient-to-br from-slate-50 to-slate-100/80 p-2 md:p-3 rounded-lg border-2 border-slate-200/60 text-center shadow-inner">รายละเอียดสิทธิประโยชน์</p>
+            <div class="text-center mb-4 z-10 w-full px-2 shrink-0">
+                <h3 id="card-modal-header" class="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-wide drop-shadow-md">ค้นพบการ์ดใหม่</h3>
+                <p id="card-modal-sub" class="text-xs md:text-sm text-white mt-1 font-bold bg-black/40 inline-block px-4 py-1 rounded-full border border-white/30">สิทธิประโยชน์พิเศษสำหรับคุณ</p>
+            </div>
+            
+            <div id="card-3d-wrapper" class="card-3d-container shrink-0">
+                <div class="card-3d-inner" id="card-inner-flip">
+                    <div class="card-face card-front">
+                        <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white border-[4px] md:border-[6px] border-sky-200 flex items-center justify-center text-3xl md:text-5xl font-black text-sky-400 mb-4 shadow-[0_5px_10px_rgba(0,0,0,0.1)]">?</div>
+                        <h4 class="text-lg md:text-2xl font-black text-white tracking-wide">กำลังเตรียมข้อมูล</h4>
+                    </div>
+                    
+                    <div class="card-face card-back" id="card-back-face">
+                        <div class="dots-pattern" style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(148,163,184,0.08) 1px,transparent 1px);background-size:14px 14px;pointer-events:none;z-index:1;border-radius:inherit;"></div>
+                        <div class="flex-1 flex flex-col items-center p-3 md:p-4 w-full text-center relative z-10 h-full">
+                            <div class="flex flex-col items-center justify-center shrink-0 mt-2 md:mt-4">
+                                <div id="card-icon-display" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-[4px] shadow-[0_5px_10px_rgba(0,0,0,0.1)] mb-2 flex items-center justify-center text-xl md:text-3xl font-black bg-white">!</div>
+                                <h4 id="card-title-display" class="text-lg md:text-2xl font-black mb-2 tracking-wide text-slate-800">ชื่อการ์ด</h4>
+                            </div>
+                            <div class="flex-1 w-full flex flex-col justify-end min-h-0 pb-1 mt-auto">
+                                <p id="card-desc-display" class="text-xs md:text-sm text-slate-600 font-bold leading-snug bg-gradient-to-br from-slate-50 to-slate-100/80 p-2 md:p-3 rounded-lg border-2 border-slate-200/60 text-center shadow-inner mt-auto">รายละเอียดสิทธิประโยชน์</p>
+                                <div id="card-financials" class="w-full shrink-0 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-2 font-black text-[0.65rem] md:text-sm border-2 border-slate-200 mt-2 hidden text-slate-700 shadow-inner"></div>
+                            </div>
                         </div>
-                        <div id="card-financials" class="w-full shrink-0 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-2 font-black text-[0.65rem] md:text-sm border-2 border-slate-200 mt-2 hidden text-slate-700 shadow-inner"></div>
                     </div>
                 </div>
             </div>
+            
+            <div class="flex gap-2 z-10 mt-4 w-[90%] md:w-auto px-2 md:px-0 flex-col md:flex-row shrink-0" id="card-action-container">
+                <button id="card-btn-accept" class="w-full md:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-black text-sm md:text-lg text-white tracking-wide shadow-md bg-emerald-500 border-2 border-white hover:bg-emerald-400 transition-all active:translate-y-1">เก็บเข้าคลังการ์ด</button>
+                <button id="card-btn-use" class="hidden w-full md:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-black text-sm md:text-lg text-white tracking-wide shadow-md bg-emerald-500 border-2 border-white hover:bg-emerald-400 transition-all active:translate-y-1">ใช้งานป้องกันตัว</button>
+            </div>
         </div>
-        
-        <div class="flex gap-2 z-10 mt-4 w-[90%] md:w-auto px-2 md:px-0 flex-col md:flex-row shrink-0" id="card-action-container">
-            <button id="card-btn-accept" class="w-full md:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-black text-sm md:text-lg text-white tracking-wide shadow-md bg-emerald-500 border-2 border-white hover:bg-emerald-400 transition-all active:translate-y-1">เก็บเข้าคลังการ์ด</button>
-            <button id="card-btn-use" class="hidden w-full md:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-black text-sm md:text-lg text-white tracking-wide shadow-md bg-emerald-500 border-2 border-white hover:bg-emerald-400 transition-all active:translate-y-1">ใช้งานป้องกันตัว</button>
-        </div>
-    </div>
     
     <div id="event-modal-overlay" class="absolute inset-0 z-[400] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 md:p-4 opacity-0 transition-opacity duration-300 pointer-events-auto">
         <div class="event-modal-box w-full max-w-lg rounded-2xl md:rounded-[2rem] p-4 md:p-8 flex flex-col items-center text-center relative max-h-[95dvh] flex-1 min-h-0">
@@ -1612,7 +1624,7 @@
                     { id: 'f1', title: 'จดทะเบียนสมรส', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', desc: 'จดทะเบียนสมรสตามกฎหมาย ได้สิทธิลดหย่อนภาษีเพิ่มเติม' },
                     { id: 'f2', title: 'มีลูกคนแรก', cost: 80000, deduct: 30000, typeTag: 'ครอบครัว', desc: 'ค่าใช้จ่ายในการเลี้ยงดูบุตร สามารถนำมาลดหย่อนภาษีได้' },
                     { id: 'f3', title: 'อุปการะคนพิการ', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', stack: true, desc: 'ดูแลผู้พิการ ได้รับสิทธิลดหย่อนภาษีเพิ่มเติม' },
-                    { id: 'f4', title: 'ดูแลพ่อแม่', cost: 15000, deduct: 15000, typeTag: 'ครอบครัว', desc: 'ดูแลพ่อแม่ ลดหย่อนได้ 15,000 บาท และจะถูกหักค่าดูแลพ่อแม่ 5,000 บาทจากเงินเดือนทุกรอบ ซื้อได้ครั้งเดียว' }
+                    { id: 'f4', title: 'ดูแลพ่อแม่', cost: 60000, deduct: 60000, typeTag: 'ครอบครัว', desc: 'ดูแลพ่อแม่ ลดหย่อนได้ 15,000 บาท และจะถูกหักค่าดูแลพ่อแม่ 60,000บาทจากเงินเดือนทุกรอบ ซื้อได้ครั้งเดียว' }
                 ]},
                 Insurance: { color: '#ec4899', items: [
                     { id: 'i1', title: 'ประกันสุขภาพตนเอง', cost: 15000, deduct: 15000, shield: 'self', stack: false, typeTag: 'ประกัน', desc: 'ซื้อประกันสุขภาพให้ตัวเอง ลดหย่อนภาษีได้ 15000 บาท และยังใช้ป้องกันการเสียเงินเมื่อตกช่องอุบัติเหตุได้ด้วย ซื้อได้แค่ครั้งเดียว' },
@@ -1620,9 +1632,9 @@
                     { id: 'i3', title: 'ประกันสะสมทรัพย์', cost: 30000, deduct: 20000, shield: 'none', stack: true, typeTag: 'ประกัน', desc: 'ออมเงินผ่านประกันชีวิตเพื่อลดหย่อนภาษี ไม่มีผลเรื่องการป้องกันอุบัติเหตุ สะสมกี่ใบก็ได้' }
                 ]},
                 Fund: { color: '#10b981', items: [
-                    { id: 'u2', title: 'กองทุน SSF', cost: 30000, deduct: 5000, max: 3, typeTag: 'กองทุน', desc: 'นำเงินไปลงทุนเพื่อสะสมไว้ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
-                    { id: 'u3', title: 'กองทุน Thai ESG', cost: 30000, deduct: 3000, max: 3, typeTag: 'กองทุน', desc: 'ลงทุนในกองทุนรักษาสิ่งแวดล้อม ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
-                    { id: 'u4', title: 'กองทุน RMF', cost: 30000, deduct: 5000, max: 3, typeTag: 'กองทุน', desc: 'เก็บเงินไว้ใช้ตอนเกษียณ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' }
+                    { id: 'u2', title: 'กองทุน SSF', cost: 30000, deduct: 30000, max: 3, typeTag: 'กองทุน', desc: 'นำเงินไปลงทุนเพื่อสะสมไว้ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
+                    { id: 'u3', title: 'กองทุน Thai ESG', cost: 30000, deduct: 30000, max: 3, typeTag: 'กองทุน', desc: 'ลงทุนในกองทุนรักษาสิ่งแวดล้อม ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' },
+                    { id: 'u4', title: 'กองทุน RMF', cost: 30000, deduct: 30000, max: 3, typeTag: 'กองทุน', desc: 'เก็บเงินไว้ใช้ตอนเกษียณ ลดหย่อนภาษีได้เท่าจำนวนเงินที่ซื้อ ซื้อสะสมได้สูงสุด 3 ใบ' }
                 ]},
                 Donation: { color: '#fb7185', items: [
                     { id: 'd1', title: 'บริจาคโรงพยาบาลรัฐ', cost: 5000, deduct: 10000, typeTag: 'บริจาค', desc: 'บริจาคเงินให้โรงพยาบาลรัฐ นำไปลดหย่อนได้ทวีคูณจากเงินที่บริจาค' },
