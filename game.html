@@ -723,12 +723,12 @@
     
     <main id="screen-game" class="absolute inset-0 z-10 overflow-hidden flex items-center justify-center hidden opacity-0 transition-opacity duration-1000">
         
-        <div class="absolute top-0 left-0 w-full z-[300] flex flex-wrap justify-center items-start gap-1.5 md:gap-2 pt-2 px-2 pointer-events-none">
-                    <button onclick="SysMenu.open()" class="pointer-events-auto px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-white/90 backdrop-blur-sm border-2 md:border-4 border-slate-200 text-slate-600 font-black text-[0.65rem] md:text-xs hover:border-sky-400 hover:text-sky-500 transition-all shadow-md active:translate-y-1">ตั้งค่า</button>
-                    <button onclick="AdminSystem.prompt()" class="pointer-events-auto px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-white/90 backdrop-blur-sm border-2 md:border-4 border-rose-200 text-rose-500 font-black text-[0.65rem] md:text-xs hover:bg-rose-50 hover:border-rose-400 transition-all shadow-md active:translate-y-1">ผู้ดูแล</button>
-                    <div id="room-id-badge" class="pointer-events-auto px-3 py-1.5 md:px-5 md:py-2 rounded-xl bg-indigo-50/90 backdrop-blur-sm border-2 md:border-4 border-indigo-200 text-indigo-600 font-black text-[0.65rem] md:text-xs shadow-md flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-inner"></div>
-                        <span id="room-id-display" class="truncate max-w-[80px] sm:max-w-none">กำลังประมวลผล</span>
+        <div class="absolute top-0 left-0 w-full z-[300] flex flex-wrap justify-center items-start gap-1 md:gap-1.5 pt-1.5 px-1.5 pointer-events-none">
+                    <button onclick="SysMenu.open()" class="pointer-events-auto px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl bg-white/90 backdrop-blur-sm border-[1.5px] md:border-2 border-slate-200 text-slate-600 font-black text-[0.55rem] md:text-[0.65rem] hover:border-sky-400 hover:text-sky-500 transition-all shadow-sm active:translate-y-1">ตั้งค่า</button>
+                    <button onclick="AdminSystem.prompt()" class="pointer-events-auto px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl bg-white/90 backdrop-blur-sm border-[1.5px] md:border-2 border-rose-200 text-rose-500 font-black text-[0.55rem] md:text-[0.65rem] hover:bg-rose-50 hover:border-rose-400 transition-all shadow-sm active:translate-y-1">ผู้ดูแล</button>
+                    <div id="room-id-badge" class="pointer-events-auto px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl bg-indigo-50/90 backdrop-blur-sm border-[1.5px] md:border-2 border-indigo-200 text-indigo-600 font-black text-[0.55rem] md:text-[0.65rem] shadow-sm flex items-center gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-inner"></div>
+                        <span id="room-id-display" class="truncate max-w-[60px] sm:max-w-none leading-none">กำลังประมวลผล</span>
                     </div>
                 </div>
             </div>
@@ -1624,7 +1624,7 @@
                     { id: 'f1', title: 'จดทะเบียนสมรส', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', desc: 'จดทะเบียนสมรสตามกฎหมาย ได้สิทธิลดหย่อนภาษีเพิ่มเติม' },
                     { id: 'f2', title: 'มีลูกคนแรก', cost: 80000, deduct: 30000, typeTag: 'ครอบครัว', desc: 'ค่าใช้จ่ายในการเลี้ยงดูบุตร สามารถนำมาลดหย่อนภาษีได้' },
                     { id: 'f3', title: 'อุปการะคนพิการ', cost: 10000, deduct: 60000, typeTag: 'ครอบครัว', stack: true, desc: 'ดูแลผู้พิการ ได้รับสิทธิลดหย่อนภาษีเพิ่มเติม' },
-                    { id: 'f4', title: 'ดูแลพ่อแม่', cost: 60000, deduct: 60000, typeTag: 'ครอบครัว', desc: 'ดูแลพ่อแม่ ลดหย่อนได้ 15,000 บาท และจะถูกหักค่าดูแลพ่อแม่ 60,000บาทจากเงินเดือนทุกรอบ ซื้อได้ครั้งเดียว' }
+                    { id: 'f4', title: 'ดูแลพ่อแม่', cost: 60000, deduct: 60000, typeTag: 'ครอบครัว', desc: 'ดูแลพ่อและแม่รวมทั้งสองคน ลดหย่อนได้ 60000 บาท (คนละ 30000) และจะถูกหักค่าดูแลพ่อแม่ 5000 บาทจากเงินเดือนทุกรอบ ซื้อได้ครั้งเดียว' }
                 ]},
                 Insurance: { color: '#ec4899', items: [
                     { id: 'i1', title: 'ประกันสุขภาพตนเอง', cost: 15000, deduct: 15000, shield: 'self', stack: false, typeTag: 'ประกัน', desc: 'ซื้อประกันสุขภาพให้ตัวเอง ลดหย่อนภาษีได้ 15000 บาท และยังใช้ป้องกันการเสียเงินเมื่อตกช่องอุบัติเหตุได้ด้วย ซื้อได้แค่ครั้งเดียว' },
