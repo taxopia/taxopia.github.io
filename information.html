@@ -136,10 +136,9 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 
-        /* แก้สี TAXOPIA มุมซ้ายบน */
         .text-glow-gold {
-            color: #eab308; /* สีส้มทอง */
-            text-shadow: 0 0 20px rgba(234, 179, 8, 0.6); /* เรืองแสงสีทอง */
+            color: #eab308;
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.6);
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -200,11 +199,11 @@
         
         <nav class="flex-none md:flex-1 overflow-x-auto md:overflow-y-auto py-3 md:py-6 flex flex-row md:flex-col gap-2 px-4 scrollbar-hide" id="nav-menu">
             <button onclick="SystemArchive.switchSection('sec-intro', this)" class="nav-item active w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">เริ่มต้นเรื่องภาษี</button>
-            <button onclick="SystemArchive.switchSection('sec-who', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">ใครบ้างที่ต้องเสียภาษี</button>
+            <button onclick="SystemArchive.switchSection('sec-who', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">ใครต้องเสียภาษีบ้าง</button>
             <button onclick="SystemArchive.switchSection('sec-types', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">ประเภทของรายได้</button>
             <button onclick="SystemArchive.switchSection('sec-deduct', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">ค่าลดหย่อนภาษี</button>
             <button onclick="SystemArchive.switchSection('sec-calc', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">วิธีคำนวณภาษี</button>
-            <button onclick="SystemArchive.switchSection('sec-penalty', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">กำหนดการและค่าปรับ</button>
+            <button onclick="SystemArchive.switchSection('sec-penalty', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">กำหนดการและบทลงโทษ</button>
         </nav>
 
         <div class="hidden md:block p-6 border-t border-slate-700/50">
@@ -223,10 +222,10 @@
                     <div class="card-data mb-6 md:mb-8">
                         <h3 class="text-xl md:text-2xl font-bold text-cyan-300 mb-4">ภาษีเงินได้บุคคลธรรมดา คืออะไร?</h3>
                         <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-4">
-                            พูดให้เข้าใจง่ายที่สุด ภาษีเงินได้บุคคลธรรมดา คือเงินส่วนหนึ่งที่รัฐบาลเรียกเก็บจากประชาชนคนธรรมดาทั่วไปที่มี "รายได้" เกิดขึ้นในแต่ละปี เพื่อนำเงินส่วนนี้ไปใช้เป็นงบประมาณในการพัฒนาประเทศ เช่น สร้างถนน โรงพยาบาล โรงเรียน หรือเป็นสวัสดิการต่างๆ ให้กับประชาชน
+                            พูดให้เข้าใจง่ายที่สุด ภาษีเงินได้บุคคลธรรมดา คือเงินส่วนหนึ่งที่รัฐบาลเรียกเก็บจากประชาชนคนธรรมดาทั่วไปที่มี "รายได้" เกิดขึ้นในแต่ละปี เพื่อนำเงินส่วนนี้ไปใช้เป็นงบประมาณในการพัฒนาประเทศ เช่น สร้างถนน โรงพยาบาล โรงเรียน หรือเป็นสวัสดิการต่างๆ ให้กับประชาชน โดยมีหน่วยงานหลักที่มีหน้าที่จัดเก็บภาษีนี้โดยตรงคือ <strong>กรมสรรพากร</strong>
                         </p>
                         <p class="text-base md:text-lg text-slate-300 leading-relaxed">
-                            กฎหมายกำหนดไว้ว่า เมื่อเราหาเงินได้ถึงเกณฑ์ที่กำหนด เราทุกคนมีหน้าที่ต้องรวบรวมข้อมูลรายได้ตลอดทั้งปีของตัวเราเอง เพื่อนำมาคำนวณและแจ้งให้กรมสรรพากรทราบ โดยกระบวนการนี้เราเรียกว่า "การยื่นภาษี" ซึ่งโดยปกติแล้วจะต้องทำในช่วงต้นปีของทุกปี หรือช่วงเดือนมกราคมถึงเดือนมีนาคมของปีถัดไป
+                            กฎหมายกำหนดไว้ว่า เมื่อเราหาเงินได้ถึงเกณฑ์ที่กำหนด เราทุกคนมีหน้าที่ต้องรวบรวมข้อมูลรายได้ตลอดทั้งปีของตัวเราเอง เพื่อนำมาคำนวณและแจ้งให้กรมสรรพากรทราบ โดยกระบวนการนี้เราเรียกว่า "การยื่นภาษี"
                         </p>
                     </div>
 
@@ -248,18 +247,18 @@
                 <div class="inline-block px-4 py-1 rounded-full border border-cyan-500/50 bg-cyan-950/30 text-cyan-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หัวข้อที่ 2</div>
                 <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">ใครบ้างที่มีหน้าที่ต้องเสียภาษี</h2>
                 
-                <p class="text-lg md:text-xl text-slate-300 leading-relaxed mb-6 md:mb-8">ในระบบภาษีของประเทศไทย ผู้ที่มีหน้าที่หลักในการเสียภาษีเงินได้ที่พบเจอได้มากที่สุดในชีวิตประจำวันก็คือ คนธรรมดาทั่วไป หรือที่กฎหมายเรียกว่า "บุคคลธรรมดา"</p>
+                <p class="text-lg md:text-xl text-slate-300 leading-relaxed mb-6 md:mb-8">ในระบบภาษีของประเทศไทย หน้าที่ในการเสียภาษีเงินได้บุคคลธรรมดา ไม่ได้ขึ้นอยู่กับอายุหรือสายอาชีพเพียงอย่างเดียว แต่เกิดจาก <strong>ผู้ที่มีรายได้ถึงเกณฑ์ที่กฎหมายกำหนด</strong></p>
                 
                 <div class="grid grid-cols-1 gap-4 md:gap-6">
                     <div class="card-data border-t-4 border-t-blue-500 flex flex-col items-start gap-4 md:gap-6">
                         <h4 class="text-2xl md:text-3xl font-bold text-white mb-2">บุคคลธรรมดา หมายถึงใคร?</h4>
                         <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-4">
-                            ความหมายของคำว่าบุคคลธรรมดาในทางภาษีนั้น เรียบง่ายมากครับ มันหมายถึง "มนุษย์" หรือคนที่มีชีวิตอยู่ทุกคน ไม่ว่าคุณจะประกอบอาชีพอะไรก็ตาม ตัวอย่างเช่น
+                            ความหมายของคำว่าบุคคลธรรมดาในทางภาษี หมายถึง "มนุษย์" หรือคนที่มีชีวิตอยู่ทุกคน ไม่ว่าคุณจะประกอบอาชีพอะไร ตัวอย่างเช่น
                         </p>
                         <ul class="space-y-4 text-slate-300 font-medium text-base md:text-lg w-full">
                             <li class="flex items-start gap-4 bg-slate-900/50 p-4 rounded-lg">
                                 <span class="text-blue-400 font-bold text-xl">1.</span>
-                                <span><strong>พนักงานบริษัท</strong> ที่ได้รับเงินเดือนประจำทุกเดือน</span>
+                                <span><strong>พนักงานบริษัท หรือ ข้าราชการ</strong> ที่ได้รับเงินเดือนประจำทุกเดือน</span>
                             </li>
                             <li class="flex items-start gap-4 bg-slate-900/50 p-4 rounded-lg">
                                 <span class="text-blue-400 font-bold text-xl">2.</span>
@@ -267,16 +266,13 @@
                             </li>
                             <li class="flex items-start gap-4 bg-slate-900/50 p-4 rounded-lg">
                                 <span class="text-blue-400 font-bold text-xl">3.</span>
-                                <span><strong>พ่อค้าแม่ค้า</strong> ทั้งที่ขายของตามตลาดนัดทั่วไป หรือขายของออนไลน์บนอินเทอร์เน็ต</span>
+                                <span><strong>พ่อค้าแม่ค้า</strong> ทั้งที่ขายของตามตลาดนัดทั่วไป หรือขายออนไลน์</span>
                             </li>
                             <li class="flex items-start gap-4 bg-slate-900/50 p-4 rounded-lg">
                                 <span class="text-blue-400 font-bold text-xl">4.</span>
-                                <span><strong>เด็กหรือผู้เยาว์</strong> กฎหมายไม่ได้จำกัดอายุว่าต้องโตเป็นผู้ใหญ่ก่อนถึงจะเสียภาษีได้ หากเด็กคนนั้นมีรายได้ เช่น ดาราเด็ก นักแสดงเด็ก หรือเด็กที่ได้มรดกแล้วมีรายได้จากมรดกนั้น ก็ถือเป็นบุคคลธรรมดาที่มีหน้าที่ต้องเสียภาษีเช่นเดียวกัน (โดยมีผู้ปกครองเป็นคนจัดการให้)</span>
+                                <span><strong>เด็กหรือผู้เยาว์</strong> กฎหมายไม่ได้จำกัดอายุว่าต้องโตเป็นผู้ใหญ่ก่อน หากเด็กคนนั้นมีรายได้จนถึงเกณฑ์ (เช่น ดาราเด็ก) ก็ถือเป็นบุคคลธรรมดาที่มีหน้าที่ต้องเสียภาษีเช่นเดียวกัน (โดยมีผู้ปกครองเป็นคนจัดการให้)</span>
                             </li>
                         </ul>
-                        <p class="text-base md:text-lg text-slate-300 leading-relaxed mt-4">
-                            สรุปสั้นๆ คือ ตราบใดที่คุณยังมีลมหายใจ และมีเงินเข้ากระเป๋าในระหว่างปีจนถึงเกณฑ์ที่กฎหมายกำหนด คุณคือ บุคคลธรรมดา ที่มีหน้าที่ต้องยื่นแบบแสดงรายได้เพื่อเสียภาษี
-                        </p>
                     </div>
                 </div>
             </div>
@@ -288,68 +284,61 @@
                 <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">ทำความรู้จักประเภทของรายได้</h2>
                 
                 <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
-                    รายได้ที่เราหามาได้นั้น กฎหมายสรรพากรไม่ได้มองว่าเป็นเงินก้อนเดียวกันทั้งหมด แต่มีการแบ่งแยกย่อยออกเป็นประเภทต่างๆ เพื่อใช้เกณฑ์ในการหักค่าใช้จ่ายที่แตกต่างกัน โดยรายได้ของคนทำงานทั่วไปที่พบได้บ่อยที่สุดจะมีอยู่ 2 ประเภทหลักๆ คือ มาตรา 40 วงเล็บ 1 และ มาตรา 40 วงเล็บ 2 ครับ
+                    รายได้ที่เราหามาได้นั้น กฎหมายสรรพากรไม่ได้มองว่าเป็นเงินก้อนเดียวกันทั้งหมด แต่มีการแบ่งแยกย่อยออกเป็นประเภทต่างๆ โดยรายได้ของคนทำงานทั่วไปที่พบได้บ่อยที่สุดจะมีอยู่ 2 ประเภทหลักๆ ครับ
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="card-data bg-gradient-to-br from-slate-900 to-slate-800 border border-indigo-500/30 hover:border-indigo-400 transition-colors">
                         <div class="text-indigo-400 font-bold text-xl md:text-2xl mb-4 border-b border-slate-700 pb-2">เงินได้ประเภทที่ 1 (เงินเดือน)</div>
-                        <p class="text-base md:text-lg text-slate-300 font-bold mb-3">หรือที่เรียกตามกฎหมายว่า มาตรา 40(1)</p>
+                        <p class="text-base md:text-lg text-slate-300 font-bold mb-3">หรือที่เรียกว่า มาตรา 40(1)</p>
                         <p class="text-sm md:text-base text-slate-300 leading-relaxed mb-4">
-                            รายได้ประเภทนี้คือรายได้ที่เกิดจากการทำงานประจำ หรือการเป็นลูกจ้างที่มีนายจ้างชัดเจน พูดง่ายๆ คือเป็นรายได้ที่ได้มาจากการตกลงว่าจ้างให้ทำงานโดยมีเวลาหรือเงื่อนไขการทำงานประจำผูกมัด
+                            รายได้ที่เกิดจากการทำงานประจำ มีเวลาหรือเงื่อนไขการทำงานประจำผูกมัดชัดเจน
                         </p>
                         <div class="bg-black/50 p-4 rounded-lg">
-                            <strong class="text-indigo-300 block mb-2">ตัวอย่างรายได้ประเภทนี้:</strong>
+                            <strong class="text-indigo-300 block mb-2">ตัวอย่างรายได้:</strong>
                             <ul class="list-disc pl-5 text-sm md:text-base text-slate-300 space-y-1">
                                 <li>เงินเดือนประจำทุกเดือน</li>
-                                <li>ค่าจ้างรายวันของพนักงาน</li>
-                                <li>ค่าทำงานล่วงเวลา (โอที)</li>
-                                <li>โบนัสประจำปีที่บริษัทจ่ายให้</li>
-                                <li>เงินบำนาญ</li>
-                                <li>เงินค่าสวัสดิการต่างๆ เช่น ค่าเช่าบ้าน ค่าเดินทางที่นายจ้างจ่ายให้ประจำ</li>
+                                <li>ค่าล่วงเวลา (โอที)</li>
+                                <li><strong>โบนัสประจำปี:</strong> ซึ่งหากเราได้โบนัสหรือรายได้เสริมเข้ามา มันจะทำให้รายได้รวมเราสูงขึ้น และอาจดันให้เราต้องเสียภาษีในฐานที่แพงขึ้นได้</li>
                             </ul>
                         </div>
                     </div>
                     
                     <div class="card-data bg-gradient-to-br from-slate-900 to-slate-800 border border-fuchsia-500/30 hover:border-fuchsia-400 transition-colors">
                         <div class="text-fuchsia-400 font-bold text-xl md:text-2xl mb-4 border-b border-slate-700 pb-2">เงินได้ประเภทที่ 2 (รับจ้างอิสระ)</div>
-                        <p class="text-base md:text-lg text-slate-300 font-bold mb-3">หรือที่เรียกตามกฎหมายว่า มาตรา 40(2)</p>
+                        <p class="text-base md:text-lg text-slate-300 font-bold mb-3">หรือที่เรียกว่า มาตรา 40(2)</p>
                         <p class="text-sm md:text-base text-slate-300 leading-relaxed mb-4">
-                            รายได้ประเภทนี้จะแตกต่างจากเงินเดือนตรงที่ ไม่ได้เกิดจากการเป็นพนักงานประจำ แต่เกิดจากการรับจ้างทำงานเป็นครั้งคราว เป็นชิ้นงาน หรือเป็นโครงการ เมื่อทำงานเสร็จและส่งมอบงานก็จะได้รับเงิน โดยไม่ได้มีนายจ้างประจำผูกมัดเรื่องเวลาเข้าออกงาน
+                            รายได้จากการรับจ้างทำงานเป็นครั้งคราว เป็นชิ้นงาน หรือเป็นโครงการ เมื่อทำงานเสร็จและส่งมอบงานก็จะได้รับเงิน
                         </p>
                         <div class="bg-black/50 p-4 rounded-lg">
-                            <strong class="text-fuchsia-300 block mb-2">ตัวอย่างรายได้ประเภทนี้:</strong>
+                            <strong class="text-fuchsia-300 block mb-2">ตัวอย่างรายได้:</strong>
                             <ul class="list-disc pl-5 text-sm md:text-base text-slate-300 space-y-1">
                                 <li>ค่าจ้างจากการรับงานฟรีแลนซ์ต่างๆ</li>
-                                <li>ค่านายหน้า (เช่น นายหน้าขายที่ดิน ตัวแทนประกันชีวิต)</li>
-                                <li>ค่าเบี้ยประชุมที่ได้รับเป็นครั้งๆ</li>
-                                <li>ค่าธรรมเนียมจากการให้คำปรึกษา</li>
-                                <li>ค่าจ้างรีวิวสินค้า หรือค่าจ้างอินฟลูเอนเซอร์</li>
+                                <li>ค่านายหน้า (เช่น นายหน้าขายที่ดิน)</li>
+                                <li>ค่าจ้างรีวิวสินค้า อินฟลูเอนเซอร์</li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 
                 <div class="mt-8 card-data border-amber-500/50">
-                    <h3 class="text-xl md:text-2xl font-bold text-amber-400 mb-4">รายได้เท่าไหร่ถึงจะต้องยื่นภาษี?</h3>
-                    <p class="text-base text-slate-300 mb-4">กฎหมายได้กำหนดเกณฑ์ขั้นต่ำเอาไว้ เพื่อไม่ให้คนที่มีรายได้น้อยเกินไปต้องมาลำบากจัดการเรื่องเอกสาร โดยมีเกณฑ์ดังนี้ครับ</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-amber-400 mb-4">รายได้เท่าไหร่ถึงจะต้อง "ยื่นแบบ" ภาษี?</h3>
                     <ul class="space-y-4 text-slate-300 font-medium text-base md:text-lg bg-black/40 p-6 rounded-xl">
                         <li class="flex items-start gap-4">
                             <span class="text-amber-500 font-bold text-xl">1.</span>
                             <div>
-                                <strong class="text-white block mb-1">คนโสดที่มีรายได้จากเงินเดือนเพียงอย่างเดียว (ประเภทที่ 1 ล้วนๆ)</strong>
-                                จะต้องยื่นภาษีก็ต่อเมื่อ มีรายได้รวมทั้งปีเกิน 120,000 บาท (เฉลี่ยเกินเดือนละ 10,000 บาท)
+                                <strong class="text-white block mb-1">คนโสดที่มีเงินเดือนเพียวๆ (ประเภทที่ 1)</strong>
+                                ต้องยื่นเมื่อรายได้ทั้งปีเกิน 120,000 บาท (เฉลี่ยเดือนละ 10,000 บาท)
                             </div>
                         </li>
                         <li class="flex items-start gap-4 border-t border-slate-700/50 pt-4">
                             <span class="text-amber-500 font-bold text-xl">2.</span>
                             <div>
-                                <strong class="text-white block mb-1">คนโสดที่มีรายได้ประเภทอื่นด้วย (เช่น มีเงินฟรีแลนซ์ หรือมีทั้งเงินเดือนและฟรีแลนซ์)</strong>
-                                จะต้องยื่นภาษีก็ต่อเมื่อ มีรายได้รวมทั้งปีเกิน 60,000 บาทเท่านั้น
+                                <strong class="text-white block mb-1">ความลับของเงินเดือน 28,000 บาท</strong>
+                                ในชีวิตจริงและในเกม ทำไมมักตั้งต้นกันที่เงินเดือน 28,000 บาท? เพราะเมื่อนำ 28,000 x 12 เดือน = 336,000 บาท เมื่อหักค่าใช้จ่ายเหมา (100,000) และค่าลดหย่อนส่วนตัว (60,000) จะเหลือ <strong>"เงินได้สุทธิเกิน 150,000 บาท"</strong> มานิดหน่อย ซึ่งเป็นจุดเริ่มต้นที่บังคับให้เราต้องเริ่มควักกระเป๋าเสียภาษีที่ฐาน 5% ทันทีครับ!
                             </div>
                         </li>
                     </ul>
-                    <p class="mt-4 text-sm text-slate-400 font-bold">* หมายเหตุ: การ "ต้องยื่นภาษี" ไม่ได้แปลว่า "ต้องเสียภาษี" เสมอไป การยื่นคือการแจ้งรายได้ให้รัฐทราบ ส่วนจะเสียภาษีหรือไม่นั้น ต้องนำไปคำนวณหักค่าใช้จ่ายและค่าลดหย่อนก่อน</p>
                 </div>
             </div>
         </section>
@@ -360,62 +349,58 @@
                 <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">สิทธิลดหย่อนภาษี ตัวช่วยประหยัดเงิน</h2>
                 
                 <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
-                    ค่าลดหย่อนภาษี คือสิทธิประโยชน์ที่รัฐบาลมอบให้เรา เพื่อนำไปหักลบออกจากรายได้ของเราก่อนที่จะนำไปคำนวณภาษี ยิ่งเรามีค่าลดหย่อนมาก รายได้สุทธิที่นำไปคิดภาษีก็จะน้อยลง ทำให้เราเสียภาษีน้อยลงนั่นเองครับ นี่คือรายการค่าลดหย่อนพื้นฐานที่สำคัญ
+                    ค่าลดหย่อนภาษี คือสิทธิประโยชน์ที่ให้นำไปหักลบออกจากรายได้ก่อนนำไปคิดภาษี ยิ่งมีเยอะ เงินได้สุทธิก็จะน้อยลง นี่คือรายการสำคัญต่างๆ ครับ
                 </p>
 
                 <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-blue-400 mb-2 mt-4">หมวดค่าลดหย่อนส่วนตัวและสิทธิครอบครัว</h3>
+                    <p class="text-slate-300 mb-4">การมีครอบครัว หรือแต่งงานมีลูก จะถูกจัดอยู่ในหมวดนี้ ซึ่งทำหน้าที่ช่วยดึงยอดรายได้รวมให้ลดต่ำลง</p>
+                    
                     <div class="card-data flex flex-col md:flex-row justify-between md:items-center gap-2 border-l-4 border-l-blue-500">
                         <div>
                             <span class="text-lg md:text-xl font-bold text-white block">ค่าลดหย่อนส่วนตัว</span>
-                            <span class="text-sm text-slate-400">สิทธิพื้นฐานที่ทุกคนได้ทันทีเพียงแค่มีชีวิตอยู่และยื่นภาษี</span>
+                            <span class="text-sm text-slate-400">สิทธิพื้นฐานที่ทุกคนได้ทันที</span>
                         </div>
                         <span class="text-xl md:text-2xl font-bold text-cyan-400 font-mono">60,000 บาท</span>
                     </div>
                     
                     <div class="card-data flex flex-col md:flex-row justify-between md:items-center gap-2 border-l-4 border-l-blue-500">
                         <div>
-                            <span class="text-lg md:text-xl font-bold text-white block">ค่าลดหย่อนคู่สมรส</span>
-                            <span class="text-sm text-slate-400">สำหรับคนที่มีสามีหรือภรรยาที่จดทะเบียนสมรสถูกต้องตามกฎหมาย และคู่สมรสไม่มีรายได้เลย</span>
+                            <span class="text-lg md:text-xl font-bold text-white block">ค่าลดหย่อนคู่สมรส และ บุตร</span>
+                            <span class="text-sm text-slate-400">คู่สมรสไม่มีรายได้ (60,000 บ.) / บุตรตามกฎหมาย (30,000 บ./คน)</span>
                         </div>
-                        <span class="text-xl md:text-2xl font-bold text-cyan-400 font-mono">60,000 บาท</span>
-                    </div>
-                    
-                    <div class="card-data flex flex-col md:flex-row justify-between md:items-center gap-2 border-l-4 border-l-blue-500">
-                        <div>
-                            <span class="text-lg md:text-xl font-bold text-white block">ค่าลดหย่อนบุตร</span>
-                            <span class="text-sm text-slate-400">สำหรับลูกที่ถูกต้องตามกฎหมาย สามารถนำมาลดหย่อนได้ต่อคน</span>
-                        </div>
-                        <span class="text-xl md:text-2xl font-bold text-cyan-400 font-mono">30,000 บาท</span>
                     </div>
                     
                     <div class="card-data flex flex-col md:flex-row justify-between md:items-center gap-2 border-l-4 border-l-emerald-500">
                         <div>
                             <span class="text-lg md:text-xl font-bold text-white block">ค่าดูแลคุณพ่อคุณแม่</span>
-                            <span class="text-sm text-slate-400">คุณพ่อคุณแม่ต้องมีอายุ 60 ปีขึ้นไป และต้องมีรายได้ทั้งปีไม่เกิน 30,000 บาท ได้สิทธิต่อคน</span>
+                            <span class="text-sm text-slate-400">พ่อแม่ต้องมีอายุ <strong>60 ปีบริบูรณ์ขึ้นไป</strong> และมีรายได้ทั้งปีไม่เกิน 30,000 บาท</span>
                         </div>
-                        <span class="text-xl md:text-2xl font-bold text-emerald-400 font-mono">30,000 บาท</span>
+                        <span class="text-xl md:text-2xl font-bold text-emerald-400 font-mono">30,000 บาท/คน</span>
                     </div>
-                    
-                    <div class="card-data flex flex-col md:flex-row justify-between md:items-center gap-2 border-l-4 border-l-emerald-500">
-                        <div>
-                            <span class="text-lg md:text-xl font-bold text-white block">ค่าดูแลผู้พิการ</span>
-                            <span class="text-sm text-slate-400">หากเราเป็นผู้ดูแลคนพิการที่มีบัตรประจำตัวคนพิการ สามารถนำมาลดหย่อนได้ต่อคน</span>
-                        </div>
-                        <span class="text-xl md:text-2xl font-bold text-emerald-400 font-mono">60,000 บาท</span>
-                    </div>
-                    
+
                     <div class="card-data border-l-4 border-l-rose-500 mt-8">
-                        <h4 class="text-xl md:text-2xl font-bold text-rose-400 mb-4">การลดหย่อนจากประกันและการออมเงิน</h4>
+                        <h4 class="text-xl md:text-2xl font-bold text-rose-400 mb-4">หมวดประกัน, การออมเงิน และ ดอกเบี้ยบ้าน</h4>
                         <ul class="space-y-4 text-sm md:text-base">
-                            <li class="bg-black/30 p-3 rounded"><strong class="text-white text-lg">เบี้ยประกันชีวิต:</strong> หากซื้อประกันชีวิตที่มีอายุคุ้มครอง 10 ปีขึ้นไป สามารถนำค่าเบี้ยที่จ่ายจริงมาลดหย่อนได้สูงสุดไม่เกิน 100,000 บาท</li>
-                            <li class="bg-black/30 p-3 rounded"><strong class="text-white text-lg">เบี้ยประกันสุขภาพ:</strong> สามารถนำค่าเบี้ยสุขภาพมาลดหย่อนได้ตามที่จ่ายจริง สูงสุดไม่เกิน 25,000 บาท (แต่เมื่อรวมกับประกันชีวิตแล้วต้องไม่เกิน 100,000 บาท)</li>
-                            <li class="bg-black/30 p-3 rounded"><strong class="text-white text-lg">กองทุนออมต่างๆ:</strong> เช่น กองทุนสำรองเลี้ยงชีพ (บริษัทหักจากเงินเดือน), กองทุน RMF (เก็บไว้ใช้ตอนเกษียณ), กองทุน SSF และ Thai ESG สามารถนำมาหักลดหย่อนได้ตามเงื่อนไขเป๊ะๆ ที่กฎหมายกำหนด ซึ่งเหมาะสำหรับคนที่ต้องการเก็บเงินระยะยาว</li>
+                            <li class="bg-black/30 p-3 rounded"><strong class="text-white text-lg">ประกันชีวิต & ประกันสุขภาพ:</strong> เบี้ยประกันชีวิต (ลดหย่อนได้ตามจริง ไม่เกิน 100,000 บ.) รวมกับประกันสุขภาพตัวเอง (ไม่เกิน 25,000 บ.) รวมกันต้องไม่เกิน 100,000 บาท</li>
+                            <li class="bg-black/30 p-3 rounded"><strong class="text-white text-lg">กองทุนเพื่อการลงทุน (ช่องสีเขียวในเกม):</strong> ได้แก่ กองทุนสำรองเลี้ยงชีพ, กองทุนรวม SSF, RMF และ <strong>กองทุน Thai ESG</strong> (กองทุนที่เน้นลงทุนในบริษัทที่รักษาสิ่งแวดล้อมและโปร่งใส) ทั้งหมดนี้ลดหย่อนได้ตามกฎหมายเป๊ะๆ</li>
+                            <li class="bg-black/30 p-3 rounded"><strong class="text-white text-lg">ดอกเบี้ยบ้าน:</strong> สำหรับคนผ่อนบ้าน รัฐให้เอาดอกเบี้ยมาเป็นค่าลดหย่อนภาษีได้ตามที่จ่ายไปจริง แต่สูงสุดไม่เกิน 100,000 บาทต่อปี</li>
                         </ul>
                     </div>
 
                     <div class="card-data border-l-4 border-l-amber-500 mt-4">
                         <h4 class="text-xl md:text-2xl font-bold text-amber-400 mb-2">เงินบริจาค</h4>
-                        <p class="text-sm md:text-base text-slate-300">หากเราบริจาคเงินให้กับวัด มูลนิธิ หรือองค์กรสาธารณกุศล สามารถนำใบเสร็จมาลดหย่อนภาษีได้เท่าที่บริจาคจริง (แต่รวมแล้วต้องไม่เกิน 10% ของรายได้หลังจากหักค่าใช้จ่ายและค่าลดหย่อนอื่นๆ แล้ว) และถ้าบริจาคให้โรงพยาบาลรัฐหรือโรงเรียน จะสามารถนำมาลดหย่อนได้เป็น 2 เท่าของเงินที่บริจาคเลยทีเดียว</p>
+                        <p class="text-sm md:text-base text-slate-300">
+                            <strong>บริจาคให้วัด/มูลนิธิ:</strong> ลดหย่อนได้ 1 เท่าของที่จ่ายจริง (ไม่เกิน 10% ของเงินได้สุทธิ)<br>
+                            <strong>บริจาคให้โรงพยาบาลรัฐ หรือ สถานศึกษา:</strong> พิเศษสุดๆ! สามารถเอาไปลดหย่อนได้ถึง <strong>2 เท่า</strong> ของที่จ่ายจริง (แต่ยอดรวมที่หักได้ต้องไม่เกิน 10% ของเงินได้สุทธิเช่นกัน)
+                        </p>
+                    </div>
+
+                    <div class="bg-rose-950/40 border border-rose-500/50 p-6 rounded-xl mt-6 relative overflow-hidden">
+                        <h4 class="text-xl font-bold text-rose-400 mb-3">⚠️ คำเตือน: รายจ่ายที่ "ห้าม" นำมาลดหย่อนเด็ดขาด</h4>
+                        <p class="text-slate-300 text-sm md:text-base">
+                            ในชีวิตจริงและในเกมอาจมีตัวเลือกหลอก รายจ่ายเพื่อความสุขส่วนตัวหรือภาระหนี้สินทั่วไป ไม่สามารถลดหย่อนได้เลย เช่น <strong>ค่าซื้อลอตเตอรี่/หวย, ค่าผ่อนรถยนต์, ค่าบริการอินเทอร์เน็ต, ค่าปรับจราจร, ค่าสมาชิกฟิตเนส, ซื้อของขวัญปีใหม่, อาหารสัตว์เลี้ยง และประกันชีวิตแบบสะสมทรัพย์ (บางประเภทที่ไม่เข้าเงื่อนไข)</strong>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -426,14 +411,9 @@
                 <div class="inline-block px-4 py-1 rounded-full border border-cyan-500/50 bg-cyan-950/30 text-cyan-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หัวข้อที่ 5</div>
                 <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">วิธีการคำนวณภาษีแบบเข้าใจง่าย</h2>
                 
-                <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
-                    เมื่อถึงเวลายื่นภาษี เราจะต้องคำนวณว่าตัวเราต้องจ่ายภาษีให้รัฐเท่าไหร่ โดยกฎหมายกำหนดให้เราต้องคิดภาษีออกมา 2 วิธี แล้วเอาตัวเลขมาเทียบกัน ถ้าวิธีไหนได้ตัวเลขภาษีเยอะกว่า ก็นั่นแหละครับคือจำนวนเงินที่เราต้องจ่ายจริงๆ
-                </p>
-
                 <div class="grid grid-cols-1 gap-6 md:gap-8">
                     <div class="card-data bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.15)] relative overflow-hidden">
-                        <h3 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4 md:mb-6 relative z-10">วิธีที่ 1 : คิดจากเงินได้สุทธิ (วิธีที่คนส่วนใหญ่ใช้)</h3>
-                        <p class="text-slate-300 mb-4 md:mb-6 relative z-10 text-sm md:text-lg">วิธีนี้คือการเอารายได้ทั้งหมดที่เราหาได้ทั้งปี มาหักลบกับค่าใช้จ่ายและสิทธิลดหย่อนต่างๆ เพื่อหาว่าจริงๆ แล้วเราเหลือกำไร หรือ "เงินได้สุทธิ" เท่าไหร่ แล้วค่อยเอาเงินก้อนนั้นไปคิดภาษี</p>
+                        <h3 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4 md:mb-6 relative z-10">สมการคำนวณภาษีบุคคลธรรมดา</h3>
                         
                         <div class="bg-black/60 p-4 md:p-6 rounded-xl font-mono text-sm md:text-lg border border-cyan-900 relative z-10">
                             <div class="flex justify-between text-white border-b border-slate-700 pb-2 mb-2"><span>รายได้ทั้งหมดตลอดทั้งปี</span><span></span></div>
@@ -441,21 +421,34 @@
                             <div class="flex justify-between text-rose-400 border-b border-slate-700 pb-2 mb-2"><span>หัก ค่าลดหย่อนส่วนตัวและอื่นๆ</span><span>(ลบออก)</span></div>
                             <div class="flex justify-between text-cyan-300 font-bold pt-4 text-xl md:text-2xl"><span>= เงินได้สุทธิ</span><span>(เงินก้อนนี้แหละที่เอาไปคิดภาษี)</span></div>
                         </div>
-                        <div class="mt-4 md:mt-6 text-center text-lg md:text-xl font-bold text-amber-400 bg-amber-950/30 py-3 md:py-4 rounded-xl border border-amber-500/30 relative z-10 p-4">
-                            จากนั้นเอา "เงินได้สุทธิ" ไปคูณกับอัตราภาษีแบบขั้นบันได <br>
-                            <span class="text-sm md:text-base font-normal text-slate-300 mt-2 block">(คนที่มีเงินได้สุทธิไม่เกิน 150,000 บาทแรก จะได้รับการยกเว้นไม่ต้องเสียภาษีเลย แต่ถ้ารายได้สูงกว่านั้น ก็จะเสียภาษีเริ่มต้นที่ 5% และค่อยๆ ไล่ระดับสูงขึ้นไปเรื่อยๆ จนถึง 35%)</span>
-                        </div>
-                    </div>
 
-                    <div class="card-data bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.15)]">
-                        <h3 class="text-2xl md:text-3xl font-bold text-emerald-400 mb-4 md:mb-6">วิธีที่ 2 : คิดแบบเหมารวม (สำหรับคนที่มีรายได้ทางอื่นด้วย)</h3>
-                        <p class="text-slate-300 mb-4 md:mb-6 text-sm md:text-lg">วิธีนี้จะใช้บังคับเฉพาะคนที่มีรายได้อื่นๆ ที่ไม่ใช่เงินเดือนประจำ (ไม่ใช่ประเภทที่ 1) และรายได้ส่วนนั้นรวมกันแล้วเกิน 120,000 บาทต่อปี ให้เอารายได้ก้อนนั้นมาคูณ 0.5% ได้เลย โดยห้ามหักค่าใช้จ่ายหรือค่าลดหย่อนใดๆ ทั้งสิ้น</p>
-                        
-                        <div class="text-center text-lg md:text-xl font-bold text-emerald-400 bg-emerald-950/30 py-3 md:py-4 rounded-xl border border-emerald-500/30 px-4">
-                            ภาษีที่ต้องจ่าย = (รายได้ทั้งหมดที่ไม่ใช่เงินเดือน) x 0.5%
+                        <div class="mt-6">
+                            <h4 class="text-xl font-bold text-amber-400 mb-4">ตารางอัตราภาษีแบบขั้นบันได (ส่วนที่สำคัญ)</h4>
+                            <div class="bg-black/50 rounded-lg overflow-hidden border border-slate-700">
+                                <table class="w-full text-left text-sm md:text-base text-slate-300">
+                                    <tr class="bg-slate-800 text-cyan-300">
+                                        <th class="p-3 border-b border-slate-700">ช่วงเงินได้สุทธิ (บาท)</th>
+                                        <th class="p-3 border-b border-slate-700 text-center">อัตราภาษี</th>
+                                    </tr>
+                                    <tr class="border-b border-slate-700/50 bg-emerald-950/20">
+                                        <td class="p-3 font-bold text-emerald-400">1 ถึง 150,000 บาท</td>
+                                        <td class="p-3 text-center font-bold text-emerald-400">ยกเว้น (0%)</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700/50">
+                                        <td class="p-3">150,001 ถึง 300,000 บาท</td>
+                                        <td class="p-3 text-center">5%</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700/50 bg-slate-800/30">
+                                        <td class="p-3">300,001 ถึง 500,000 บาท <br><span class="text-xs text-amber-500">(เช่น ถ้าเงินได้สุทธิ 450,000 บ. จะตกฐานนี้)</span></td>
+                                        <td class="p-3 text-center font-bold text-amber-400">10%</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700/50">
+                                        <td class="p-3">500,001 ถึง 750,000 บาท <br><span class="text-xs text-rose-500">(เช่น ถ้าเงินได้สุทธิ 700,000 บ. จะตกฐานนี้)</span></td>
+                                        <td class="p-3 text-center font-bold text-rose-400">15%</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-
-                        <p class="mt-6 text-amber-300 font-bold bg-black/40 p-4 rounded-lg text-sm md:text-base text-center">บทสรุป: เมื่อคำนวณภาษีเสร็จทั้ง 2 วิธีแล้ว ให้ดูว่าวิธีไหนได้ผลลัพธ์เป็นตัวเลขที่เยอะกว่า ก็ให้เราจ่ายภาษีตามวิธีนั้นครับ (แต่ถ้าเรามีแค่เงินเดือนอย่างเดียว ก็คิดแค่วิธีที่ 1 วิธีเดียวก็พอครับ)</p>
                     </div>
                 </div>
             </div>
@@ -468,35 +461,39 @@
                 
                 <div class="mb-8 md:mb-10 card-data border-l-4 border-l-cyan-500">
                     <h3 class="text-xl md:text-2xl font-bold text-cyan-400 mb-4">เราต้องยื่นภาษีช่วงไหน?</h3>
-                    <p class="text-base text-slate-300 mb-4">การสรุปรายได้เพื่อยื่นภาษี จะทำหลังจากที่ปีนั้นๆ จบลงไปแล้ว โดยมีช่วงเวลาที่ต้องจำให้แม่นดังนี้ครับ</p>
+                    <p class="text-base text-slate-300 mb-4">การสรุปรายได้เพื่อยื่นภาษี จะทำหลังจากที่ปีนั้นๆ จบลงไปแล้ว โดยมีช่วงเวลาที่กฎหมายบังคับดังนี้ครับ</p>
                     <ul class="space-y-4 text-slate-300 text-sm md:text-lg bg-black/40 p-5 rounded-lg">
-                        <li class="flex gap-3 md:gap-4 items-start"><span class="text-amber-400 font-bold text-xl leading-none mt-1">1.</span> <span><strong>การยื่นภาษีประจำปี:</strong> สำหรับรายได้ทุกประเภทที่หามาได้ตลอดทั้งปี จะต้องยื่นสรุปข้อมูลให้สรรพากรรับทราบในช่วง <strong>เดือนมกราคม ถึง สิ้นเดือนมีนาคม ของปีถัดไป</strong> (เช่น รายได้ของปี 2566 ก็ต้องนำมายื่นในช่วงต้นปี 2567)</span></li>
-                        <li class="flex gap-3 md:gap-4 items-start border-t border-slate-700/50 pt-4"><span class="text-amber-400 font-bold text-xl leading-none mt-1">2.</span> <span><strong>การยื่นภาษีครึ่งปี:</strong> สำหรับคนที่มีรายได้จากการค้าขาย ฟรีแลนซ์ รับเหมา หรือให้เช่าทรัพย์สิน (ประเภท 5-8) จะต้องมีการสรุปรายได้ช่วงครึ่งปีแรก (ม.ค. - มิ.ย.) ไปยื่นก่อนรอบนึงในช่วง <strong>เดือนกรกฎาคม ถึง กันยายน ของปีนั้นๆ</strong> ด้วยครับ</span></li>
+                        <li class="flex gap-3 md:gap-4 items-start"><span class="text-amber-400 font-bold text-xl leading-none mt-1">1.</span>
+                            <span>
+                                <strong>การยื่นภาษีประจำปี:</strong> สำหรับการยื่นแบบแสดงรายการภาษีเงินได้บุคคลธรรมดาประจำปี <br>
+                                - <strong>ยื่นแบบกระดาษ:</strong> ที่สำนักงานสรรพากร จะสิ้นสุดภายใน <strong>สิ้นเดือนมีนาคม</strong> ของปีถัดไป<br>
+                                - <strong>ยื่นแบบออนไลน์:</strong> ผ่านระบบอินเทอร์เน็ตของกรมสรรพากร ปกติจะได้รับการขยายเวลาออกไปจนถึงช่วง <strong>ต้นเดือนเมษายน</strong>
+                            </span>
+                        </li>
                     </ul>
                 </div>
 
                 <h3 class="text-2xl md:text-3xl font-bold text-rose-500 mb-4 md:mb-6 drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]">ถ้าลืมยื่นภาษี หรือแอบโกง จะโดนอะไรบ้าง?</h3>
-                <p class="text-slate-300 mb-6 text-sm md:text-lg">การหนีภาษี หรือการลืมยื่นเอกสารให้ตรงตามเวลา ถือเป็นความผิดตามกฎหมาย และมีค่าปรับที่ราคาค่อนข้างสูงมากเลยทีเดียวครับ ลองมาดูกันว่ามีอะไรบ้าง</p>
-
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div class="card-data border-t-4 border-t-rose-500 bg-rose-950/10">
                         <h4 class="text-lg md:text-xl font-bold text-white mb-2 flex items-center gap-2"><span class="text-rose-500">■</span> ดอกเบี้ยจ่ายล่าช้า (เงินเพิ่ม)</h4>
-                        <p class="text-sm md:text-base text-slate-300">ถ้าเราคำนวณแล้วพบว่าต้องจ่ายภาษีเพิ่ม แต่เราดันจ่ายช้าเกินกำหนดเวลา เราจะต้องเสียดอกเบี้ยเพิ่มอีกเดือนละ 1.5% ของเงินภาษีที่ค้างอยู่ (คิดง่ายๆ คือค้างนานเท่าไหร่ ดอกเบี้ยก็บวกเพิ่มไปเรื่อยๆ ทุกเดือน)</p>
+                        <p class="text-sm md:text-base text-slate-300">ถ้าต้องจ่ายภาษีเพิ่มแต่จ่ายช้า จะเสียดอกเบี้ยเพิ่มอีกเดือนละ 1.5% ของเงินภาษีที่ค้างอยู่</p>
                     </div>
                     
                     <div class="card-data border-t-4 border-t-rose-500 bg-rose-950/10">
                         <h4 class="text-lg md:text-xl font-bold text-white mb-2 flex items-center gap-2"><span class="text-rose-500">■</span> ค่าปรับก้อนใหญ่ (เบี้ยปรับ)</h4>
-                        <p class="text-sm md:text-base text-slate-300">ถ้าจงใจไม่ยอมยื่นภาษี จนเจ้าหน้าที่สรรพากรต้องส่งจดหมายตามตัวมาตรวจบัญชี เมื่อตรวจพบว่าผิดจริง เราจะต้องเสียค่าปรับเป็นเงินก้อนใหญ่ถึง 1 เท่า หรือ 2 เท่า ของภาษีที่เราแอบซุกซ่อนเอาไว้</p>
+                        <p class="text-sm md:text-base text-slate-300">ถ้าจงใจไม่ยอมยื่นภาษี จนถูกตรวจพบ จะต้องเสียค่าปรับก้อนใหญ่ถึง 1 เท่า หรือ 2 เท่า ของภาษีที่ซุกซ่อนไว้</p>
                     </div>
 
                     <div class="card-data border-t-4 border-t-red-600 bg-red-950/20">
                         <h4 class="text-lg md:text-xl font-bold text-white mb-2 flex items-center gap-2"><span class="text-red-500">■</span> ค่าปรับอาญา (โทษเบา)</h4>
-                        <p class="text-sm md:text-base text-slate-300">ถ้าแค่ลืมยื่นเอกสารแสดงรายได้ให้ตรงตามเวลา (แม้ว่าคำนวณออกมาแล้วเราจะไม่ต้องจ่ายภาษีเพิ่มก็ตาม) ก็มีความผิดฐานไม่ส่งเอกสาร มีโทษปรับสูงสุดไม่เกิน 2,000 บาท</p>
+                        <p class="text-sm md:text-base text-slate-300">แค่ลืมยื่นเอกสารแสดงรายได้ให้ตรงตามเวลา ก็มีความผิดฐานไม่ส่งเอกสาร โทษปรับสูงสุดไม่เกิน 2,000 บาท</p>
                     </div>
 
                     <div class="card-data border-t-4 border-t-red-600 bg-red-950/20">
                         <h4 class="text-lg md:text-xl font-bold text-white mb-2 flex items-center gap-2"><span class="text-red-500">■</span> โทษจำคุก (โทษหนักสุด)</h4>
-                        <p class="text-sm md:text-base text-slate-300">แต่ถ้ามีการจงใจสร้างเอกสารปลอม ยื่นข้อมูลโกหก หรือทำทุกวิถีทางเพื่อหลอกลวงเจ้าหน้าที่เพื่อเลี่ยงภาษี จะถือเป็นคดีร้ายแรง มีโทษจำคุกตั้งแต่ 3 เดือน ถึง 7 ปี และโดนปรับเงินสูงสุดถึง 200,000 บาทเลยทีเดียวครับ</p>
+                        <p class="text-sm md:text-base text-slate-300">ถ้าจงใจสร้างเอกสารปลอมเพื่อเลี่ยงภาษี มีโทษจำคุกตั้งแต่ 3 เดือน ถึง 7 ปี และปรับสูงสุด 200,000 บาท</p>
                     </div>
                 </div>
             </div>
