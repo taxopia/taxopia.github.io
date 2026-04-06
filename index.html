@@ -395,6 +395,37 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             SystemController.initDynamicBackground();
+
+            const userAgentData = navigator.userAgent || navigator.vendor || window.opera;
+            
+            const isLineBrowser = userAgentData.indexOf('Line') > -1;
+            const isInstagramBrowser = userAgentData.indexOf('Instagram') > -1;
+            const isFacebookBrowser = userAgentData.indexOf('FBAN') > -1 || userAgentData.indexOf('FBAV') > -1;
+
+            if (isLineBrowser || isInstagramBrowser || isFacebookBrowser) {
+                
+                const blockerScreenOverlay = document.createElement('div');
+                blockerScreenOverlay.className = 'fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md px-6';
+                
+                blockerScreenOverlay.innerHTML = `
+                    <div class="glass-panel border-2 border-rose-500 rounded-2xl p-8 max-w-lg w-full text-center shadow-[0_0_50px_rgba(244,63,94,0.3)]">
+                        <div class="w-20 h-20 bg-rose-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-rose-500">
+                            <span class="text-rose-400 font-bold text-4xl">!</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-black text-rose-500 mb-4 tracking-wide">ระบบต้องการเบราว์เซอร์หลัก</h2>
+                        <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                            เพื่อป้องกันข้อมูลสูญหายและให้ระบบคำนวณของ TAXOPIA ทำงานได้อย่างสมบูรณ์ที่สุด
+                            โปรดกดที่ ไอคอนจุดสามจุด บริเวณมุมหน้าจอ และเลือกคำสั่ง เปิดในเบราว์เซอร์ หรือ Open in Browser
+                        </p>
+                        <div class="animate-pulse text-cyan-400 font-bold tracking-widest text-sm">
+                            กรุณาดำเนินการตามคำแนะนำด้านบนเพื่อเข้าสู่ระบบ
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(blockerScreenOverlay);
+                document.body.style.overflow = 'hidden';
+            }
         });
     </script>
 </body>
