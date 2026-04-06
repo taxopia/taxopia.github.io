@@ -156,13 +156,19 @@
 
         .player-hud {
             position: absolute;
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 20;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         .hud-active {
-            transform: scale(1.1) translateY(-10px);
+            transform: scale(1.05) translateY(-8px) translateZ(0);
             box-shadow: 0 20px 40px rgba(0, 100, 200, 0.3), inset 0 0 0 4px #fcd34d;
             border-color: #fcd34d !important;
             z-index: 25;
@@ -760,89 +766,89 @@
             <div id="pawn-container" class="absolute inset-0 pointer-events-none z-[50]"></div>
         </div>
         
-        <div id="hud-1" class="player-hud top-[2vh] left-[2vw] lg:top-4 lg:left-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #3b82f6;">
-            <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2">
-                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(59,130,246,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #60a5fa, #2563eb);">P1</div>
-                <div class="flex-1 min-w-0">
-                    <div id="name-1" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
-                    <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-1">รอบที่ 0</div>
+        <div id="hud-1" class="player-hud top-[2vh] left-[2vw] lg:top-4 lg:left-4 hidden glass-panel rounded-2xl p-1.5 md:p-2 border-[2px] md:border-[3px] w-[42vw] md:w-[160px] lg:w-[220px]" style="border-color: #3b82f6;">
+                    <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2">
+                        <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(59,130,246,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #60a5fa, #2563eb);">P1</div>
+                        <div class="flex-1 min-w-0">
+                            <div id="name-1" class="font-black text-slate-800 text-[0.65rem] lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
+                            <div class="text-[0.55rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-1">รอบที่ 0</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-1.5 rounded-xl mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
+                        <div class="flex-1 text-center pr-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
+                            <div class="font-black text-emerald-500 text-[0.65rem] lg:text-base truncate" id="cash-1">0</div>
+                        </div>
+                        <div class="flex-1 text-center pl-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
+                            <div class="font-black text-sky-500 text-[0.65rem] lg:text-base truncate" id="deduct-1">0</div>
+                        </div>
+                    </div>
+                    <button onclick="UIEngine.openInventory(1)" class="w-full bg-white hover:bg-slate-50 rounded-xl text-[0.6rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
                 </div>
-            </div>
-            <div class="bg-slate-50 p-1.5 rounded-lg mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
-                <div class="flex-1 text-center pr-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
-                    <div class="font-black text-emerald-500 text-xs lg:text-base truncate" id="cash-1">0</div>
-                </div>
-                <div class="flex-1 text-center pl-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
-                    <div class="font-black text-sky-500 text-xs lg:text-base truncate" id="deduct-1">0</div>
-                </div>
-            </div>
-            <button onclick="UIEngine.openInventory(1)" class="w-full bg-white hover:bg-slate-50 rounded-lg text-[0.65rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
-        </div>
         
-        <div id="hud-2" class="player-hud top-[2vh] right-[2vw] lg:top-4 lg:right-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #f43f5e;">
-            <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2 flex-row-reverse text-right">
-                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(244,63,94,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #fb7185, #e11d48);">P2</div>
-                <div class="flex-1 min-w-0">
-                    <div id="name-2" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
-                    <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-2">รอบที่ 0</div>
+        <div id="hud-2" class="player-hud top-[2vh] right-[2vw] lg:top-4 lg:right-4 hidden glass-panel rounded-2xl p-1.5 md:p-2 border-[2px] md:border-[3px] w-[42vw] md:w-[160px] lg:w-[220px]" style="border-color: #f43f5e;">
+                    <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2 flex-row-reverse text-right">
+                        <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(244,63,94,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #fb7185, #e11d48);">P2</div>
+                        <div class="flex-1 min-w-0">
+                            <div id="name-2" class="font-black text-slate-800 text-[0.65rem] lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
+                            <div class="text-[0.55rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-2">รอบที่ 0</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-1.5 rounded-xl mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
+                        <div class="flex-1 text-center pr-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
+                            <div class="font-black text-emerald-500 text-[0.65rem] lg:text-base truncate" id="cash-2">0</div>
+                        </div>
+                        <div class="flex-1 text-center pl-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
+                            <div class="font-black text-sky-500 text-[0.65rem] lg:text-base truncate" id="deduct-2">0</div>
+                        </div>
+                    </div>
+                    <button onclick="UIEngine.openInventory(2)" class="w-full bg-white hover:bg-slate-50 rounded-xl text-[0.6rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
                 </div>
-            </div>
-            <div class="bg-slate-50 p-1.5 rounded-lg mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
-                <div class="flex-1 text-center pr-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
-                    <div class="font-black text-emerald-500 text-xs lg:text-base truncate" id="cash-2">0</div>
-                </div>
-                <div class="flex-1 text-center pl-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
-                    <div class="font-black text-sky-500 text-xs lg:text-base truncate" id="deduct-2">0</div>
-                </div>
-            </div>
-            <button onclick="UIEngine.openInventory(2)" class="w-full bg-white hover:bg-slate-50 rounded-lg text-[0.65rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
-        </div>
         
-        <div id="hud-3" class="player-hud bottom-[2vh] left-[2vw] lg:bottom-4 lg:left-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #10b981;">
-            <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2">
-                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(16,185,129,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #34d399, #059669);">P3</div>
-                <div class="flex-1 min-w-0">
-                    <div id="name-3" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
-                    <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-3">รอบที่ 0</div>
+        <div id="hud-3" class="player-hud bottom-[2vh] left-[2vw] lg:bottom-4 lg:left-4 hidden glass-panel rounded-2xl p-1.5 md:p-2 border-[2px] md:border-[3px] w-[42vw] md:w-[160px] lg:w-[220px]" style="border-color: #10b981;">
+                    <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2">
+                        <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(16,185,129,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #34d399, #059669);">P3</div>
+                        <div class="flex-1 min-w-0">
+                            <div id="name-3" class="font-black text-slate-800 text-[0.65rem] lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
+                            <div class="text-[0.55rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-3">รอบที่ 0</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-1.5 rounded-xl mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
+                        <div class="flex-1 text-center pr-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
+                            <div class="font-black text-emerald-500 text-[0.65rem] lg:text-base truncate" id="cash-3">0</div>
+                        </div>
+                        <div class="flex-1 text-center pl-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
+                            <div class="font-black text-sky-500 text-[0.65rem] lg:text-base truncate" id="deduct-3">0</div>
+                        </div>
+                    </div>
+                    <button onclick="UIEngine.openInventory(3)" class="w-full bg-white hover:bg-slate-50 rounded-xl text-[0.6rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
                 </div>
-            </div>
-            <div class="bg-slate-50 p-1.5 rounded-lg mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
-                <div class="flex-1 text-center pr-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
-                    <div class="font-black text-emerald-500 text-xs lg:text-base truncate" id="cash-3">0</div>
-                </div>
-                <div class="flex-1 text-center pl-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
-                    <div class="font-black text-sky-500 text-xs lg:text-base truncate" id="deduct-3">0</div>
-                </div>
-            </div>
-            <button onclick="UIEngine.openInventory(3)" class="w-full bg-white hover:bg-slate-50 rounded-lg text-[0.65rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
-        </div>
         
-        <div id="hud-4" class="player-hud bottom-[2vh] right-[2vw] lg:bottom-4 lg:right-4 hidden glass-panel rounded-lg p-1.5 md:p-2 border-[2px] md:border-[3px] w-[35vw] md:w-[130px] lg:w-[180px]" style="border-color: #f59e0b;">
-            <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2 flex-row-reverse text-right">
-                <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(245,158,11,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #fbbf24, #d97706);">P4</div>
-                <div class="flex-1 min-w-0">
-                    <div id="name-4" class="font-black text-slate-800 text-xs lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
-                    <div class="text-[0.6rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-4">รอบที่ 0</div>
+        <div id="hud-4" class="player-hud bottom-[2vh] right-[2vw] lg:bottom-4 lg:right-4 hidden glass-panel rounded-2xl p-1.5 md:p-2 border-[2px] md:border-[3px] w-[42vw] md:w-[160px] lg:w-[220px]" style="border-color: #f59e0b;">
+                    <div class="flex items-center gap-2 border-b-2 border-slate-100 pb-2 mb-2 flex-row-reverse text-right">
+                        <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-black text-white text-[0.6rem] lg:text-lg shadow-[0_4px_10px_rgba(245,158,11,0.5)] border-[2px] border-white shrink-0" style="background: linear-gradient(135deg, #fbbf24, #d97706);">P4</div>
+                        <div class="flex-1 min-w-0">
+                            <div id="name-4" class="font-black text-slate-800 text-[0.65rem] lg:text-base truncate tracking-wide">รอเข้าระบบ</div>
+                            <div class="text-[0.55rem] lg:text-xs text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded inline-block mt-0.5" id="laps-4">รอบที่ 0</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-1.5 rounded-xl mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
+                        <div class="flex-1 text-center pr-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
+                            <div class="font-black text-emerald-500 text-[0.65rem] lg:text-base truncate" id="cash-4">0</div>
+                        </div>
+                        <div class="flex-1 text-center pl-1">
+                            <div class="text-[0.5rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
+                            <div class="font-black text-sky-500 text-[0.65rem] lg:text-base truncate" id="deduct-4">0</div>
+                        </div>
+                    </div>
+                    <button onclick="UIEngine.openInventory(4)" class="w-full bg-white hover:bg-slate-50 rounded-xl text-[0.6rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
                 </div>
-            </div>
-            <div class="bg-slate-50 p-1.5 rounded-lg mb-2 border-2 border-slate-100 flex divide-x-2 divide-slate-200">
-                <div class="flex-1 text-center pr-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">เงินสด</div>
-                    <div class="font-black text-emerald-500 text-xs lg:text-base truncate" id="cash-4">0</div>
-                </div>
-                <div class="flex-1 text-center pl-1">
-                    <div class="text-[0.55rem] lg:text-[0.65rem] text-slate-500 font-black uppercase">ลดหย่อน</div>
-                    <div class="font-black text-sky-500 text-xs lg:text-base truncate" id="deduct-4">0</div>
-                </div>
-            </div>
-            <button onclick="UIEngine.openInventory(4)" class="w-full bg-white hover:bg-slate-50 rounded-lg text-[0.65rem] lg:text-xs py-1.5 text-slate-600 font-black border-2 border-slate-200 shadow-sm transition-all active:translate-y-1">คลังการ์ด</button>
-        </div>
     </main>
     
     <div id="sys-menu-modal" class="absolute inset-0 z-[3000] hidden bg-slate-900/80 backdrop-blur-sm flex-col items-center justify-center p-2 md:p-4 opacity-0 transition-opacity duration-300">
