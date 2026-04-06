@@ -192,11 +192,11 @@
         
         <nav class="flex-none md:flex-1 overflow-x-auto md:overflow-y-auto py-3 md:py-6 flex flex-row md:flex-col gap-2 px-4 scrollbar-hide" id="nav-menu">
             <button onclick="SystemArchive.switchSection('sec-objective', this)" class="nav-item active w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">เป้าหมายของเกม</button>
-            <button onclick="SystemArchive.switchSection('sec-economy', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">กติกาพื้นฐานและการเงิน</button>
-            <button onclick="SystemArchive.switchSection('sec-board', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">ช่องต่างๆ บนกระดาน</button>
-            <button onclick="SystemArchive.switchSection('sec-cards', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">การ์ดสิทธิลดหย่อนภาษี</button>
-            <button onclick="SystemArchive.switchSection('sec-hazards', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">เหตุฉุกเฉินและการป้องกัน</button>
-            <button onclick="SystemArchive.switchSection('sec-endgame', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">การคำนวณภาษีตอนจบเกม</button>
+            <button onclick="SystemArchive.switchSection('sec-economy', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">กติกาและการเงิน</button>
+            <button onclick="SystemArchive.switchSection('sec-board', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">ช่องบนกระดาน</button>
+            <button onclick="SystemArchive.switchSection('sec-cards', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">การ์ดลดหย่อน</button>
+            <button onclick="SystemArchive.switchSection('sec-hazards', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">เหตุฉุกเฉิน</button>
+            <button onclick="SystemArchive.switchSection('sec-endgame', this)" class="nav-item w-auto md:w-full text-center md:text-left px-4 py-3 md:py-4 rounded-xl font-bold text-slate-300 text-base md:text-lg shrink-0">การคิดภาษี</button>
         </nav>
 
         <div class="hidden md:block p-6 border-t border-slate-700/50">
@@ -208,66 +208,62 @@
         
         <section id="sec-objective" class="content-section active">
             <div class="max-w-4xl mx-auto pb-10">
-                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 1</div>
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">เป้าหมายของเกมและคณะผู้จัดทำ</h2>
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">ส่วนที่ 1</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">เป้าหมายของเกมและทีมสร้าง</h2>
                 
                 <div class="prose prose-invert max-w-none">
                     <div class="card-data mb-6 md:mb-8">
-                        <h3 class="text-xl md:text-2xl font-bold text-emerald-300 mb-4">เป้าหมายหลักในการเล่น</h3>
+                        <h3 class="text-xl md:text-2xl font-bold text-emerald-300 mb-4">เล่นไปเพื่ออะไร</h3>
                         <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-4">
-                            ผู้เล่นทุกคนจะได้รับบทบาทเป็นประชาชนคนทำงานที่มีรายได้ ซึ่งจะต้องทอยลูกเต๋าเพื่อเดินไปตามช่องต่างๆ บนกระดาน โดยมีเป้าหมายที่สำคัญที่สุดคือการบริหารจัดการเงินสดในมือ ควบคู่ไปกับการตัดสินใจเลือกซื้อการ์ดลดหย่อนภาษีที่เหมาะสมกับการเงินของตนเอง เกมจะดำเนินไปอย่างต่อเนื่องจนกว่าผู้เล่นทุกคนจะเดินผ่านจุดเริ่มต้นครบจำนวน 3 รอบกระดาน
-                        </p>
-                        <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-4">
-                            หลังจากที่ทุกคนเดินครบกำหนดแล้ว ระบบจะทำการปิดเกมและคำนวณภาษีเงินได้บุคคลธรรมดาของแต่ละคนโดยอัตโนมัติ ผู้เล่นที่สามารถวางแผนการเงินและใช้สิทธิลดหย่อนได้ดีที่สุด จนทำให้ตนเองเสียภาษีน้อยที่สุด หรือได้รับเงินคืนภาษีจากรัฐบาลมากที่สุด จะถือเป็นผู้ชนะในบอร์ดเกมนี้
+                            เกมนี้ให้คุณรับบทเป็นมนุษย์เงินเดือน ทอยลูกเต๋าเดินบนกระดานไปเรื่อยๆ พอเดินครบ 1 รอบจะได้เงินเดือนเพิ่ม หน้าที่หลักของคุณคือบริหารเงินในกระเป๋าและเอาเงินไปซื้อการ์ดลดหย่อนภาษีให้ฉลาดที่สุด เกมจะเล่นกันทั้งหมด 3 รอบ พอเดินครบเกมจะจบและคิดภาษีทันที ใครจ่ายภาษีน้อยสุดหรือได้เงินคืนเยอะสุดจะเป็นผู้ชนะ
                         </p>
                     </div>
 
                     <div class="card-data border-t-4 border-t-emerald-500 relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.15)]">
                         <div class="absolute right-0 top-0 w-64 h-full bg-gradient-to-l from-emerald-500/10 to-transparent pointer-events-none"></div>
-                        <h3 class="text-2xl md:text-3xl font-bold text-emerald-400 mb-3 relative z-10">คณะผู้จัดทำ</h3>
+                        <h3 class="text-2xl md:text-3xl font-bold text-emerald-400 mb-3 relative z-10">ทีมสร้างสรรค์ผลงาน</h3>
                         <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 relative z-10 font-medium">
-                            บอร์ดเกมชุดนี้ถูกออกแบบและพัฒนาขึ้นโดยคณะนักศึกษาชั้นปีที่ 1 แห่งมหาวิทยาลัยธรรมศาสตร์ ซึ่งเป็นส่วนหนึ่งของการประเมินผลในรายวิชา TU242 โดยได้รับความกรุณาจาก อาจารย์รุ่งนภา เทพภาพ เป็นอาจารย์ที่ปรึกษาโครงงาน ทั้งนี้โครงงานสำเร็จลุล่วงได้จากความร่วมมือของสมาชิกดังต่อไปนี้
+                            เกมนี้สร้างโดยนักศึกษาชั้นปีที่ 1 มหาวิทยาลัยธรรมศาสตร์ ในวิชา TU242 โดยมีอาจารย์รุ่งนภา เทพภาพ เป็นที่ปรึกษา สมาชิกในทีมมีดังนี้
                         </p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">เมนี่ ไพศาลพนา</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ณนน อินทชาติ</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ชวัลนุช พฤกษจำรูญ</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ลิเดีย ดวงปัญญา</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ซีรีน ปาทาน</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ฐิติวัสส์ พยัฆบุตร</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">อุกฤษณ์ คำวิงวร</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ปริยากร จารุประวิทย์</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ปพนธีร์ ชัยมา</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">ถูริชญา กุหลาบ</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
                                 <span class="text-white font-bold text-lg">มัตติกา สุนทรวิทย์</span>
                             </div>
-                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
-                                                            <span class="text-white font-bold text-lg">ปุณณาสา ถนอมสิน</span>
-                                                        </div>
-                                                        <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center hover:border-emerald-500 transition-colors text-center">
-                                                            <span class="text-white font-bold text-lg">บวรวิชญ์ ระหัส</span>
-                                                        </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
+                                <span class="text-white font-bold text-lg">ปุณณาสา ถนอมสิน</span>
+                            </div>
+                            <div class="bg-black/50 border border-emerald-900/50 p-4 rounded-xl flex items-center justify-center text-center">
+                                <span class="text-white font-bold text-lg">บวรวิชญ์ ระหัส</span>
                             </div>
                         </div>
                     </div>
@@ -277,26 +273,26 @@
 
         <section id="sec-economy" class="content-section">
             <div class="max-w-4xl mx-auto pb-10">
-                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 2</div>
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">กติกาพื้นฐานและการเงิน</h2>
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">ส่วนที่ 2</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">กติกาและการเงิน</h2>
                 
-                <p class="text-lg md:text-xl text-slate-300 leading-relaxed mb-6 md:mb-8">เพื่อให้การแข่งขันมีความยุติธรรม ผู้เล่นทุกคนจะเริ่มต้นด้วยกฎเกณฑ์และสถานะทางการเงินที่เท่าเทียมกันทั้งหมด</p>
+                <p class="text-lg md:text-xl text-slate-300 leading-relaxed mb-6 md:mb-8">ทุกคนเริ่มเกมด้วยเงื่อนไขและเงินทุนที่เท่ากันทั้งหมด</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div class="card-data border-t-4 border-t-amber-500">
                         <h4 class="text-xl md:text-2xl font-bold text-amber-400 mb-2">เงินทุนเริ่มต้น</h4>
-                        <p class="text-base md:text-lg text-slate-300 mb-4">เมื่อกดเริ่มเกม ผู้เล่นทุกคนจะได้รับเงินสดตั้งต้นจำนวน <strong>27,000 บาท</strong> ซึ่งเปรียบเสมือนฐานเงินเดือนประจำที่ได้รับในแต่ละเดือน</p>
+                        <p class="text-base md:text-lg text-slate-300 mb-4">เริ่มเกมทุกคนจะได้เงินทุน 27000 บาท ซึ่งอัตราเดียวกับเงินเดือน ถ้าเงินหมดกลางทางจะถือว่าล้มละลายและแพ้ทันที</p>
                     </div>
                     
                     <div class="card-data border-t-4 border-t-amber-500">
-                        <h4 class="text-xl md:text-2xl font-bold text-amber-400 mb-2">ช่องวันรับเงินเดือน</h4>
-                        <p class="text-base md:text-lg text-slate-300 mb-4">ทุกครั้งที่ผู้เล่นทอยลูกเต๋าแล้วเดินวนกลับมาผ่านช่องจุดเริ่มต้น หรือที่เรียกว่าช่องวันรับเงินเดือน ระบบจะทำการเพิ่มเงินสดให้ผู้เล่นอีก <strong>27,000 บาท</strong> ทันที เพื่อใช้เป็นทุนสำหรับเดินจับจ่ายใช้สอยในรอบถัดไป</p>
+                        <h4 class="text-xl md:text-2xl font-bold text-amber-400 mb-2">รับเงินเดือน</h4>
+                        <p class="text-base md:text-lg text-slate-300 mb-4">เวลาเดินผ่านจุดเริ่มต้นจะได้เงินเดือน 28000 บาท ซึ่งหักค่าประกันสังคมและภาษีมาให้แล้วเหลือ 27000 บาท แต่ถ้ามีการ์ดเลี้ยงลูกหรือดูแลพ่อแม่จะโดนหักเงินเพิ่มใบละ 5000 บาททุกรอบ</p>
                     </div>
 
                     <div class="card-data border-t-4 border-t-cyan-500 md:col-span-2">
-                        <h4 class="text-xl md:text-2xl font-bold text-cyan-400 mb-2">ฐานรายได้รวมประจำปีเพื่อคิดภาษี</h4>
+                        <h4 class="text-xl md:text-2xl font-bold text-cyan-400 mb-2">รายได้รวมทั้งปี</h4>
                         <p class="text-base md:text-lg text-slate-300 mb-4">
-                            ในส่วนของการคำนวณภาษีตอนจบเกมนั้น ระบบได้ตั้งค่ารายได้จากเงินเดือนตลอดทั้งปีแบบคงที่ไว้ที่ <strong>336,000 บาท</strong> สำหรับผู้เล่นทุกคน แต่ในระหว่างการเล่น หากผู้เล่นตกไปในช่องโชคชะตาหรือฝ่ายบุคคลที่ทำให้ได้รับเงินพิเศษเพิ่มเติม รายได้ส่วนนั้นจะถูกบวกเพิ่มเข้าไปในฐานรายได้รวมนี้ด้วย ซึ่งหมายความว่ายิ่งคุณได้รับเงินพิเศษมากเท่าไหร่ ฐานภาษีที่คุณจะต้องนำไปคำนวณตอนจบเกมก็จะยิ่งสูงขึ้นตามไปด้วยอย่างหลีกเลี่ยงไม่ได้
+                            รายได้รวมทั้งปีของทุกคนจะตั้งไว้ที่ 336000 บาท แต่ถ้าเล่นแล้วได้โบนัส หรือได้รายได้เสริมอื่นๆระหว่างทาง ยอดเงินรายได้ก็จะสูงขึ้นและต้องเสียภาษีเยอะขึ้นตามไปด้วย
                         </p>
                     </div>
                 </div>
@@ -305,11 +301,11 @@
 
         <section id="sec-board" class="content-section">
             <div class="max-w-4xl mx-auto pb-10">
-                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 3</div>
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">วิธีการทำงานของช่องต่างๆ บนกระดาน</h2>
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">ส่วนที่ 3</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">แต่ละช่องบนกระดาน</h2>
                 
                 <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
-                    กระดานเกมประกอบด้วยช่องสำหรับเดินทั้งหมด 40 ช่อง ซึ่งแต่ละช่องจะมีเงื่อนไขและผลลัพธ์ที่แตกต่างกันออกไป โดยผู้เล่นสามารถสังเกตประเภทของการกระทำได้จากแถบสีที่ปรากฏอยู่ด้านบนของแต่ละช่อง ดังนี้
+                    กระดานมี 40 ช่อง ดูง่ายๆ จากสีและประเภทของช่องตามนี้
                 </p>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -348,11 +344,17 @@
                 </div>
 
                 <div class="mt-8 card-data">
-                    <h3 class="text-2xl font-bold text-emerald-400 mb-4">ผลลัพธ์เมื่อเดินไปตกที่ช่องต่างๆ</h3>
-                    <ul class="space-y-4 text-slate-300 text-sm md:text-base">
-                        <li><strong class="text-blue-400">ช่องสิทธิลดหย่อน ครอบครัว ประกันภัย กองทุน การกุศล:</strong> เป็นช่องที่เปิดโอกาสให้ผู้เล่นสามารถตัดสินใจเลือกซื้อการ์ดเพื่อนำไปลดหย่อนภาษีได้ หากผู้เล่นมีเงินสดในมือเพียงพอ ระบบจะถามความสมัครใจว่าต้องการซื้อหรือไม่ หากตอบตกลง เงินสดจะถูกหักออกและการ์ดจะเข้าไปอยู่ในคลังเก็บของทันที</li>
-                        <li><strong class="text-red-400">ช่องภาระค่าใช้จ่าย:</strong> เป็นช่องบังคับที่ผู้เล่นจะต้องเสียเงินสดออกจากตัวทันทีตามจำนวนที่ป้ายระบุไว้ โดยไม่สามารถหลีกเลี่ยงหรือปฏิเสธได้</li>
-                        <li><strong class="text-orange-400">ช่องฝ่ายบุคคล และ ช่องโชคชะตา:</strong> คือช่องสุ่มเหตุการณ์ ซึ่งระบบจะทำการจั่วไพ่โชคชะตาให้โดยอัตโนมัติ ผลลัพธ์อาจมีทั้งเหตุการณ์ที่ทำให้ได้รับเงินก้อนโต เหตุการณ์ที่ทำให้ต้องเสียเงินฟรีๆ เหตุการณ์ที่บังคับให้ย้ายตำแหน่งบนกระดาน หรือแม้กระทั่งเหตุการณ์ที่ทำให้ผู้เล่นต้องงดเดินในรอบต่อไป</li>
+                    <h3 class="text-2xl font-bold text-emerald-400 mb-4">อธิบายการตกช่อง</h3>
+                    <ul class="space-y-4 text-slate-300 text-sm md:text-base leading-relaxed">
+                        <li>
+                            ช่องลดหย่อน ได้แก่ ครอบครัว ประกัน กองทุน บริจาค ถ้าเดินตกแล้วมีเงินพอ จะเลือกซื้อการ์ดเก็บไว้ลดภาษีตอนจบเกมได้
+                        </li>
+                        <li>
+                            ช่องค่าใช้จ่าย เป็นช่องสีแดง เดินตกปุ๊บโดนบังคับจ่ายเงินทันที หนีไม่ได้
+                        </li>
+                        <li>
+                            ช่องโชคชะตาและฝ่ายบุคคล เป็นช่องเสี่ยงดวง ระบบจะสุ่มเหตุการณ์ให้ อาจจะได้เงิน เสียเงิน โดนจับย้ายที่ หรือสั่งข้ามตาเดิน
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -360,32 +362,32 @@
 
         <section id="sec-cards" class="content-section">
             <div class="max-w-4xl mx-auto pb-10">
-                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 4</div>
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">การ์ดสิทธิลดหย่อนภาษี</h2>
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">ส่วนที่ 4</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">การ์ดลดหย่อนภาษี</h2>
                 
                 <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
-                    การ์ดลดหย่อนภาษีคือไอเทมชิ้นสำคัญที่จะช่วยให้ผู้เล่นประหยัดเงินค่าภาษีในตอนจบเกมได้มหาศาล เมื่อผู้เล่นตัดสินใจซื้อการ์ดสำเร็จ การ์ดจะถูกเก็บรวบรวมไว้ในคลังของผู้เล่น ซึ่งสามารถกดปุ่มตรวจสอบคลังเพื่อดูว่าตนเองมีการ์ดอะไรอยู่บ้างได้ตลอดเวลา โดยการ์ดจะแบ่งออกเป็น 4 หมวดหมู่หลัก ดังนี้
+                    การ์ดลดหย่อนเอาไว้ลดเงินภาษีตอนจบเกม ซื้อแล้วจะเข้าไปอยู่ในคลังของคุณ แบ่งเป็น 4 หมวดตามนี้
                 </p>
 
                 <div class="space-y-6">
                     <div class="card-data border-l-[6px] border-l-blue-500">
-                        <h4 class="text-2xl font-bold text-blue-400 mb-2">หมวดครอบครัว</h4>
-                        <p class="text-slate-300 mb-4">ประกอบด้วยสิทธิประโยชน์ต่างๆ เช่น การจดทะเบียนสมรส การมีบุตร การดูแลคุณพ่อคุณแม่ และการดูแลผู้พิการ การซื้อการ์ดในหมวดนี้จะให้ยอดลดหย่อนภาษีที่ค่อนข้างสูงมาก แต่กฎของเกมกำหนดไว้ว่า ผู้เล่นจะสามารถครอบครองการ์ดแต่ละชนิดในหมวดนี้ได้เพียง <strong>1 ใบ</strong> เท่านั้น ไม่สามารถซื้อใบเดิมซ้ำเพื่อเพิ่มยอดได้อีก</p>
+                        <h4 class="text-2xl font-bold text-blue-400 mb-2">ครอบครัว</h4>
+                        <p class="text-slate-300 mb-4 leading-relaxed">ลดหย่อนได้เยอะ แต่ซื้อได้แค่ชื่อละ 1 ใบเท่านั้น และถ้าซื้อการ์ดเลี้ยงลูกหรือดูแลพ่อแม่ จะทำให้คุณโดนหักเงินรายเดือนเพิ่มรอบละ 5000 บาทด้วย</p>
                     </div>
 
                     <div class="card-data border-l-[6px] border-l-pink-500">
-                        <h4 class="text-2xl font-bold text-pink-400 mb-2">หมวดประกันภัย</h4>
-                        <p class="text-slate-300 mb-4">ครอบคลุมการ์ดประกันสุขภาพตนเอง ประกันสุขภาพมารดา และประกันสะสมทรัพย์ ความพิเศษของการ์ดประกันสุขภาพคือ นอกเหนือจากจะใช้ลดหย่อนภาษีแล้ว มันยังสามารถนำมาใช้ป้องกันเหตุฉุกเฉินตอนที่ตกช่องอุบัติเหตุได้อีกด้วย ส่วนการ์ดประกันสะสมทรัพย์นั้นจะเน้นไปที่การออมเงินเพื่อลดหย่อนภาษีล้วนๆ ผู้เล่นจึงสามารถซื้อสะสมกี่ใบก็ได้ไม่มีจำกัด</p>
+                        <h4 class="text-2xl font-bold text-pink-400 mb-2">ประกันภัย</h4>
+                        <p class="text-slate-300 mb-4 leading-relaxed">การ์ดประกันสุขภาพซื้อได้ชื่อละ 1 ใบ เอาไว้ลดหย่อนภาษีและเอาไว้ป้องกันเงินหายเวลาตกช่องอุบัติเหตุได้ ส่วนประกันสะสมทรัพย์เอาไว้ลดหย่อนอย่างเดียวแต่ซื้อได้ไม่จำกัดจำนวนใบ</p>
                     </div>
 
                     <div class="card-data border-l-[6px] border-l-emerald-500">
-                        <h4 class="text-2xl font-bold text-emerald-400 mb-2">หมวดกองทุน</h4>
-                        <p class="text-slate-300 mb-4">รวมถึงการ์ดกองทุนประเภทต่างๆ เช่น กองทุน PVD กองทุน SSF กองทุน Thai ESG และ กองทุน RMF เพื่อให้เกมมีความสมดุลและสมจริงตามข้อกฎหมาย ระบบจึงจำกัดสิทธิให้ผู้เล่นสามารถซื้อการ์ดกองทุนแต่ละประเภทได้สูงสุดเพียง <strong>3 ใบ</strong> เท่านั้น</p>
+                        <h4 class="text-2xl font-bold text-emerald-400 mb-2">กองทุน</h4>
+                        <p class="text-slate-300 mb-4 leading-relaxed">เอาเงินไปลงทุนเพื่อลดหย่อนภาษี ซื้อได้สูงสุดชื่อละ 3 ใบ</p>
                     </div>
 
                     <div class="card-data border-l-[6px] border-l-rose-500">
-                        <h4 class="text-2xl font-bold text-rose-400 mb-2">หมวดการกุศล</h4>
-                        <p class="text-slate-300 mb-4">การ์ดในหมวดนี้คือการบริจาคเงินเพื่อช่วยเหลือสังคม หากผู้เล่นซื้อการ์ดบริจาคให้แก่โรงพยาบาลของรัฐหรือสถานศึกษา จะได้รับสิทธิพิเศษในการหักลดหย่อนภาษีเป็น <strong>2 เท่า</strong> ของเงินสดที่จ่ายไปจริง แต่หากเป็นการบริจาคให้แก่มูลนิธิทั่วไป จะสามารถนำมาลดหย่อนได้เท่ากับจำนวนเงินที่จ่ายไปเท่านั้น</p>
+                        <h4 class="text-2xl font-bold text-rose-400 mb-2">การกุศล</h4>
+                        <p class="text-slate-300 mb-4 leading-relaxed">ถ้าบริจาคให้โรงพยาบาลรัฐ โรงเรียน พรรคการเมือง จะได้สิทธิลดหย่อน 2 เท่าของเงินที่จ่ายไป แต่ถ้าบริจาคให้วัดจะได้ลดหย่อนแค่ 1 เท่า</p>
                     </div>
                 </div>
             </div>
@@ -393,28 +395,28 @@
 
         <section id="sec-hazards" class="content-section">
             <div class="max-w-4xl mx-auto pb-10">
-                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 5</div>
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">เหตุฉุกเฉินและการป้องกัน</h2>
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">ส่วนที่ 5</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">เหตุฉุกเฉิน</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div>
                         <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6">
-                            บนกระดานเกมจะมีช่องสีแดงที่เขียนว่า <strong>อุบัติเหตุฉุกเฉิน</strong> ซึ่งเป็นช่องที่สร้างความเสียหายทางการเงินอย่างหนักหน่วง หากผู้เล่นคนใดโชคร้ายเดินมาตกที่ช่องนี้ จะต้องถูกบังคับให้เสียเงินสดก้อนใหญ่ทันทีโดยไม่มีข้อแม้
+                            ช่องอุบัติเหตุฉุกเฉินเป็นช่องอันตราย ตกแล้วโดนบังคับจ่ายเงินก้อนโต
                         </p>
                         <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6">
-                            แต่หากผู้เล่นคนนั้นได้เตรียมตัวมาเป็นอย่างดี โดยการซื้อการ์ด <strong>ประกันสุขภาพ</strong> ที่ตรงกับประเภทของอุบัติเหตุนั้นๆ เก็บเอาไว้ในคลังล่วงหน้า ระบบจะเปิดทางเลือกให้ผู้เล่นสามารถตัดสินใจแก้ไขสถานการณ์ได้ 2 ทางเลือก ดังนี้
+                            แต่ถ้าคุณมีการ์ดประกันสุขภาพที่ตรงกันเก็บไว้ จะมีทางเลือก 2 ทาง
                         </p>
                     </div>
                     <div class="card-data bg-red-950/40 border-red-500/50">
-                        <h4 class="text-2xl font-bold text-red-400 mb-4 text-center">ทางเลือกเมื่อเผชิญเหตุฉุกเฉิน</h4>
+                        <h4 class="text-2xl font-bold text-red-400 mb-4 text-center">ทางเลือกตอนเจออุบัติเหตุ</h4>
                         <div class="space-y-4">
                             <div class="bg-black/60 p-4 rounded-xl border border-red-900/50">
-                                <span class="text-emerald-400 font-bold tracking-wide block mb-1">เลือกที่จะใช้สิทธิคุ้มครอง</span>
-                                <span class="text-slate-300 text-sm">ผู้เล่นจะรอดพ้นจากการเสียเงินสดอย่างสมบูรณ์ แต่จะต้องยอมฉีกการ์ดประกันสุขภาพใบนั้นทิ้งไป ทำให้สูญเสียสิทธิในการนำยอดการ์ดใบนั้นไปลดหย่อนภาษีในตอนจบเกม</span>
+                                <span class="text-emerald-400 font-bold tracking-wide block mb-1">ใช้การ์ดป้องกัน</span>
+                                <span class="text-slate-300 text-sm leading-relaxed">ไม่ต้องเสียเงินเลย แต่การ์ดจะถูกฉีกทิ้ง เอาไปใช้ลดภาษีตอนจบไม่ได้</span>
                             </div>
                             <div class="bg-black/60 p-4 rounded-xl border border-red-900/50">
-                                <span class="text-rose-400 font-bold tracking-wide block mb-1">เลือกที่จะสละสิทธิคุ้มครอง</span>
-                                <span class="text-slate-300 text-sm">ผู้เล่นจะต้องยอมเสียเงินสดจ่ายค่าอุบัติเหตุตามปกติเต็มจำนวน แต่จะยังคงเก็บรักษาการ์ดประกันสุขภาพใบนั้นไว้ในคลัง เพื่อใช้เป็นสิทธิลดหย่อนภาษีในตอนจบเกมได้</span>
+                                <span class="text-rose-400 font-bold tracking-wide block mb-1">ยอมจ่ายเงินสด</span>
+                                <span class="text-slate-300 text-sm leading-relaxed">ยอมจ่ายค่ารักษาเอง แต่เก็บการ์ดไว้ใช้ลดภาษีตอนจบเกมได้ตามปกติ</span>
                             </div>
                         </div>
                     </div>
@@ -424,43 +426,43 @@
 
         <section id="sec-endgame" class="content-section">
             <div class="max-w-4xl mx-auto pb-10">
-                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">หมวดหมู่ที่ 6</div>
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">การคำนวณภาษีตอนจบเกม</h2>
+                <div class="inline-block px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/30 text-emerald-400 font-bold text-xs md:text-sm tracking-wide mb-4 md:mb-6">ส่วนที่ 6</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 md:mb-8 drop-shadow-lg">วิธีคิดภาษีตอนจบเกม</h2>
                 
                 <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-6 md:mb-8">
-                    เมื่อผู้เล่นทุกคนบนกระดานเดินผ่านจุดเริ่มต้นจนครบ 3 รอบ เกมจะจบลงและเข้าสู่ขั้นตอนการคำนวณภาษีเงินได้บุคคลธรรมดาโดยอัตโนมัติ ระบบจะทำหน้าที่สรุปผลอย่างรวดเร็วและแม่นยำตามขั้นตอนดังต่อไปนี้
+                    พอทุกคนเดินครบ 3 รอบ เกมจะตัดจบและคำนวณภาษีให้ทันทีตาม 6 ขั้นตอนนี้
                 </p>
 
                 <div class="space-y-4 font-medium text-slate-300">
                     <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <div class="w-10 h-10 rounded-full bg-cyan-900/50 text-cyan-400 flex items-center justify-center font-bold text-xl border border-cyan-500">1</div>
-                        <div class="flex-1 text-lg">ประเมินรายได้รวม โดยนำฐานเงินเดือนประจำ 336,000 บาท มารวมกับรายได้เสริมทั้งหมดที่ผู้เล่นแต่ละคนเก็บสะสมมาได้ระหว่างการเล่น</div>
+                        <div class="w-10 h-10 rounded-full bg-cyan-900/50 text-cyan-400 flex items-center justify-center font-bold text-xl border border-cyan-500 shrink-0">1</div>
+                        <div class="flex-1 text-lg leading-relaxed">รวมรายได้ทั้งหมด คือเอาฐานเงินเดือน 336000 บวกกับเงินพิเศษทั้งหมดที่หาได้ตอนเล่น</div>
                     </div>
                     <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <div class="w-10 h-10 rounded-full bg-cyan-900/50 text-cyan-400 flex items-center justify-center font-bold text-xl border border-cyan-500">2</div>
-                        <div class="flex-1 text-lg">ทำการหักลบด้วยค่าใช้จ่ายส่วนตัวและสิทธิลดหย่อนพื้นฐาน ที่ประชาชนทุกคนมีสิทธิได้รับตามกฎหมาย</div>
+                        <div class="w-10 h-10 rounded-full bg-cyan-900/50 text-cyan-400 flex items-center justify-center font-bold text-xl border border-cyan-500 shrink-0">2</div>
+                        <div class="flex-1 text-lg leading-relaxed">หักค่าใช้จ่ายส่วนตัว 100000 และลดหย่อนพื้นฐานอีก 60000 ออกไปเลย</div>
                     </div>
                     <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <div class="w-10 h-10 rounded-full bg-amber-900/50 text-amber-400 flex items-center justify-center font-bold text-xl border border-amber-500">3</div>
-                        <div class="flex-1 text-lg">คำนวณสิทธิลดหย่อนเพิ่มเติม โดยรวบรวมมูลค่าของการ์ดลดหย่อนทั้งหมดที่ผู้เล่นได้ซื้อและเก็บไว้ในคลัง</div>
+                        <div class="w-10 h-10 rounded-full bg-amber-900/50 text-amber-400 flex items-center justify-center font-bold text-xl border border-amber-500 shrink-0">3</div>
+                        <div class="flex-1 text-lg leading-relaxed">หักประกันสังคม 9000 และหักมูลค่าจากการ์ดลดหย่อนทั้งหมดที่มี แต่ค่าดูแลพ่อแม่หักรวมได้ไม่เกิน 60000</div>
                     </div>
                     <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <div class="w-10 h-10 rounded-full bg-amber-900/50 text-amber-400 flex items-center justify-center font-bold text-xl border border-amber-500">4</div>
-                        <div class="flex-1 text-lg">หาเงินได้สุทธิ โดยการนำรายได้ทั้งหมดจากข้อแรก มาหักลบกับค่าใช้จ่ายและค่าลดหย่อนทั้งหมดที่มี</div>
+                        <div class="w-10 h-10 rounded-full bg-amber-900/50 text-amber-400 flex items-center justify-center font-bold text-xl border border-amber-500 shrink-0">4</div>
+                        <div class="flex-1 text-lg leading-relaxed">หักเงินบริจาค โดยจะหักได้ไม่เกิน 10 เปอร์เซ็นต์ของเงินที่เหลืออยู่ หักเสร็จจะได้ยอดเงินได้สุทธิ</div>
                     </div>
                     <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <div class="w-10 h-10 rounded-full bg-purple-900/50 text-purple-400 flex items-center justify-center font-bold text-xl border border-purple-500">5</div>
-                        <div class="flex-1 text-lg">นำเงินได้สุทธิที่เหลืออยู่ ไปคำนวณภาษีที่ต้องจ่ายตามระบบภาษีแบบขั้นบันได</div>
+                        <div class="w-10 h-10 rounded-full bg-purple-900/50 text-purple-400 flex items-center justify-center font-bold text-xl border border-purple-500 shrink-0">5</div>
+                        <div class="flex-1 text-lg leading-relaxed">เอาเงินได้สุทธิไปคิดภาษีขั้นบันได ไม่เกิน 150000 ไม่เสียภาษี ส่วนเกิน 150000 ถึง 300000 เสีย 5 เปอร์เซ็นต์ ส่วนที่เกิน 300000 เสีย 10 เปอร์เซ็นต์</div>
                     </div>
                     <div class="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <div class="w-10 h-10 rounded-full bg-rose-900/50 text-rose-400 flex items-center justify-center font-bold text-xl border border-rose-500">6</div>
-                        <div class="flex-1 text-lg">ขั้นตอนสุดท้าย ระบบจะนำภาษีที่คำนวณได้ไปเปรียบเทียบกับภาษีที่ถูกหักไว้ล่วงหน้า 3,000 บาท หากคำนวณแล้วน้อยกว่า 3,000 บาท ผู้เล่นจะได้รับเงินคืนภาษี แต่หากคำนวณแล้วเกิน 3,000 บาท ผู้เล่นจะต้องจ่ายเงินส่วนต่างเพิ่ม</div>
+                        <div class="w-10 h-10 rounded-full bg-rose-900/50 text-rose-400 flex items-center justify-center font-bold text-xl border border-rose-500 shrink-0">6</div>
+                        <div class="flex-1 text-lg leading-relaxed">เอาภาษีที่ต้องจ่ายไปเทียบกับ 3000 ถ้าน้อยกว่า 3000 ได้เงินคืน ถ้ามากกว่า 3000 ต้องจ่ายเพิ่ม</div>
                     </div>
                 </div>
 
-                <div class="mt-10 text-center">
-                    <p class="text-xl font-bold text-emerald-400 drop-shadow-md tracking-wide uppercase">
-                        ผู้ที่มียอดเงินคืนสูงสุด หรือเสียภาษีเพิ่มน้อยที่สุด จะเป็นผู้ชนะในเกมนี้
+                <div class="mt-10 text-center bg-slate-900/60 py-6 border-y border-emerald-500/50">
+                    <p class="text-xl md:text-2xl font-bold text-emerald-400 drop-shadow-md tracking-wide uppercase">
+                        ใครจ่ายภาษีน้อยสุด หรือได้เงินคืนเยอะสุด ชนะไปเลย
                     </p>
                 </div>
             </div>
