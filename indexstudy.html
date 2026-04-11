@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Study Station - ระบบยืมอุปกรณ์</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{font-family:'Prompt',sans-serif}
+  body{background:linear-gradient(135deg,#e0f2fe 0%,#fef3f2 50%,#fce7f3 100%);min-height:100vh}
+  .glass{background:rgba(255,255,255,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5)}
+  .glass-dark{background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.6)}
+  .card-shadow{box-shadow:0 10px 40px -10px rgba(244,63,94,0.15)}
+  .card-hover{transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
+  .card-hover:hover:not(.disabled){transform:translateY(-6px);box-shadow:0 20px 50px -10px rgba(244,63,94,0.3)}
+  .gradient-btn{background:linear-gradient(135deg,#f43f5e 0%,#ec4899 100%);transition:all 0.3s ease}
+  .gradient-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 25px -5px rgba(244,63,94,0.5)}
+  .gradient-btn:disabled{opacity:0.6;cursor:not-allowed}
+  .gradient-text{background:linear-gradient(135deg,#f43f5e 0%,#ec4899 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .modal-bg{background:rgba(15,23,42,0.5);backdrop-filter:blur(8px)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .animate-fade{animation:fadeIn 0.5s ease-out}
+  .animate-scale{animation:scaleIn 0.3s ease-out}
+  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle}
+  .disabled{opacity:0.5;cursor:not-allowed;filter:grayscale(0.7)}
+  .sidebar-item{transition:all 0.2s ease}
+  .sidebar-item.active{background:linear-gradient(135deg,#f43f5e 0%,#ec4899 100%);color:white;box-shadow:0 8px 20px -5px rgba(244,63,94,0.5)}
+  .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.4;z-index:-1;pointer-events:none}
+  .blob1{width:400px;height:400px;background:#fda4af;top:-100px;right:-100px}
+  .blob2{width:350px;height:350px;background:#a5f3fc;bottom:-100px;left:-100px}
+  ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#f43f5e;border-radius:10px}
+  .toast{position:fixed;top:20px;right:20px;z-index:9999;max-width:90vw}
+  .icon-wrap svg{width:100%;height:100%}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  @keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(244,63,94,0.4)}70%{box-shadow:0 0 0 12px rgba(244,63,94,0)}100%{box-shadow:0 0 0 0 rgba(244,63,94,0)}}
+  .float-anim{animation:float 3s ease-in-out infinite}
+  .stat-card{background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.6);transition:all 0.3s ease}
+  .stat-card:hover{transform:translateY(-4px)}
+  .icon-bg-glow{position:relative}
+  .icon-bg-glow::before{content:"";position:absolute;inset:-2px;background:linear-gradient(135deg,rgba(244,63,94,0.2),rgba(236,72,153,0.2));border-radius:inherit;filter:blur(8px);z-index:-1;opacity:0;transition:opacity 0.3s}
+  .card-hover:hover .icon-bg-glow::before{opacity:1}
+  .return-btn{background:linear-gradient(135deg,#10b981 0%,#14b8a6 100%);transition:all 0.3s ease}
+  .return-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px -5px rgba(16,185,129,0.5)}
+  .return-btn:disabled{opacity:0.5;cursor:not-allowed}
+  .mobile-menu-btn{display:none}
+  @media (max-width:1023px){
+    .mobile-menu-btn{display:flex}
+    .sidebar-mobile{position:fixed;top:0;left:0;bottom:0;width:280px;z-index:50;transform:translateX(-100%);transition:transform 0.3s ease}
+    .sidebar-mobile.open{transform:translateX(0)}
+    .sidebar-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:40;opacity:0;pointer-events:none;transition:opacity 0.3s}
+    .sidebar-overlay.open{opacity:1;pointer-events:auto}
+  }
+</style>
+</head>
+<body>
+<div class="blob blob1"></div><div class="blob blob2"></div>
+<div id="app"><div class="min-h-screen flex items-center justify-center text-slate-500">⏳ กำลังโหลด...</div></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {getFirestore,collection,doc,setDoc,getDocs,getDoc,updateDoc,addDoc,serverTimestamp,writeBatch,query,where} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyCzD093g7oV1ZdoTXsMGkEEa6DrnCM9VAE",authDomain:"studystation-31473.firebaseapp.com",projectId:"studystation-31473",storageBucket:"studystation-31473.firebasestorage.app",messagingSenderId:"130615554198",appId:"1:130615554198:web:5f337ce0934ccbd62b52b7"};
+let db;try{db=getFirestore(initializeApp(firebaseConfig))}catch(e){console.error(e)}
+const ICON={
+  ruler_short:`<svg viewBox="0 0 64 64"><rect x="8" y="22" width="48" height="20" rx="2" fill="#fde047" stroke="#854d0e" stroke-width="2"/><line x1="14" y1="22" x2="14" y2="30" stroke="#854d0e" stroke-width="2"/><line x1="22" y1="22" x2="22" y2="34" stroke="#854d0e" stroke-width="2"/><line x1="30" y1="22" x2="30" y2="30" stroke="#854d0e" stroke-width="2"/><line x1="38" y1="22" x2="38" y2="34" stroke="#854d0e" stroke-width="2"/><line x1="46" y1="22" x2="46" y2="30" stroke="#854d0e" stroke-width="2"/></svg>`,
+  ruler_long:`<svg viewBox="0 0 64 64"><rect x="4" y="24" width="56" height="16" rx="2" fill="#fcd34d" stroke="#854d0e" stroke-width="2"/><line x1="10" y1="24" x2="10" y2="32" stroke="#854d0e" stroke-width="1.5"/><line x1="16" y1="24" x2="16" y2="36" stroke="#854d0e" stroke-width="1.5"/><line x1="22" y1="24" x2="22" y2="32" stroke="#854d0e" stroke-width="1.5"/><line x1="28" y1="24" x2="28" y2="36" stroke="#854d0e" stroke-width="1.5"/><line x1="34" y1="24" x2="34" y2="32" stroke="#854d0e" stroke-width="1.5"/><line x1="40" y1="24" x2="40" y2="36" stroke="#854d0e" stroke-width="1.5"/><line x1="46" y1="24" x2="46" y2="32" stroke="#854d0e" stroke-width="1.5"/><line x1="52" y1="24" x2="52" y2="36" stroke="#854d0e" stroke-width="1.5"/></svg>`,
+  cutter:`<svg viewBox="0 0 64 64"><rect x="8" y="26" width="40" height="12" rx="2" fill="#fbbf24" stroke="#78350f" stroke-width="2"/><polygon points="48,26 60,30 60,34 48,38" fill="#e5e7eb" stroke="#475569" stroke-width="2"/><circle cx="20" cy="32" r="2" fill="#78350f"/><circle cx="32" cy="32" r="2" fill="#78350f"/></svg>`,
+  pen_blue:`<svg viewBox="0 0 64 64"><rect x="20" y="8" width="14" height="40" rx="2" fill="#3b82f6" stroke="#1e3a8a" stroke-width="2"/><polygon points="20,48 34,48 27,58" fill="#1e3a8a"/><rect x="20" y="14" width="14" height="4" fill="#1e40af"/><rect x="36" y="16" width="3" height="20" rx="1" fill="#1e3a8a"/></svg>`,
+  pen_red:`<svg viewBox="0 0 64 64"><rect x="20" y="8" width="14" height="40" rx="2" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/><polygon points="20,48 34,48 27,58" fill="#7f1d1d"/><rect x="20" y="14" width="14" height="4" fill="#b91c1c"/><rect x="36" y="16" width="3" height="20" rx="1" fill="#7f1d1d"/></svg>`,
+  pen_black:`<svg viewBox="0 0 64 64"><rect x="20" y="8" width="14" height="40" rx="2" fill="#1f2937" stroke="#000" stroke-width="2"/><polygon points="20,48 34,48 27,58" fill="#000"/><rect x="20" y="14" width="14" height="4" fill="#374151"/><rect x="36" y="16" width="3" height="20" rx="1" fill="#000"/></svg>`,
+  liquid_water:`<svg viewBox="0 0 64 64"><rect x="22" y="12" width="20" height="36" rx="3" fill="#fff" stroke="#0284c7" stroke-width="2"/><rect x="26" y="6" width="12" height="8" rx="1" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/><rect x="24" y="20" width="16" height="14" fill="#dbeafe"/><text x="32" y="32" font-size="9" text-anchor="middle" fill="#0284c7" font-weight="bold">LIQ</text></svg>`,
+  liquid_tape:`<svg viewBox="0 0 64 64"><rect x="14" y="18" width="36" height="28" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="2"/><circle cx="24" cy="32" r="6" fill="#fff" stroke="#475569" stroke-width="2"/><circle cx="40" cy="32" r="6" fill="#fff" stroke="#475569" stroke-width="2"/><rect x="20" y="12" width="24" height="8" rx="2" fill="#94a3b8"/></svg>`,
+  stapler_refill:`<svg viewBox="0 0 64 64"><rect x="10" y="22" width="44" height="20" rx="2" fill="#fbbf24" stroke="#78350f" stroke-width="2"/><line x1="16" y1="22" x2="16" y2="42" stroke="#78350f"/><line x1="22" y1="22" x2="22" y2="42" stroke="#78350f"/><line x1="28" y1="22" x2="28" y2="42" stroke="#78350f"/><line x1="34" y1="22" x2="34" y2="42" stroke="#78350f"/><line x1="40" y1="22" x2="40" y2="42" stroke="#78350f"/><line x1="46" y1="22" x2="46" y2="42" stroke="#78350f"/></svg>`,
+  eraser:`<svg viewBox="0 0 64 64"><rect x="12" y="22" width="40" height="20" rx="3" fill="#fda4af" stroke="#9f1239" stroke-width="2"/><rect x="12" y="22" width="40" height="6" fill="#fb7185"/></svg>`,
+  pencil:`<svg viewBox="0 0 64 64"><rect x="22" y="14" width="14" height="34" fill="#fbbf24" stroke="#78350f" stroke-width="2"/><polygon points="22,48 36,48 29,60" fill="#1f2937"/><polygon points="22,48 36,48 29,54" fill="#fde68a"/><rect x="22" y="8" width="14" height="8" fill="#dc2626" stroke="#78350f" stroke-width="2"/></svg>`,
+  tape_clear:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="#06b6d4" stroke-width="3"/><circle cx="32" cy="32" r="22" fill="#a5f3fc" opacity="0.4"/><circle cx="32" cy="32" r="10" fill="#cffafe" stroke="#06b6d4" stroke-width="2"/></svg>`,
+  sharpener:`<svg viewBox="0 0 64 64"><rect x="14" y="18" width="36" height="28" rx="4" fill="#a78bfa" stroke="#5b21b6" stroke-width="2"/><circle cx="32" cy="32" r="6" fill="#1f2937" stroke="#5b21b6" stroke-width="2"/><circle cx="32" cy="32" r="2" fill="#fff"/></svg>`,
+  stapler:`<svg viewBox="0 0 64 64"><path d="M 8 36 L 56 28 L 56 38 L 8 42 Z" fill="#f43f5e" stroke="#881337" stroke-width="2"/><rect x="10" y="40" width="44" height="6" rx="2" fill="#9f1239" stroke="#881337" stroke-width="2"/><rect x="14" y="32" width="32" height="3" fill="#fbbf24"/></svg>`,
+  paper_clip:`<svg viewBox="0 0 64 64"><path d="M 22 12 L 22 48 Q 22 54 28 54 Q 34 54 34 48 L 34 18 Q 34 14 38 14 Q 42 14 42 18 L 42 44" stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
+  scissors:`<svg viewBox="0 0 64 64"><circle cx="18" cy="20" r="8" fill="none" stroke="#a855f7" stroke-width="3"/><circle cx="18" cy="44" r="8" fill="none" stroke="#a855f7" stroke-width="3"/><line x1="24" y1="24" x2="54" y2="40" stroke="#64748b" stroke-width="3" stroke-linecap="round"/><line x1="24" y1="40" x2="54" y2="24" stroke="#64748b" stroke-width="3" stroke-linecap="round"/></svg>`,
+  paper_a4:`<svg viewBox="0 0 64 64"><rect x="14" y="8" width="36" height="48" rx="2" fill="#fff" stroke="#64748b" stroke-width="2"/><line x1="20" y1="18" x2="44" y2="18" stroke="#cbd5e1" stroke-width="2"/><line x1="20" y1="26" x2="44" y2="26" stroke="#cbd5e1" stroke-width="2"/><line x1="20" y1="34" x2="44" y2="34" stroke="#cbd5e1" stroke-width="2"/><line x1="20" y1="42" x2="38" y2="42" stroke="#cbd5e1" stroke-width="2"/><text x="32" y="54" font-size="6" text-anchor="middle" fill="#64748b" font-weight="bold">A4</text></svg>`,
+  tape_clear_l:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="#06b6d4" stroke-width="3"/><circle cx="32" cy="32" r="26" fill="#a5f3fc" opacity="0.4"/><circle cx="32" cy="32" r="10" fill="#cffafe" stroke="#06b6d4" stroke-width="2"/><text x="32" y="36" font-size="7" text-anchor="middle" fill="#06b6d4" font-weight="bold">L</text></svg>`,
+  tape_clear_m:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="#06b6d4" stroke-width="3"/><circle cx="32" cy="32" r="22" fill="#a5f3fc" opacity="0.4"/><circle cx="32" cy="32" r="9" fill="#cffafe" stroke="#06b6d4" stroke-width="2"/><text x="32" y="35" font-size="6" text-anchor="middle" fill="#06b6d4" font-weight="bold">M</text></svg>`,
+  tape_clear_s:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18" fill="none" stroke="#06b6d4" stroke-width="3"/><circle cx="32" cy="32" r="18" fill="#a5f3fc" opacity="0.4"/><circle cx="32" cy="32" r="8" fill="#cffafe" stroke="#06b6d4" stroke-width="2"/><text x="32" y="35" font-size="6" text-anchor="middle" fill="#06b6d4" font-weight="bold">S</text></svg>`,
+  tape_double_s:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18" fill="#5eead4" stroke="#0f766e" stroke-width="3"/><circle cx="32" cy="32" r="8" fill="#fff" stroke="#0f766e" stroke-width="2"/><text x="32" y="36" font-size="7" text-anchor="middle" fill="#0f766e" font-weight="bold">2S</text></svg>`,
+};
+ICON.pen_horse_blue=ICON.pen_blue;
+ICON.tape_double=ICON.tape_double_l;
+ICON.pen_black=`<svg viewBox="0 0 64 64"><rect x="20" y="8" width="14" height="40" rx="2" fill="#1f2937" stroke="#000" stroke-width="2"/><polygon points="20,48 34,48 27,58" fill="#000"/><rect x="20" y="14" width="14" height="4" fill="#374151"/><rect x="36" y="16" width="3" height="20" rx="1" fill="#000"/></svg>`;
+const FALLBACK_ICON=`<svg viewBox="0 0 64 64"><rect x="14" y="14" width="36" height="36" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><text x="32" y="38" font-size="20" text-anchor="middle" fill="#64748b">?</text></svg>`;
+function getIcon(type){return ICON[type]||FALLBACK_ICON}
+const EQUIPMENT_TYPES=[
+  {type:"paper_a4",name:"กระดาษ A4",qty:1,color:"from-slate-100 to-gray-200"},
+  {type:"ruler_short",name:"ไม้บรรทัด 15 ซม",qty:1,color:"from-yellow-200 to-amber-300"},
+  {type:"ruler_long",name:"ไม้บรรทัด 30 ซม",qty:1,color:"from-amber-200 to-yellow-300"},
+  {type:"cutter",name:"คัตเตอร์",qty:2,color:"from-amber-300 to-orange-400"},
+  {type:"pen_horse_blue",name:"ปากกาตราม้า สีฟ้า",qty:1,color:"from-sky-200 to-blue-300"},
+  {type:"liquid_water",name:"ลิควิดน้ำ",qty:2,color:"from-sky-200 to-blue-300"},
+  {type:"liquid_tape",name:"ลิควิดเทป",qty:2,color:"from-slate-200 to-gray-300"},
+  {type:"stapler_refill",name:"ไส้แม็ก",qty:3,color:"from-yellow-200 to-amber-300"},
+  {type:"eraser",name:"ยางลบ",qty:3,color:"from-pink-200 to-rose-300"},
+  {type:"pencil",name:"ดินสอ",qty:6,color:"from-yellow-200 to-orange-300"},
+  {type:"pen_red",name:"ปากกาแดง",qty:5,color:"from-red-200 to-rose-300"},
+  {type:"pen_blue",name:"ปากกาน้ำเงิน",qty:9,color:"from-blue-200 to-indigo-300"},
+  {type:"tape_clear_l",name:"เทปใส ใหญ่",qty:3,color:"from-cyan-200 to-sky-300"},
+  {type:"tape_clear_m",name:"เทปใส กลาง",qty:2,color:"from-cyan-200 to-sky-300"},
+  {type:"tape_clear_s",name:"เทปใส เล็ก",qty:1,color:"from-cyan-200 to-sky-300"},
+  {type:"tape_double_s",name:"เทปสองหน้า เล็ก",qty:1,color:"from-teal-200 to-cyan-300"},
+  {type:"tape_double_l",name:"เทปสองหน้า ใหญ่",qty:1,color:"from-teal-200 to-cyan-300"},
+  {type:"sharpener",name:"กบเหลาดินสอ",qty:2,color:"from-purple-200 to-violet-300"},
+  {type:"stapler",name:"แม็ก",qty:2,color:"from-rose-200 to-pink-300"},
+  {type:"paper_clip",name:"คลิปหนีบกระดาษ",qty:2,color:"from-amber-200 to-yellow-300"},
+  {type:"scissors",name:"กรรไกร",qty:4,color:"from-fuchsia-200 to-purple-300"}
+];
+let currentUser=null,itemsCache=[],myBookings=[],currentPage="home";
+function init(){try{const s=localStorage.getItem("studystation_user");if(s){const p=JSON.parse(s);if(p?.studentId&&p?.fullName){currentUser=p;renderDashboard();return}}}catch(e){}renderLogin()}
+function toast(msg,type="success",dur=3000){const c={success:"from-emerald-500 to-teal-500",error:"from-red-500 to-rose-500",info:"from-blue-500 to-indigo-500"};const t=document.createElement("div");t.className="toast glass-dark rounded-2xl px-6 py-4 card-shadow flex items-center gap-3 animate-fade";t.innerHTML=`<div class="w-2 h-10 rounded-full bg-gradient-to-b ${c[type]||c.info}"></div><span class="font-medium text-slate-700">${msg}</span>`;document.body.appendChild(t);setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity 0.3s";setTimeout(()=>t.remove(),300)},dur)}
+function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderLogin(){
+  document.getElementById("app").innerHTML=`<div class="min-h-screen flex items-center justify-center p-4 animate-fade"><div class="glass rounded-3xl card-shadow w-full max-w-md p-8 md:p-10"><div class="text-center mb-8"><div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl gradient-btn mb-4 text-4xl">📚</div><h1 class="text-3xl font-bold gradient-text">Study Station CISTU</h1><p class="text-slate-500 mt-2">ระบบยืมอุปกรณ์การเรียนออนไลน์ของห้องคอมมอนวิทยาลัยสหวิทยาการ</p></div><form id="loginForm" class="space-y-5" novalidate><div><label class="block text-sm font-semibold text-slate-700 mb-2">รหัสนักศึกษา</label><input id="studentId" type="text" autocomplete="off" class="w-full px-4 py-3 rounded-xl bg-white/60 border border-white/80 focus:outline-none focus:ring-2 focus:ring-rose-400" placeholder="กรอกรหัสนักศึกษา" /></div><div><label class="block text-sm font-semibold text-slate-700 mb-2">ชื่อ - นามสกุล</label><input id="fullName" type="text" autocomplete="off" class="w-full px-4 py-3 rounded-xl bg-white/60 border border-white/80 focus:outline-none focus:ring-2 focus:ring-rose-400" placeholder="กรอกชื่อจริง นามสกุล" /></div><div><label class="block text-sm font-semibold text-slate-700 mb-2">ชั้นปี</label><select id="yearOfStudy" class="w-full px-4 py-3 rounded-xl bg-white/60 border border-white/80 focus:outline-none focus:ring-2 focus:ring-rose-400"><option value="">-- เลือกชั้นปี --</option><option value="1">ปี 1</option><option value="2">ปี 2</option><option value="3">ปี 3</option><option value="4">ปี 4</option></select></div><button type="submit" id="loginSubmitBtn" class="w-full gradient-btn text-white font-bold py-3 rounded-xl text-lg">เข้าสู่ระบบ</button></form><p class="text-center text-xs text-slate-400 mt-6">© 2026 Study Station CIS Thammasat University</p></div></div>`;
+  document.getElementById("loginForm").addEventListener("submit",handleLogin);
+}
+async function handleLogin(e){e.preventDefault();const btn=document.getElementById("loginSubmitBtn");const sid=document.getElementById("studentId").value.trim();const fn=document.getElementById("fullName").value.trim();const y=document.getElementById("yearOfStudy").value;if(!sid)return toast("กรุณากรอกรหัสนักศึกษา","error");if(!fn)return toast("กรุณากรอกชื่อ-นามสกุล","error");if(!y)return toast("กรุณาเลือกชั้นปี","error");btn.disabled=true;btn.innerHTML='<span class="spinner"></span> <span class="ml-2">กำลังเข้าสู่ระบบ...</span>';const u={studentId:sid,fullName:fn,yearOfStudy:y,createdAt:new Date().toISOString()};try{localStorage.setItem("studystation_user",JSON.stringify(u));currentUser=u}catch{btn.disabled=false;btn.innerHTML="เข้าสู่ระบบ";return toast("บันทึกในเครื่องไม่สำเร็จ","error")}if(db)setDoc(doc(db,"users",sid),u).catch(e=>console.warn(e));toast("เข้าสู่ระบบสำเร็จ ✨");setTimeout(()=>renderDashboard(),400)}
+async function renderDashboard(){
+  if(!currentUser)return renderLogin();
+  document.getElementById("app").innerHTML=`<div class="min-h-screen flex flex-col lg:flex-row animate-fade"><div id="sidebarOverlay" class="sidebar-overlay"></div><aside id="sidebar" class="lg:w-72 lg:min-h-screen p-4 lg:p-6 sidebar-mobile lg:!translate-x-0 lg:!static lg:!transform-none"><div class="glass rounded-3xl card-shadow p-6 lg:sticky lg:top-6 flex flex-col h-full" style="min-height:calc(100vh - 3rem);"><div class="flex items-center gap-3 mb-8"><div class="w-12 h-12 rounded-2xl gradient-btn flex items-center justify-center text-2xl shadow-lg">📚</div><div><h2 class="font-bold text-lg gradient-text">Study Station</h2><p class="text-xs text-slate-500">ยืมอุปกรณ์การเรียนในห้องคอมมอน CISTU</p></div></div><nav class="space-y-2 flex-1"><button data-page="home" class="nav-btn sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-white/50"><span class="text-lg">🏠</span><span>หน้าหลัก</span></button><button data-page="bookings" class="nav-btn sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-white/50"><span class="text-lg">📋</span><span>การยืมของฉัน</span></button><button data-page="rules" class="nav-btn sidebar-item w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-white/50"><span class="text-lg">📜</span><span>กฎและข้อตกลง</span></button></nav><div class="mt-8 pt-6 border-t border-white/60"><div class="flex items-center gap-3 mb-4"><div class="w-11 h-11 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg">${esc(currentUser.fullName.charAt(0))}</div><div class="flex-1 min-w-0"><p class="text-sm font-semibold text-slate-700 truncate">${esc(currentUser.fullName)}</p><p class="text-xs text-slate-500 truncate">${esc(currentUser.studentId)} • ปี ${esc(currentUser.yearOfStudy)}</p></div></div><button id="logoutBtn" class="w-full px-4 py-2.5 rounded-xl bg-white/60 hover:bg-white text-slate-700 text-sm font-medium transition">ออกจากระบบ</button><a href="adminstudy.html" class="block text-center mt-3 text-xs text-slate-400 hover:text-rose-500 transition">🔒 เข้าสู่หน้าแอดมิน</a></div></div></aside><main id="mainContent" class="flex-1 p-4 lg:p-8 min-w-0"></main></div>`;
+  document.getElementById("logoutBtn").addEventListener("click",logout);
+  document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>{navigate(b.dataset.page);document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open")}));
+  const sb=document.getElementById("sidebar"),ov=document.getElementById("sidebarOverlay");
+  ov.addEventListener("click",()=>{sb.classList.remove("open");ov.classList.remove("open")});
+  await navigate(currentPage);
+}
+async function navigate(page){currentPage=page;document.querySelectorAll(".nav-btn").forEach(b=>{if(b.dataset.page===page){b.classList.add("active");b.classList.remove("text-slate-600","hover:bg-white/50")}else{b.classList.remove("active");b.classList.add("text-slate-600","hover:bg-white/50")}});if(page==="home")await renderHome();else if(page==="bookings")await renderMyBookings();else if(page==="rules")renderRules();injectMobileMenu()}
+function injectMobileMenu(){const main=document.getElementById("mainContent");if(!main||main.querySelector("#mobileMenuBtn"))return;const btn=document.createElement("button");btn.id="mobileMenuBtn";btn.className="mobile-menu-btn glass rounded-xl p-3 mb-4 items-center gap-2 text-slate-700 font-semibold w-auto";btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg> เมนู';btn.addEventListener("click",()=>{document.getElementById("sidebar").classList.add("open");document.getElementById("sidebarOverlay").classList.add("open")});main.insertBefore(btn,main.firstChild)}
+function logout(){localStorage.removeItem("studystation_user");currentUser=null;itemsCache=[];myBookings=[];renderLogin();toast("ออกจากระบบแล้ว","info")}
+async function renderHome(){
+  document.getElementById("mainContent").innerHTML=`<div class="glass rounded-3xl card-shadow p-6 lg:p-8 mb-6 relative overflow-hidden"><div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-gradient-to-br from-rose-200 to-pink-300 opacity-30 blur-2xl"></div><div class="absolute -bottom-16 -left-10 w-48 h-48 rounded-full bg-gradient-to-br from-cyan-200 to-blue-300 opacity-25 blur-2xl"></div><div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"><div><h1 class="text-2xl lg:text-3xl font-bold text-slate-800">สวัสดี, <span class="gradient-text">${esc(currentUser.fullName)}</span> <span class="inline-block float-anim">👋</span></h1><p class="text-slate-500 mt-1">เลือกอุปกรณ์ที่ต้องการยืมได้เลย</p></div><button id="refreshBtn" class="px-5 py-2.5 rounded-2xl glass-dark hover:bg-white text-slate-700 font-semibold transition flex items-center gap-2 self-start sm:self-auto"><span>🔄</span> รีเฟรช</button></div></div><div id="homeStats" class="grid grid-cols-3 gap-3 lg:gap-4 mb-6"></div><div id="itemsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5"><div class="col-span-full text-center py-12 text-slate-500"><div class="spinner mr-2"></div>กำลังโหลด...</div></div><footer class="mt-12 text-center pb-4"><p class="text-xs text-slate-400">© 2026 Study Station CIS Thammasat University</p></footer>`;
+  document.getElementById("refreshBtn").addEventListener("click",()=>loadItems(true));
+  await loadItems();
+}
+async function loadItems(force=false){const grid=document.getElementById("itemsGrid");if(!db){grid.innerHTML=`<div class="col-span-full glass rounded-2xl p-8 text-center text-red-500">❌ Firebase ไม่พร้อม</div>`;return}try{let snap=await getDocs(collection(db,"items"));const validTypes=new Set(EQUIPMENT_TYPES.map(e=>e.type));const existingTypes=new Set(snap.docs.map(d=>d.data().type));const needReseed=snap.empty||EQUIPMENT_TYPES.some(e=>!existingTypes.has(e.type))||[...existingTypes].some(t=>!validTypes.has(t));if(needReseed){grid.innerHTML=`<div class="col-span-full glass rounded-2xl p-8 text-center text-slate-600">🌱 กำลังอัปเดตรายการอุปกรณ์...</div>`;const delBatch=writeBatch(db);snap.docs.forEach(d=>delBatch.delete(d.ref));await delBatch.commit();await seedItems();snap=await getDocs(collection(db,"items"))}itemsCache=snap.docs.map(d=>({id:d.id,...d.data()}));renderItemsGrouped();if(force)toast("รีเฟรชสำเร็จ")}catch(err){console.error(err);grid.innerHTML=`<div class="col-span-full glass rounded-2xl p-8 text-center text-red-500">❌ โหลดอุปกรณ์ไม่สำเร็จ<br><span class="text-xs text-slate-500 mt-2 block">${esc(err.message)}</span></div>`}}
+async function seedItems(){const b=writeBatch(db);for(const eq of EQUIPMENT_TYPES){for(let i=1;i<=eq.qty;i++){const id=`${eq.type}_${String(i).padStart(3,"0")}`;b.set(doc(db,"items",id),{itemId:id,type:eq.type,name:eq.name,color:eq.color,status:"Available",number:i})}}await b.commit()}
+function renderItemsGrouped(){
+  const grid=document.getElementById("itemsGrid");
+  const totalUnits=itemsCache.length;
+  const availUnits=itemsCache.filter(i=>i.status==="Available").length;
+  const borrowedUnits=totalUnits-availUnits;
+  const stats=document.getElementById("homeStats");
+  if(stats)stats.innerHTML=`
+    <div class="stat-card rounded-2xl p-4 lg:p-5"><div class="flex items-center gap-3"><div class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-xl lg:text-2xl">📦</div><div><div class="text-xl lg:text-2xl font-bold text-slate-800">${totalUnits}</div><div class="text-xs text-slate-500">อุปกรณ์ทั้งหมด</div></div></div></div>
+    <div class="stat-card rounded-2xl p-4 lg:p-5"><div class="flex items-center gap-3"><div class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-400 flex items-center justify-center text-xl lg:text-2xl">✓</div><div><div class="text-xl lg:text-2xl font-bold text-emerald-600">${availUnits}</div><div class="text-xs text-slate-500">พร้อมใช้</div></div></div></div>
+    <div class="stat-card rounded-2xl p-4 lg:p-5"><div class="flex items-center gap-3"><div class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-rose-400 to-pink-400 flex items-center justify-center text-xl lg:text-2xl">🔒</div><div><div class="text-xl lg:text-2xl font-bold text-rose-600">${borrowedUnits}</div><div class="text-xs text-slate-500">ถูกยืม</div></div></div></div>`;
+  grid.innerHTML=EQUIPMENT_TYPES.map(eq=>{const units=itemsCache.filter(i=>i.type===eq.type);const avail=units.filter(i=>i.status==="Available").length;const total=units.length;const out=avail===0;const pct=total?Math.round((avail/total)*100):0;return `<div class="type-card card-hover glass rounded-2xl p-4 lg:p-5 cursor-pointer ${out?"disabled":""}" data-type="${eq.type}"><div class="aspect-square rounded-xl bg-gradient-to-br ${eq.color} flex items-center justify-center mb-3 shadow-inner p-3 lg:p-4 icon-wrap icon-bg-glow">${getIcon(eq.type)}</div><h3 class="font-bold text-slate-800 text-xs lg:text-sm leading-tight line-clamp-2">${esc(eq.name)}</h3><div class="mt-2 lg:mt-3 flex items-center justify-between gap-1"><span class="text-[10px] lg:text-xs px-2 py-0.5 lg:py-1 rounded-full ${out?"bg-red-100 text-red-600":"bg-emerald-100 text-emerald-600"} font-semibold whitespace-nowrap">${out?"● หมด":"● ว่าง"}</span><span class="text-[10px] lg:text-xs font-bold text-slate-600 whitespace-nowrap">${avail}/${total}</span></div><div class="mt-2 h-1 bg-slate-200 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r ${out?'from-red-400 to-rose-400':'from-emerald-400 to-teal-400'} rounded-full transition-all" style="width:${pct}%"></div></div></div>`}).join("");
+  document.querySelectorAll(".type-card").forEach(c=>c.addEventListener("click",()=>{if(c.classList.contains("disabled"))return;const eq=EQUIPMENT_TYPES.find(e=>e.type===c.dataset.type);openBookingModal(eq)}));
+}
+function openBookingModal(eq){
+  const units=itemsCache.filter(i=>i.type===eq.type&&i.status==="Available");
+  if(!units.length)return toast("อุปกรณ์นี้หมด","error");
+  const unit=units[0];const now=new Date();const pad=n=>String(n).padStart(2,"0");const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const modal=document.createElement("div");modal.id="bookingModal";modal.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-50";
+  modal.innerHTML=`<div class="glass-dark rounded-3xl card-shadow max-w-md w-full p-8 animate-scale"><div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 rounded-2xl bg-gradient-to-br ${eq.color} flex items-center justify-center p-2 icon-wrap">${getIcon(eq.type)}</div><div class="flex-1 min-w-0"><h3 class="font-bold text-xl text-slate-800 truncate">${esc(eq.name)}</h3><p class="text-sm text-slate-500">รหัส: ${esc(unit.itemId)}</p><p class="text-xs text-emerald-600 font-semibold">เหลือ ${units.length} ชิ้น</p></div></div><form id="bookingForm" class="space-y-4" novalidate><input type="hidden" id="selUnit" value="${unit.id}" /><div><label class="block text-sm font-semibold text-slate-700 mb-2">เวลาเริ่มต้น</label><input id="startTime" type="datetime-local" value="${fmt(now)}" class="w-full px-4 py-3 rounded-xl bg-white/70 border border-white focus:outline-none focus:ring-2 focus:ring-rose-400" /></div><div><label class="block text-sm font-semibold text-slate-700 mb-2">ระยะเวลา (ชั่วโมง)</label><input id="duration" type="number" min="1" max="24" value="1" class="w-full px-4 py-3 rounded-xl bg-white/70 border border-white focus:outline-none focus:ring-2 focus:ring-rose-400" /></div><div><label class="block text-sm font-semibold text-slate-700 mb-2">เวลาสิ้นสุด</label><input id="endTime" type="datetime-local" value="${fmt(new Date(now.getTime()+3600000))}" class="w-full px-4 py-3 rounded-xl bg-white/70 border border-white focus:outline-none focus:ring-2 focus:ring-rose-400" /></div><div class="flex gap-3 pt-2"><button type="button" id="cancelBtn" class="flex-1 px-4 py-3 rounded-xl bg-white/70 hover:bg-white text-slate-700 font-semibold">ยกเลิก</button><button type="submit" id="confirmBtn" class="flex-1 gradient-btn text-white font-bold py-3 rounded-xl">ยืนยันการยืม</button></div></form></div>`;
+  document.body.appendChild(modal);
+  const close=()=>{modal.remove();document.removeEventListener("keydown",ek)};
+  const ek=e=>{if(e.key==="Escape")close()};
+  document.addEventListener("keydown",ek);
+  modal.addEventListener("click",e=>{if(e.target===modal)close()});
+  document.getElementById("cancelBtn").addEventListener("click",close);
+  const upd=()=>{const s=document.getElementById("startTime").value;const d=parseFloat(document.getElementById("duration").value)||1;if(s)document.getElementById("endTime").value=fmt(new Date(new Date(s).getTime()+d*3600000))};
+  document.getElementById("startTime").addEventListener("change",upd);
+  document.getElementById("duration").addEventListener("input",upd);
+  document.getElementById("bookingForm").addEventListener("submit",confirmBooking);
+}
+async function confirmBooking(e){e.preventDefault();const btn=document.getElementById("confirmBtn");const uid=document.getElementById("selUnit").value;const st=document.getElementById("startTime").value;const et=document.getElementById("endTime").value;const dur=document.getElementById("duration").value;if(!st||!et||!dur)return toast("กรุณากรอกข้อมูลให้ครบ","error");if(new Date(et)<=new Date(st))return toast("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น","error");btn.disabled=true;btn.innerHTML='<span class="spinner"></span> <span class="ml-2">กำลังบันทึก...</span>';try{const ref=doc(db,"items",uid);const snap=await getDoc(ref);if(snap.exists()&&snap.data().status==="Borrowed"){toast("อุปกรณ์นี้เพิ่งถูกยืมไป","error");document.getElementById("bookingModal").remove();await loadItems();return}const it=snap.data();await addDoc(collection(db,"bookings"),{itemId:it.itemId,itemName:it.name,itemType:it.type,studentId:currentUser.studentId,studentName:currentUser.fullName,yearOfStudy:currentUser.yearOfStudy,startTime:st,endTime:et,duration:Number(dur),status:"Active",createdAt:serverTimestamp()});await updateDoc(ref,{status:"Borrowed"});const idx=itemsCache.findIndex(i=>i.id===uid);if(idx!==-1)itemsCache[idx].status="Borrowed";document.getElementById("bookingModal").remove();renderItemsGrouped();toast("จองสำเร็จ! 🎉")}catch(err){console.error(err);btn.disabled=false;btn.innerHTML="ยืนยันการยืม";toast("บันทึกไม่สำเร็จ: "+err.message,"error",5000)}}
+async function renderMyBookings(){
+  document.getElementById("mainContent").innerHTML=`<div class="glass rounded-3xl card-shadow p-6 lg:p-8 mb-6 relative overflow-hidden"><div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-gradient-to-br from-rose-200 to-pink-300 opacity-30 blur-2xl"></div><div class="relative"><h1 class="text-2xl lg:text-3xl font-bold text-slate-800 flex items-center gap-3"><span class="text-3xl float-anim">📋</span>การยืมของฉัน</h1><p class="text-slate-500 mt-1">ประวัติและรายการยืมทั้งหมด</p></div></div><div id="bookingStats" class="grid grid-cols-3 gap-3 lg:gap-4 mb-6"></div><div id="bookingsList" class="space-y-4"><div class="glass rounded-2xl p-12 text-center text-slate-500"><div class="spinner mr-2"></div> กำลังโหลด...</div></div>`;
+  if(!db)return;
+  try{
+    const q=query(collection(db,"bookings"),where("studentId","==",currentUser.studentId));
+    const snap=await getDocs(q);
+    myBookings=snap.docs.map(d=>({id:d.id,...d.data()}));
+    myBookings.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    const active=myBookings.filter(b=>b.status==="Active").length;
+    const returned=myBookings.filter(b=>b.status==="Returned").length;
+    document.getElementById("bookingStats").innerHTML=`
+      <div class="stat-card rounded-2xl p-4 lg:p-5 text-center"><div class="text-2xl lg:text-3xl font-bold gradient-text">${myBookings.length}</div><div class="text-xs lg:text-sm text-slate-500 mt-1">ทั้งหมด</div></div>
+      <div class="stat-card rounded-2xl p-4 lg:p-5 text-center"><div class="text-2xl lg:text-3xl font-bold text-amber-500">${active}</div><div class="text-xs lg:text-sm text-slate-500 mt-1">กำลังยืม</div></div>
+      <div class="stat-card rounded-2xl p-4 lg:p-5 text-center"><div class="text-2xl lg:text-3xl font-bold text-emerald-500">${returned}</div><div class="text-xs lg:text-sm text-slate-500 mt-1">คืนแล้ว</div></div>`;
+    const list=document.getElementById("bookingsList");
+    if(!myBookings.length){list.innerHTML=`<div class="glass rounded-2xl p-12 text-center text-slate-500"><div class="text-6xl mb-3">📭</div>ยังไม่มีรายการยืม</div>`;return}
+    list.innerHTML=myBookings.map(b=>{
+      const eq=EQUIPMENT_TYPES.find(e=>e.type===b.itemType);
+      const ret=b.status==="Returned";
+      const colorClass=eq?.color||'from-slate-200 to-gray-300';
+      return `<div class="glass rounded-2xl p-4 lg:p-5 card-shadow flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="flex items-center gap-4 flex-1 min-w-0">
+          <div class="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br ${colorClass} flex items-center justify-center p-2.5 icon-wrap flex-shrink-0 shadow-inner">${getIcon(b.itemType)}</div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-slate-800 text-base lg:text-lg truncate">${esc(b.itemName)}</h3>
+            <p class="text-xs text-slate-500 font-mono">${esc(b.itemId)}</p>
+            <p class="text-xs text-slate-600 mt-1.5 flex items-center gap-1"><span>🕐</span>${esc(fmtDate(b.startTime))} → ${esc(fmtDate(b.endTime))}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+          <span class="text-xs px-3 py-1.5 rounded-full font-semibold ${ret?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700'}">${ret?'✓ คืนแล้ว':'● กำลังยืม'}</span>
+          ${ret?'':`<button data-bid="${b.id}" data-iid="${b.itemId}" class="return-btn-trigger return-btn text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5"><span>↩</span>คืนอุปกรณ์</button>`}
+        </div>
+      </div>`;
+    }).join("");
+    document.querySelectorAll(".return-btn-trigger").forEach(btn=>btn.addEventListener("click",()=>returnItem(btn.dataset.bid,btn.dataset.iid,btn)));
+  }catch(err){console.error(err);document.getElementById("bookingsList").innerHTML=`<div class="glass rounded-2xl p-8 text-center text-red-500">❌ โหลดไม่สำเร็จ<br><span class="text-xs text-slate-500 mt-2 block">${esc(err.message)}</span></div>`}
+}
+async function returnItem(bookingId,itemId,btn){
+  if(!confirm("ยืนยันการคืนอุปกรณ์นี้?"))return;
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
+  try{
+    await updateDoc(doc(db,"bookings",bookingId),{status:"Returned",returnedAt:serverTimestamp()});
+    const itemDocId=itemsCache.find(i=>i.itemId===itemId)?.id||itemId;
+    await updateDoc(doc(db,"items",itemDocId),{status:"Available"});
+    const idx=itemsCache.findIndex(i=>i.itemId===itemId);
+    if(idx!==-1)itemsCache[idx].status="Available";
+    toast("คืนอุปกรณ์สำเร็จ ✓","success");
+    await renderMyBookings();
+  }catch(err){console.error(err);btn.disabled=false;btn.innerHTML='<span>↩</span>คืนอุปกรณ์';toast("คืนไม่สำเร็จ: "+err.message,"error",5000)}
+}
+function fmtDate(s){if(!s)return"-";const d=new Date(s);const p=n=>String(n).padStart(2,"0");return `${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function renderRules(){document.getElementById("mainContent").innerHTML=`<div class="glass rounded-3xl card-shadow p-6 mb-6"><h1 class="text-2xl lg:text-3xl font-bold text-slate-800">📜 กฎและข้อตกลง</h1><p class="text-slate-500 mt-1">โปรดอ่านก่อนใช้บริการ</p></div><div class="glass rounded-2xl p-8 card-shadow space-y-4 text-slate-700"><div class="flex gap-3"><span class="text-rose-500 font-bold">1.</span><p>ผู้ยืมต้องเป็นนักศึกษาวิทยาลัยสหวิทยาการเท่านั้น</p></div><div class="flex gap-3"><span class="text-rose-500 font-bold">2.</span><p>ยืมได้ครั้งละไม่เกิน 24 ชั่วโมง ต่อ 1 รายการ</p></div><div class="flex gap-3"><span class="text-rose-500 font-bold">3.</span><p>กรุณาดูแลรักษาอุปกรณ์ และคืนตามเวลาที่กำหนด</p></div><div class="flex gap-3"><span class="text-rose-500 font-bold">4.</span><p>หากอุปกรณ์ชำรุด สูญหาย ผู้ยืมต้องรับผิดชอบ</p></div><div class="flex gap-3"><span class="text-rose-500 font-bold">5.</span><p>การคืนอุปกรณ์ล่าช้าจะถูกระงับสิทธิ์การยืม</p></div></div>`}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+</script>
+</body>
+</html>

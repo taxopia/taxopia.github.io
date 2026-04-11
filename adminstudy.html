@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin - Study Station</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{font-family:'Prompt',sans-serif}
+  body{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;color:#e2e8f0}
+  .glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}
+  .glass-light{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15)}
+  .card-shadow{box-shadow:0 20px 50px -10px rgba(0,0,0,0.5)}
+  .gradient-btn{background:linear-gradient(135deg,#8b5cf6 0%,#3b82f6 100%);transition:all 0.3s ease}
+  .gradient-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 25px -5px rgba(139,92,246,0.5)}
+  .gradient-btn:disabled{opacity:0.6;cursor:not-allowed}
+  .gradient-text{background:linear-gradient(135deg,#a78bfa 0%,#60a5fa 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .danger-btn{background:linear-gradient(135deg,#ef4444 0%,#f43f5e 100%);transition:all 0.3s}
+  .danger-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px -5px rgba(239,68,68,0.5)}
+  .success-btn{background:linear-gradient(135deg,#10b981 0%,#14b8a6 100%);transition:all 0.3s}
+  .success-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px -5px rgba(16,185,129,0.5)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,0.3)}50%{box-shadow:0 0 40px rgba(139,92,246,0.6)}}
+  .animate-fade{animation:fadeIn 0.5s ease-out}
+  .animate-scale{animation:scaleIn 0.3s ease-out}
+  .pulse-glow{animation:pulse-glow 2s ease-in-out infinite}
+  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle}
+  .blob{position:fixed;border-radius:50%;filter:blur(100px);opacity:0.3;z-index:0;pointer-events:none}
+  .blob1{width:500px;height:500px;background:#8b5cf6;top:-150px;right:-150px}
+  .blob2{width:400px;height:400px;background:#3b82f6;bottom:-100px;left:-100px}
+  ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:rgba(255,255,255,0.05)}::-webkit-scrollbar-thumb{background:#8b5cf6;border-radius:10px}
+  .toast{position:fixed;top:20px;right:20px;z-index:9999;max-width:90vw}
+  .nav-tab{transition:all 0.2s ease;cursor:pointer}
+  .nav-tab.active{background:linear-gradient(135deg,#8b5cf6 0%,#3b82f6 100%);color:white;box-shadow:0 8px 20px -5px rgba(139,92,246,0.5)}
+  .modal-bg{background:rgba(0,0,0,0.7);backdrop-filter:blur(8px)}
+  input,select,textarea{color-scheme:dark}
+  table{border-collapse:collapse;width:100%}
+  th{text-align:left;padding:14px 16px;font-size:12px;font-weight:600;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,0.1)}
+  td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px}
+  tr:hover{background:rgba(255,255,255,0.03)}
+  .icon-wrap svg{width:100%;height:100%}
+  .mobile-menu-btn{display:none}
+  @media (max-width:1023px){.mobile-menu-btn{display:flex}.sidebar-mobile{position:fixed;top:0;left:0;bottom:0;width:280px;z-index:50;transform:translateX(-100%);transition:transform 0.3s}.sidebar-mobile.open{transform:translateX(0)}.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:40;opacity:0;pointer-events:none;transition:opacity 0.3s}.sidebar-overlay.open{opacity:1;pointer-events:auto}}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div><div class="blob blob2"></div>
+<div id="app" class="relative z-10"><div class="min-h-screen flex items-center justify-center text-slate-400">⏳ กำลังโหลด...</div></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {getFirestore,collection,doc,setDoc,getDocs,getDoc,updateDoc,deleteDoc,addDoc,serverTimestamp,writeBatch,query,where,orderBy} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyCzD093g7oV1ZdoTXsMGkEEa6DrnCM9VAE",authDomain:"studystation-31473.firebaseapp.com",projectId:"studystation-31473",storageBucket:"studystation-31473.firebasestorage.app",messagingSenderId:"130615554198",appId:"1:130615554198:web:5f337ce0934ccbd62b52b7"};
+let db;try{db=getFirestore(initializeApp(firebaseConfig))}catch(e){console.error(e)}
+
+const ADMIN_PASSWORD="4168";
+const SESSION_KEY="studystation_admin";
+const SESSION_HOURS=4;
+
+let currentTab="dashboard";
+let users=[],items=[],bookings=[];
+
+function init(){
+  try{
+    const s=localStorage.getItem(SESSION_KEY);
+    if(s){
+      const d=JSON.parse(s);
+      if(d.expires>Date.now()){renderAdmin();return}
+      localStorage.removeItem(SESSION_KEY);
+    }
+  }catch(e){}
+  renderLogin();
+}
+
+function toast(msg,type="success",dur=3000){
+  const c={success:"from-emerald-500 to-teal-500",error:"from-red-500 to-rose-500",info:"from-blue-500 to-indigo-500"};
+  const t=document.createElement("div");
+  t.className="toast glass-light rounded-2xl px-6 py-4 card-shadow flex items-center gap-3 animate-fade";
+  t.innerHTML=`<div class="w-2 h-10 rounded-full bg-gradient-to-b ${c[type]||c.info}"></div><span class="font-medium text-slate-100">${msg}</span>`;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity 0.3s";setTimeout(()=>t.remove(),300)},dur);
+}
+
+function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function fmtDate(s){if(!s)return"-";const d=new Date(s);const p=n=>String(n).padStart(2,"0");return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function fmtTimestamp(t){if(!t)return"-";return fmtDate(new Date(t.seconds*1000).toISOString())}
+
+// ========== LOGIN ==========
+function renderLogin(){
+  document.getElementById("app").innerHTML=`
+  <div class="min-h-screen flex items-center justify-center p-4 animate-fade">
+    <div class="glass rounded-3xl card-shadow w-full max-w-md p-8 md:p-10 pulse-glow">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl gradient-btn mb-4 text-4xl">🔐</div>
+        <h1 class="text-3xl font-bold gradient-text">Admin Panel</h1>
+        <p class="text-slate-400 mt-2">Study Station Control Center</p>
+      </div>
+      <form id="adminLogin" class="space-y-5">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-2">รหัสผ่านแอดมิน</label>
+          <input id="adminPw" type="password" autocomplete="off" inputmode="numeric" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white text-lg tracking-widest text-center" placeholder="• • • •" maxlength="20" />
+        </div>
+        <button type="submit" id="adminLoginBtn" class="w-full gradient-btn text-white font-bold py-3 rounded-xl text-lg">เข้าสู่ระบบแอดมิน</button>
+      </form>
+      <p class="text-center text-xs text-slate-500 mt-6">⚠ พื้นที่จำกัดเฉพาะผู้ดูแลระบบ</p>
+      <a href="index.html" class="block text-center mt-3 text-xs text-slate-500 hover:text-violet-400 transition">← กลับหน้าผู้ใช้</a>
+    </div>
+  </div>`;
+  document.getElementById("adminLogin").addEventListener("submit",handleLogin);
+  setTimeout(()=>document.getElementById("adminPw").focus(),100);
+}
+
+function handleLogin(e){
+  e.preventDefault();
+  const pw=document.getElementById("adminPw").value.trim();
+  const btn=document.getElementById("adminLoginBtn");
+  if(pw!==ADMIN_PASSWORD){
+    document.getElementById("adminPw").value="";
+    toast("รหัสผ่านไม่ถูกต้อง","error");
+    return;
+  }
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> <span class="ml-2">กำลังเข้าสู่ระบบ...</span>';
+  const session={loginAt:Date.now(),expires:Date.now()+SESSION_HOURS*3600*1000};
+  localStorage.setItem(SESSION_KEY,JSON.stringify(session));
+  toast("เข้าสู่ระบบสำเร็จ ✨","success");
+  setTimeout(()=>renderAdmin(),400);
+}
+
+function logout(){
+  if(!confirm("ออกจากระบบแอดมิน?"))return;
+  localStorage.removeItem(SESSION_KEY);
+  renderLogin();
+  toast("ออกจากระบบแล้ว","info");
+}
+
+// ========== ADMIN SHELL ==========
+async function renderAdmin(){
+  document.getElementById("app").innerHTML=`
+  <div class="min-h-screen flex flex-col lg:flex-row animate-fade">
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <aside id="sidebar" class="lg:w-72 lg:min-h-screen p-4 lg:p-6 sidebar-mobile lg:!translate-x-0 lg:!static lg:!transform-none">
+      <div class="glass rounded-3xl card-shadow p-6 lg:sticky lg:top-6 flex flex-col" style="min-height:calc(100vh - 3rem)">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-12 h-12 rounded-2xl gradient-btn flex items-center justify-center text-2xl shadow-lg">⚙</div>
+          <div><h2 class="font-bold text-lg gradient-text">Admin Panel</h2><p class="text-xs text-slate-400">Study Station</p></div>
+        </div>
+        <nav class="space-y-2 flex-1">
+          <button data-tab="dashboard" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">📊</span><span>แดชบอร์ด</span></button>
+          <button data-tab="items" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">📦</span><span>จัดการอุปกรณ์</span></button>
+          <button data-tab="bookings" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">📋</span><span>การยืม</span></button>
+          <button data-tab="users" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">👥</span><span>ผู้ใช้</span></button>
+          <button data-tab="danger" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">⚠</span><span>Danger Zone</span></button>
+        </nav>
+        <div class="mt-8 pt-6 border-t border-white/10">
+          <button id="logoutBtn" class="w-full px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-sm font-medium transition">🚪 ออกจากระบบ</button>
+          <a href="index.html" class="block text-center mt-3 text-xs text-slate-500 hover:text-violet-400 transition">← กลับหน้าผู้ใช้</a>
+        </div>
+      </div>
+    </aside>
+    <main id="mainContent" class="flex-1 p-4 lg:p-8 min-w-0"></main>
+  </div>`;
+  document.getElementById("logoutBtn").addEventListener("click",logout);
+  document.querySelectorAll(".nav-tab").forEach(b=>b.addEventListener("click",()=>{navigate(b.dataset.tab);document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open")}));
+  document.getElementById("sidebarOverlay").addEventListener("click",()=>{document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open")});
+  await navigate(currentTab);
+}
+
+async function navigate(tab){
+  currentTab=tab;
+  document.querySelectorAll(".nav-tab").forEach(b=>{
+    if(b.dataset.tab===tab){b.classList.add("active");b.classList.remove("text-slate-300","hover:bg-white/5")}
+    else{b.classList.remove("active");b.classList.add("text-slate-300","hover:bg-white/5")}
+  });
+  await loadAllData();
+  if(tab==="dashboard")renderDashboard();
+  else if(tab==="items")renderItems();
+  else if(tab==="bookings")renderBookings();
+  else if(tab==="users")renderUsers();
+  else if(tab==="danger")renderDanger();
+  injectMobileMenu();
+}
+
+function injectMobileMenu(){
+  const main=document.getElementById("mainContent");
+  if(!main||main.querySelector("#mobileMenuBtn"))return;
+  const btn=document.createElement("button");
+  btn.id="mobileMenuBtn";
+  btn.className="mobile-menu-btn glass rounded-xl p-3 mb-4 items-center gap-2 text-slate-200 font-semibold";
+  btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg> เมนู';
+  btn.addEventListener("click",()=>{document.getElementById("sidebar").classList.add("open");document.getElementById("sidebarOverlay").classList.add("open")});
+  main.insertBefore(btn,main.firstChild);
+}
+
+async function loadAllData(){
+  if(!db){toast("Firebase ไม่พร้อม","error");return}
+  try{
+    const [uS,iS,bS]=await Promise.all([getDocs(collection(db,"users")),getDocs(collection(db,"items")),getDocs(collection(db,"bookings"))]);
+    users=uS.docs.map(d=>({id:d.id,...d.data()}));
+    items=iS.docs.map(d=>({id:d.id,...d.data()}));
+    bookings=bS.docs.map(d=>({id:d.id,...d.data()}));
+    bookings.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  }catch(err){console.error(err);toast("โหลดข้อมูลไม่สำเร็จ: "+err.message,"error",5000)}
+}
+
+// ========== DASHBOARD ==========
+function renderDashboard(){
+  const totalUsers=users.length;
+  const totalItems=items.length;
+  const availItems=items.filter(i=>i.status==="Available").length;
+  const borrowedItems=items.filter(i=>i.status==="Borrowed").length;
+  const activeBookings=bookings.filter(b=>b.status==="Active").length;
+  const totalBookings=bookings.length;
+  const recentBookings=bookings.slice(0,5);
+  const typeStats={};
+  items.forEach(i=>{if(!typeStats[i.type])typeStats[i.type]={name:i.name,total:0,available:0};typeStats[i.type].total++;if(i.status==="Available")typeStats[i.type].available++});
+  const topBorrowed=Object.values(typeStats).sort((a,b)=>(b.total-b.available)-(a.total-a.available)).slice(0,5);
+
+  document.getElementById("mainContent").innerHTML=`
+    <div class="glass rounded-3xl card-shadow p-6 lg:p-8 mb-6 relative overflow-hidden">
+      <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 opacity-20 blur-3xl"></div>
+      <div class="relative">
+        <h1 class="text-2xl lg:text-4xl font-bold text-white">📊 แดชบอร์ดภาพรวม</h1>
+        <p class="text-slate-400 mt-2">สรุปข้อมูลและสถิติการใช้งานระบบทั้งหมด</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      ${statCard("👥","ผู้ใช้ทั้งหมด",totalUsers,"from-violet-500 to-purple-500")}
+      ${statCard("📦","อุปกรณ์ทั้งหมด",totalItems,"from-blue-500 to-cyan-500")}
+      ${statCard("✓","พร้อมใช้",availItems,"from-emerald-500 to-teal-500")}
+      ${statCard("🔒","ถูกยืม",borrowedItems,"from-rose-500 to-pink-500")}
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div class="glass rounded-2xl card-shadow p-6">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">📋 การยืมล่าสุด</h3>
+        ${recentBookings.length?recentBookings.map(b=>`
+          <div class="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
+            <div class="min-w-0 flex-1"><p class="text-sm font-semibold text-slate-200 truncate">${esc(b.itemName||'-')}</p><p class="text-xs text-slate-500">${esc(b.studentName||'-')} • ${esc(fmtTimestamp(b.createdAt))}</p></div>
+            <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${b.status==='Returned'?'bg-emerald-500/20 text-emerald-300':'bg-amber-500/20 text-amber-300'}">${b.status==='Returned'?'คืนแล้ว':'กำลังยืม'}</span>
+          </div>`).join(""):'<p class="text-center text-slate-500 py-8">ยังไม่มีรายการ</p>'}
+      </div>
+      <div class="glass rounded-2xl card-shadow p-6">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">🔥 อุปกรณ์ยอดนิยม</h3>
+        ${topBorrowed.length?topBorrowed.map(t=>{const borrowed=t.total-t.available;const pct=t.total?Math.round((borrowed/t.total)*100):0;return `
+          <div class="py-3 border-b border-white/5 last:border-0">
+            <div class="flex justify-between mb-1.5"><span class="text-sm font-semibold text-slate-200">${esc(t.name)}</span><span class="text-xs text-slate-400">${borrowed}/${t.total}</span></div>
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-violet-500 to-blue-500 rounded-full" style="width:${pct}%"></div></div>
+          </div>`}).join(""):'<p class="text-center text-slate-500 py-8">ยังไม่มีข้อมูล</p>'}
+      </div>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${statCard("📋","Bookings ทั้งหมด",totalBookings,"from-amber-500 to-orange-500")}
+      ${statCard("⏳","กำลังยืม",activeBookings,"from-yellow-500 to-amber-500")}
+      ${statCard("✓","คืนแล้ว",totalBookings-activeBookings,"from-green-500 to-emerald-500")}
+      ${statCard("📊","ใช้งานเฉลี่ย",totalUsers?(totalBookings/totalUsers).toFixed(1):"0","from-indigo-500 to-violet-500")}
+    </div>`;
+}
+
+function statCard(icon,label,value,gradient){
+  return `<div class="glass rounded-2xl p-5 card-shadow"><div class="flex items-center gap-4"><div class="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-2xl shadow-lg">${icon}</div><div class="min-w-0"><div class="text-2xl lg:text-3xl font-bold text-white">${value}</div><div class="text-xs text-slate-400">${label}</div></div></div></div>`;
+}
+
+// ========== ITEMS ==========
+function renderItems(){
+  document.getElementById("mainContent").innerHTML=`
+    <div class="glass rounded-3xl card-shadow p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div><h1 class="text-2xl lg:text-3xl font-bold text-white">📦 จัดการอุปกรณ์</h1><p class="text-slate-400 mt-1">ทั้งหมด ${items.length} ชิ้น</p></div>
+      <div class="flex gap-2"><input id="itemSearch" type="text" placeholder="ค้นหา..." class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" /><button id="addItemBtn" class="gradient-btn text-white font-bold px-5 py-2.5 rounded-xl whitespace-nowrap">+ เพิ่มอุปกรณ์</button></div>
+    </div>
+    <div class="glass rounded-2xl card-shadow overflow-hidden"><div class="overflow-x-auto"><table>
+      <thead><tr><th>ID</th><th>ชื่อ</th><th>ประเภท</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+      <tbody id="itemsTbody"></tbody>
+    </table></div></div>`;
+  document.getElementById("addItemBtn").addEventListener("click",()=>openItemModal());
+  document.getElementById("itemSearch").addEventListener("input",e=>renderItemsRows(e.target.value));
+  renderItemsRows("");
+}
+
+function renderItemsRows(filter){
+  const f=filter.toLowerCase();
+  const filtered=items.filter(i=>!f||i.name?.toLowerCase().includes(f)||i.itemId?.toLowerCase().includes(f)||i.type?.toLowerCase().includes(f));
+  const tbody=document.getElementById("itemsTbody");
+  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="5" class="text-center py-8 text-slate-500">ไม่พบข้อมูล</td></tr>`;return}
+  tbody.innerHTML=filtered.map(i=>`
+    <tr>
+      <td class="font-mono text-xs text-slate-400">${esc(i.itemId)}</td>
+      <td class="font-semibold text-slate-200">${esc(i.name)}</td>
+      <td class="text-xs text-slate-400">${esc(i.type)}</td>
+      <td><span class="text-xs px-2.5 py-1 rounded-full font-semibold ${i.status==='Available'?'bg-emerald-500/20 text-emerald-300':'bg-rose-500/20 text-rose-300'}">${i.status==='Available'?'พร้อมใช้':'ถูกยืม'}</span></td>
+      <td><div class="flex gap-2"><button data-edit="${esc(i.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30">แก้ไข</button>${i.status==='Borrowed'?`<button data-free="${esc(i.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30">ปลดล็อก</button>`:''}<button data-del="${esc(i.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30">ลบ</button></div></td>
+    </tr>`).join("");
+  tbody.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>openItemModal(items.find(x=>x.id===b.dataset.edit))));
+  tbody.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>deleteItem(b.dataset.del)));
+  tbody.querySelectorAll("[data-free]").forEach(b=>b.addEventListener("click",()=>freeItem(b.dataset.free)));
+}
+
+function openItemModal(item){
+  const isEdit=!!item;
+  const modal=document.createElement("div");
+  modal.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-50";
+  modal.innerHTML=`<div class="glass-light rounded-3xl card-shadow max-w-md w-full p-8 animate-scale">
+    <h3 class="text-xl font-bold text-white mb-6">${isEdit?'✏ แก้ไขอุปกรณ์':'+ เพิ่มอุปกรณ์ใหม่'}</h3>
+    <form id="itemForm" class="space-y-4">
+      <div><label class="block text-sm font-semibold text-slate-300 mb-2">รหัส (ID)</label><input id="f_id" type="text" required ${isEdit?'readonly':''} value="${isEdit?esc(item.itemId):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 ${isEdit?'opacity-60':''}" placeholder="เช่น pencil_006" /></div>
+      <div><label class="block text-sm font-semibold text-slate-300 mb-2">ชื่ออุปกรณ์</label><input id="f_name" type="text" required value="${isEdit?esc(item.name):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500" /></div>
+      <div><label class="block text-sm font-semibold text-slate-300 mb-2">ประเภท (type)</label><input id="f_type" type="text" required value="${isEdit?esc(item.type):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="เช่น pencil" /></div>
+      <div><label class="block text-sm font-semibold text-slate-300 mb-2">URL รูปภาพ (เลือกใส่)</label><input id="f_image" type="text" value="${isEdit?esc(item.imageUrl||''):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="https://..." /></div>
+      <div><label class="block text-sm font-semibold text-slate-300 mb-2">สถานะ</label><select id="f_status" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500"><option value="Available" ${isEdit&&item.status==='Available'?'selected':''}>พร้อมใช้</option><option value="Borrowed" ${isEdit&&item.status==='Borrowed'?'selected':''}>ถูกยืม</option></select></div>
+      <div class="flex gap-3 pt-2"><button type="button" id="cancelBtn" class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-semibold">ยกเลิก</button><button type="submit" class="flex-1 gradient-btn text-white font-bold py-3 rounded-xl">${isEdit?'บันทึก':'เพิ่ม'}</button></div>
+    </form>
+  </div>`;
+  document.body.appendChild(modal);
+  const close=()=>modal.remove();
+  document.getElementById("cancelBtn").addEventListener("click",close);
+  modal.addEventListener("click",e=>{if(e.target===modal)close()});
+  document.getElementById("itemForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const data={itemId:document.getElementById("f_id").value.trim(),name:document.getElementById("f_name").value.trim(),type:document.getElementById("f_type").value.trim(),imageUrl:document.getElementById("f_image").value.trim(),status:document.getElementById("f_status").value};
+    if(!data.itemId||!data.name||!data.type)return toast("กรุณากรอกข้อมูลให้ครบ","error");
+    try{
+      if(isEdit){await updateDoc(doc(db,"items",item.id),data);toast("แก้ไขสำเร็จ ✓")}
+      else{await setDoc(doc(db,"items",data.itemId),{...data,number:1,createdAt:serverTimestamp()});toast("เพิ่มสำเร็จ ✓")}
+      close();await loadAllData();renderItems();
+    }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+  });
+}
+
+async function deleteItem(id){
+  if(!confirm("ยืนยันลบอุปกรณ์นี้? การกระทำนี้ไม่สามารถย้อนกลับได้"))return;
+  try{await deleteDoc(doc(db,"items",id));toast("ลบสำเร็จ");await loadAllData();renderItems()}
+  catch(err){toast("ลบไม่สำเร็จ: "+err.message,"error",5000)}
+}
+
+async function freeItem(id){
+  if(!confirm("ปลดล็อกอุปกรณ์นี้ให้กลับมาพร้อมใช้?"))return;
+  try{await updateDoc(doc(db,"items",id),{status:"Available"});toast("ปลดล็อกสำเร็จ");await loadAllData();renderItems()}
+  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+// ========== BOOKINGS ==========
+function renderBookings(){
+  document.getElementById("mainContent").innerHTML=`
+    <div class="glass rounded-3xl card-shadow p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div><h1 class="text-2xl lg:text-3xl font-bold text-white">📋 การยืมทั้งหมด</h1><p class="text-slate-400 mt-1">ทั้งหมด ${bookings.length} รายการ</p></div>
+      <div class="flex gap-2"><select id="bFilter" class="px-4 py-2.5 rounded-xl bg-slate-800 border border-white/10 text-white text-sm"><option value="all">ทั้งหมด</option><option value="Active">กำลังยืม</option><option value="Returned">คืนแล้ว</option></select><input id="bSearch" type="text" placeholder="ค้นหา..." class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" /></div>
+    </div>
+    <div class="glass rounded-2xl card-shadow overflow-hidden"><div class="overflow-x-auto"><table>
+      <thead><tr><th>วันที่</th><th>อุปกรณ์</th><th>ผู้ยืม</th><th>ระยะเวลา</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+      <tbody id="bTbody"></tbody>
+    </table></div></div>`;
+  const update=()=>renderBookingRows(document.getElementById("bSearch").value,document.getElementById("bFilter").value);
+  document.getElementById("bSearch").addEventListener("input",update);
+  document.getElementById("bFilter").addEventListener("change",update);
+  renderBookingRows("","all");
+}
+
+function renderBookingRows(search,filter){
+  const s=search.toLowerCase();
+  const list=bookings.filter(b=>(filter==="all"||b.status===filter)&&(!s||b.itemName?.toLowerCase().includes(s)||b.studentName?.toLowerCase().includes(s)||b.studentId?.toLowerCase().includes(s)));
+  const tbody=document.getElementById("bTbody");
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="6" class="text-center py-8 text-slate-500">ไม่พบข้อมูล</td></tr>`;return}
+  tbody.innerHTML=list.map(b=>`
+    <tr>
+      <td class="text-xs text-slate-400">${esc(fmtTimestamp(b.createdAt))}</td>
+      <td><p class="font-semibold text-slate-200">${esc(b.itemName||'-')}</p><p class="text-xs text-slate-500 font-mono">${esc(b.itemId||'-')}</p></td>
+      <td><p class="text-slate-200">${esc(b.studentName||'-')}</p><p class="text-xs text-slate-500">${esc(b.studentId||'-')} • ปี ${esc(b.yearOfStudy||'-')}</p></td>
+      <td class="text-xs text-slate-400">${esc(b.duration||0)} ชม.</td>
+      <td><span class="text-xs px-2.5 py-1 rounded-full font-semibold ${b.status==='Returned'?'bg-emerald-500/20 text-emerald-300':'bg-amber-500/20 text-amber-300'}">${b.status==='Returned'?'คืนแล้ว':'กำลังยืม'}</span></td>
+      <td><div class="flex gap-2">${b.status==='Active'?`<button data-return="${esc(b.id)}" data-iid="${esc(b.itemId)}" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30">บังคับคืน</button>`:''}<button data-delb="${esc(b.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30">ลบ</button></div></td>
+    </tr>`).join("");
+  tbody.querySelectorAll("[data-return]").forEach(b=>b.addEventListener("click",()=>forceReturn(b.dataset.return,b.dataset.iid)));
+  tbody.querySelectorAll("[data-delb]").forEach(b=>b.addEventListener("click",()=>deleteBooking(b.dataset.delb)));
+}
+
+async function forceReturn(bid,iid){
+  if(!confirm("บังคับคืนอุปกรณ์นี้?"))return;
+  try{
+    await updateDoc(doc(db,"bookings",bid),{status:"Returned",returnedAt:serverTimestamp(),returnedByAdmin:true});
+    const it=items.find(i=>i.itemId===iid);
+    if(it)await updateDoc(doc(db,"items",it.id),{status:"Available"});
+    toast("คืนสำเร็จ ✓");await loadAllData();renderBookings();
+  }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+async function deleteBooking(id){
+  if(!confirm("ลบรายการยืมนี้? (ไม่จะคืนสถานะอุปกรณ์อัตโนมัติ)"))return;
+  try{await deleteDoc(doc(db,"bookings",id));toast("ลบสำเร็จ");await loadAllData();renderBookings()}
+  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+// ========== USERS ==========
+function renderUsers(){
+  document.getElementById("mainContent").innerHTML=`
+    <div class="glass rounded-3xl card-shadow p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div><h1 class="text-2xl lg:text-3xl font-bold text-white">👥 จัดการผู้ใช้</h1><p class="text-slate-400 mt-1">ทั้งหมด ${users.length} คน</p></div>
+      <input id="uSearch" type="text" placeholder="ค้นหา..." class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+    </div>
+    <div class="glass rounded-2xl card-shadow overflow-hidden"><div class="overflow-x-auto"><table>
+      <thead><tr><th>รหัส</th><th>ชื่อ</th><th>ชั้นปี</th><th>ยืมทั้งหมด</th><th>กำลังยืม</th><th>ลงทะเบียน</th><th>จัดการ</th></tr></thead>
+      <tbody id="uTbody"></tbody>
+    </table></div></div>`;
+  document.getElementById("uSearch").addEventListener("input",e=>renderUserRows(e.target.value));
+  renderUserRows("");
+}
+
+function renderUserRows(search){
+  const s=search.toLowerCase();
+  const list=users.filter(u=>!s||u.fullName?.toLowerCase().includes(s)||u.studentId?.toLowerCase().includes(s));
+  const tbody=document.getElementById("uTbody");
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7" class="text-center py-8 text-slate-500">ไม่พบข้อมูล</td></tr>`;return}
+  tbody.innerHTML=list.map(u=>{
+    const userBookings=bookings.filter(b=>b.studentId===u.studentId);
+    const active=userBookings.filter(b=>b.status==="Active").length;
+    return `<tr>
+      <td class="font-mono text-xs text-slate-400">${esc(u.studentId)}</td>
+      <td class="font-semibold text-slate-200">${esc(u.fullName)}</td>
+      <td class="text-slate-400">ปี ${esc(u.yearOfStudy)}</td>
+      <td class="text-slate-300">${userBookings.length}</td>
+      <td>${active>0?`<span class="text-amber-300 font-semibold">${active}</span>`:'<span class="text-slate-500">0</span>'}</td>
+      <td class="text-xs text-slate-500">${esc(u.createdAt?fmtDate(u.createdAt):'-')}</td>
+      <td><button data-delu="${esc(u.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30">ลบ</button></td>
+    </tr>`}).join("");
+  tbody.querySelectorAll("[data-delu]").forEach(b=>b.addEventListener("click",()=>deleteUser(b.dataset.delu)));
+}
+
+async function deleteUser(id){
+  if(!confirm("ยืนยันลบผู้ใช้นี้? (ประวัติการยืมจะไม่ถูกลบ)"))return;
+  try{await deleteDoc(doc(db,"users",id));toast("ลบสำเร็จ");await loadAllData();renderUsers()}
+  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+// ========== DANGER ZONE ==========
+function renderDanger(){
+  document.getElementById("mainContent").innerHTML=`
+    <div class="glass rounded-3xl card-shadow p-6 mb-6">
+      <h1 class="text-2xl lg:text-3xl font-bold text-white">⚠ Danger Zone</h1>
+      <p class="text-slate-400 mt-1">การกระทำในนี้ไม่สามารถย้อนกลับได้ โปรดใช้ความระมัดระวัง</p>
+    </div>
+    <div class="space-y-4">
+      <div class="glass rounded-2xl p-6 border-2 border-rose-500/30">
+        <h3 class="text-lg font-bold text-rose-300 mb-2">🔄 Reset อุปกรณ์ทั้งหมด</h3>
+        <p class="text-sm text-slate-400 mb-4">ตั้งสถานะอุปกรณ์ทุกชิ้นเป็น "พร้อมใช้" และตั้งทุก booking เป็น "คืนแล้ว"</p>
+        <button id="resetItemsBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">Reset อุปกรณ์</button>
+      </div>
+      <div class="glass rounded-2xl p-6 border-2 border-rose-500/30">
+        <h3 class="text-lg font-bold text-rose-300 mb-2">🗑 ลบประวัติการยืมทั้งหมด</h3>
+        <p class="text-sm text-slate-400 mb-4">ลบ collection bookings ทั้งหมด (ผู้ใช้และอุปกรณ์ไม่ถูกแตะ)</p>
+        <button id="clearBookingsBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">ลบ Bookings ทั้งหมด</button>
+      </div>
+      <div class="glass rounded-2xl p-6 border-2 border-rose-500/30">
+        <h3 class="text-lg font-bold text-rose-300 mb-2">👥 ลบผู้ใช้ทั้งหมด</h3>
+        <p class="text-sm text-slate-400 mb-4">ลบ collection users ทั้งหมด</p>
+        <button id="clearUsersBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">ลบ Users ทั้งหมด</button>
+      </div>
+      <div class="glass rounded-2xl p-6 border-2 border-rose-500/50 bg-rose-500/5">
+        <h3 class="text-lg font-bold text-rose-300 mb-2">💀 NUCLEAR — ล้างข้อมูลทั้งระบบ</h3>
+        <p class="text-sm text-slate-400 mb-4">ลบทุกอย่าง: items, bookings, users — กลับสู่สภาพเริ่มต้น</p>
+        <button id="nukeBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">💀 ล้างทั้งระบบ</button>
+      </div>
+    </div>`;
+  document.getElementById("resetItemsBtn").addEventListener("click",resetItems);
+  document.getElementById("clearBookingsBtn").addEventListener("click",clearBookings);
+  document.getElementById("clearUsersBtn").addEventListener("click",clearUsers);
+  document.getElementById("nukeBtn").addEventListener("click",nuke);
+}
+
+async function batchDelete(coll){
+  const snap=await getDocs(collection(db,coll));
+  const b=writeBatch(db);
+  snap.docs.forEach(d=>b.delete(d.ref));
+  await b.commit();
+  return snap.size;
+}
+
+async function resetItems(){
+  if(!confirm("Reset อุปกรณ์ทั้งหมดเป็น Available? และตั้ง bookings ที่ active เป็น Returned"))return;
+  try{
+    const b=writeBatch(db);
+    items.forEach(i=>b.update(doc(db,"items",i.id),{status:"Available"}));
+    bookings.filter(x=>x.status==="Active").forEach(x=>b.update(doc(db,"bookings",x.id),{status:"Returned",returnedAt:serverTimestamp(),returnedByAdmin:true}));
+    await b.commit();
+    toast("Reset สำเร็จ ✓");await loadAllData();renderDanger();
+  }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+async function clearBookings(){
+  const c=prompt('พิมพ์ "DELETE" เพื่อยืนยันลบ bookings ทั้งหมด');
+  if(c!=="DELETE")return;
+  try{const n=await batchDelete("bookings");toast(`ลบ ${n} รายการสำเร็จ`);await loadAllData();renderDanger()}
+  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+async function clearUsers(){
+  const c=prompt('พิมพ์ "DELETE" เพื่อยืนยันลบ users ทั้งหมด');
+  if(c!=="DELETE")return;
+  try{const n=await batchDelete("users");toast(`ลบ ${n} ผู้ใช้สำเร็จ`);await loadAllData();renderDanger()}
+  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+async function nuke(){
+  const c=prompt('💀 พิมพ์ "NUKE" เพื่อล้างระบบทั้งหมด (items + bookings + users)');
+  if(c!=="NUKE")return;
+  try{
+    const [a,b2,c2]=await Promise.all([batchDelete("items"),batchDelete("bookings"),batchDelete("users")]);
+    toast(`ล้างสำเร็จ: ${a} items, ${b2} bookings, ${c2} users`,"success",5000);
+    await loadAllData();renderDanger();
+  }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+}
+
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);
+else init();
+</script>
+</body>
+</html>
