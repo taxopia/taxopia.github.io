@@ -3,515 +3,349 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin - Study Station</title>
+<title>Study Station - Admin</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *{font-family:'Prompt',sans-serif}
-  body{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;color:#e2e8f0}
-  .glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}
-  .glass-light{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15)}
-  .card-shadow{box-shadow:0 20px 50px -10px rgba(0,0,0,0.5)}
-  .gradient-btn{background:linear-gradient(135deg,#8b5cf6 0%,#3b82f6 100%);transition:all 0.3s ease}
-  .gradient-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 25px -5px rgba(139,92,246,0.5)}
+  body{background:linear-gradient(135deg,#e0f2fe 0%,#fef3f2 50%,#fce7f3 100%);min-height:100vh}
+  .glass{background:rgba(255,255,255,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5)}
+  .glass-dark{background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.6)}
+  .card-shadow{box-shadow:0 10px 40px -10px rgba(244,63,94,0.15)}
+  .gradient-btn{background:linear-gradient(135deg,#f43f5e 0%,#ec4899 100%);transition:all 0.3s ease}
+  .gradient-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 25px -5px rgba(244,63,94,0.5)}
   .gradient-btn:disabled{opacity:0.6;cursor:not-allowed}
-  .gradient-text{background:linear-gradient(135deg,#a78bfa 0%,#60a5fa 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .danger-btn{background:linear-gradient(135deg,#ef4444 0%,#f43f5e 100%);transition:all 0.3s}
-  .danger-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px -5px rgba(239,68,68,0.5)}
-  .success-btn{background:linear-gradient(135deg,#10b981 0%,#14b8a6 100%);transition:all 0.3s}
-  .success-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px -5px rgba(16,185,129,0.5)}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+  .gradient-text{background:linear-gradient(135deg,#f43f5e 0%,#ec4899 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .modal-bg{background:rgba(15,23,42,0.5);backdrop-filter:blur(8px)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
   @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,0.3)}50%{box-shadow:0 0 40px rgba(139,92,246,0.6)}}
-  .animate-fade{animation:fadeIn 0.5s ease-out}
-  .animate-scale{animation:scaleIn 0.3s ease-out}
-  .pulse-glow{animation:pulse-glow 2s ease-in-out infinite}
-  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle}
-  .blob{position:fixed;border-radius:50%;filter:blur(100px);opacity:0.3;z-index:0;pointer-events:none}
-  .blob1{width:500px;height:500px;background:#8b5cf6;top:-150px;right:-150px}
-  .blob2{width:400px;height:400px;background:#3b82f6;bottom:-100px;left:-100px}
-  ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:rgba(255,255,255,0.05)}::-webkit-scrollbar-thumb{background:#8b5cf6;border-radius:10px}
+  .animate-fade{animation:fadeIn 0.4s ease-out}
+  .animate-scale{animation:scaleIn 0.25s ease-out}
+  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle}
+  .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.35;z-index:-1;pointer-events:none}
+  .blob1{width:400px;height:400px;background:#fda4af;top:-100px;right:-100px}
+  .blob2{width:350px;height:350px;background:#a5f3fc;bottom:-100px;left:-100px}
+  ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#f43f5e;border-radius:10px}
   .toast{position:fixed;top:20px;right:20px;z-index:9999;max-width:90vw}
-  .nav-tab{transition:all 0.2s ease;cursor:pointer}
-  .nav-tab.active{background:linear-gradient(135deg,#8b5cf6 0%,#3b82f6 100%);color:white;box-shadow:0 8px 20px -5px rgba(139,92,246,0.5)}
-  .modal-bg{background:rgba(0,0,0,0.7);backdrop-filter:blur(8px)}
-  input,select,textarea{color-scheme:dark}
-  table{border-collapse:collapse;width:100%}
-  th{text-align:left;padding:14px 16px;font-size:12px;font-weight:600;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,0.1)}
-  td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px}
-  tr:hover{background:rgba(255,255,255,0.03)}
-  .icon-wrap svg{width:100%;height:100%}
-  .mobile-menu-btn{display:none}
-  @media (max-width:1023px){.mobile-menu-btn{display:flex}.sidebar-mobile{position:fixed;top:0;left:0;bottom:0;width:280px;z-index:50;transform:translateX(-100%);transition:transform 0.3s}.sidebar-mobile.open{transform:translateX(0)}.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:40;opacity:0;pointer-events:none;transition:opacity 0.3s}.sidebar-overlay.open{opacity:1;pointer-events:auto}}
+  .tab-btn{transition:all 0.2s ease;white-space:nowrap}
+  .tab-btn.active{background:linear-gradient(135deg,#f43f5e 0%,#ec4899 100%);color:white;box-shadow:0 6px 16px -4px rgba(244,63,94,0.45)}
+  .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+  .input{width:100%;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.9);outline:none;transition:all 0.2s}
+  .input:focus{border-color:#f43f5e;box-shadow:0 0 0 3px rgba(244,63,94,0.15)}
+  .btn{padding:10px 16px;border-radius:12px;font-weight:600;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+  .btn-primary{background:linear-gradient(135deg,#f43f5e,#ec4899);color:#fff}
+  .btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 18px -4px rgba(244,63,94,0.45)}
+  .btn-secondary{background:rgba(255,255,255,0.8);color:#334155}
+  .btn-secondary:hover{background:#fff}
+  .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+  .btn-danger:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 18px -4px rgba(220,38,38,0.45)}
+  .btn-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+  .btn-success:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 18px -4px rgba(5,150,105,0.45)}
+  .btn-xs{padding:6px 10px;font-size:12px;border-radius:10px}
+  .tbl{width:100%;border-collapse:separate;border-spacing:0}
+  .tbl th{text-align:left;padding:12px;font-size:12px;font-weight:700;color:#64748b;background:rgba(255,255,255,0.5);position:sticky;top:0}
+  .tbl td{padding:12px;border-top:1px solid rgba(226,232,240,0.6);font-size:14px;color:#334155;vertical-align:middle}
+  .tbl tr:hover td{background:rgba(255,255,255,0.4)}
+  .section-title{font-size:20px;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:10px}
+  @media (max-width:768px){
+    .tbl thead{display:none}
+    .tbl tr{display:block;border-radius:14px;background:rgba(255,255,255,0.6);margin-bottom:10px;padding:10px}
+    .tbl td{display:flex;justify-content:space-between;gap:10px;border:none;padding:6px 4px;font-size:13px}
+    .tbl td::before{content:attr(data-label);font-weight:700;color:#64748b;font-size:12px}
+  }
 </style>
 </head>
 <body>
 <div class="blob blob1"></div><div class="blob blob2"></div>
-<div id="app" class="relative z-10"><div class="min-h-screen flex items-center justify-center text-slate-400">⏳ กำลังโหลด...</div></div>
-
+<div id="app"><div class="min-h-screen flex items-center justify-center text-slate-500">⏳ กำลังโหลด...</div></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {getFirestore,collection,doc,setDoc,getDocs,getDoc,updateDoc,deleteDoc,addDoc,serverTimestamp,writeBatch,query,where,orderBy} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {getFirestore,collection,doc,setDoc,getDocs,getDoc,updateDoc,deleteDoc,addDoc,serverTimestamp,writeBatch,increment} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyCzD093g7oV1ZdoTXsMGkEEa6DrnCM9VAE",authDomain:"studystation-31473.firebaseapp.com",projectId:"studystation-31473",storageBucket:"studystation-31473.firebasestorage.app",messagingSenderId:"130615554198",appId:"1:130615554198:web:5f337ce0934ccbd62b52b7"};
+const YEAR1_ROSTER_SEED=[{"id":"6824493016","name":"นางสาวบุณยานุช ธรรมจรรโลง"},{"id":"6824763012","name":"นางสาวกชพรรณ แก้วมา"},{"id":"6824763020","name":"นางสาวกฤษณวรรศ อินทนิล"},{"id":"6824763038","name":"นางสาวกวินทรา ปรีชาญาณ"},{"id":"6824763046","name":"นางสาวกวินธิดา โชติกพนิช"},{"id":"6824763053","name":"นางสาวกัญญาณัฐ ลายนาค"},{"id":"6824763061","name":"นางสาวกัลยรัตน์ เกตุศรี"},{"id":"6824763079","name":"นางสาวกานต์ธิดา ปลอดทอง"},{"id":"6824763087","name":"นางสาวกีรัตติยา วงศ์มีแก้ว"},{"id":"6824763103","name":"นางสาวจุฑารัตน์ ตันเจริญ"},{"id":"6824763111","name":"นายฉันทวัฒน์ นิธินรเศรษฐ"},{"id":"6824763129","name":"นางสาวชนิศา วิวัฒน์พงศ์กิจ"},{"id":"6824763137","name":"นายชาคริต ชัยวิชิต"},{"id":"6824763145","name":"นายชุติเดช ศรีไทย"},{"id":"6824763152","name":"นางสาวชุติมา ทวีสมาน"},{"id":"6824763160","name":"นางสาวญาณิศา อภิบาลศรี"},{"id":"6824763178","name":"นางสาวฐิตาภรณ์ อ่อนแก้ว"},{"id":"6824763186","name":"นางสาวฐิติวรดา เตชะศรี"},{"id":"6824763194","name":"นางสาวฐิติวรดา ฟักขาว"},{"id":"6824763202","name":"นายณัฏฐพล ทัยคง"},{"id":"6824763210","name":"นายณัฐพล วีระวงศ์"},{"id":"6824763228","name":"นางสาวณิชกานต์ เตสุชาตะ"},{"id":"6824763244","name":"นางสาวณิชาภัทร ยิ่งดำนุ่น"},{"id":"6824763251","name":"นางสาวทยา ประสารการ"},{"id":"6824763269","name":"นางสาวธณัสนันท์ ทองทาย"},{"id":"6824763277","name":"นายธนเดช อุดมเสรีย์"},{"id":"6824763285","name":"นายธนวัฒน์ พันทะบุตร"},{"id":"6824763293","name":"นายธนวินท์ สำลีวงค์"},{"id":"6824763327","name":"นางสาวธันยากานต์ วัฒน์ธนินโภคิน"},{"id":"6824763335","name":"นางสาวธิญาดา แสนจันทร์"},{"id":"6824763343","name":"นายธีรวัฒน์ ขุนเพชร"},{"id":"6824763350","name":"นางสาวนติกานต์ ศรีจันทร์"},{"id":"6824763368","name":"นางสาวนวพร วีรประเสริฐสกุล"},{"id":"6824763384","name":"นางสาวเนติมากร แสงจันทร์"},{"id":"6824763392","name":"นางสาวบัณฑิตา เมฆแดง"},{"id":"6824763400","name":"นางสาวปริยากร ทองด้วง"},{"id":"6824763418","name":"นางสาวปริยากร ปานจันทร์"},{"id":"6824763426","name":"นางสาวปวริศา สุขเจริญ"},{"id":"6824763434","name":"นางสาวปาทิตตา สุนทรศารทูล"},{"id":"6824763442","name":"นางสาวปาริชาติ ราชนาวี"},{"id":"6824763459","name":"นายปิยพัทธ์ ปานะ"},{"id":"6824763467","name":"นายปิยพัทธ์ ญาณหาญ"},{"id":"6824763475","name":"นางสาวปุณณาสา ถนอมสิน"},{"id":"6824763483","name":"นางสาวปุณยาพร เจริญพานิชเสรี"},{"id":"6824763491","name":"นายพณศักดิ์ สังข์ขำ"},{"id":"6824763509","name":"นางสาวพฤกษารัฐ แก้วสกุล"},{"id":"6824763517","name":"นางสาวพิมพ์พรรษา พร้อมสุข"},{"id":"6824763525","name":"นางสาวเพ็ญนีตี้ สุรพงษ์ชาญเดช"},{"id":"6824763533","name":"นางสาวมนัญญา โสตติยัง"},{"id":"6824763558","name":"นางสาวมัชฌิมา แดงสากล"},{"id":"6824763574","name":"นางสาวมาริสา จินดาวงษ์"},{"id":"6824763582","name":"นางสาวรมิตา เพาะปลูก"},{"id":"6824763590","name":"นายรักษ์สิริ ปานเนตรแก้ว"},{"id":"6824763608","name":"นางสาวรัตนประภา อินทรบุญ"},{"id":"6824763616","name":"นางสาวลภัสรดา เพ็งพูน"},{"id":"6824763624","name":"นางสาววนัสนันท์ คงสมบูรณ์"},{"id":"6824763632","name":"นางสาววริษฐา เทศนอก"},{"id":"6824763640","name":"นายวาทศิลป์ สัตย์ซื่อ"},{"id":"6824763665","name":"นายวีราทร สำเภาเงิน"},{"id":"6824763673","name":"นางสาวศิรดา สุขสม"},{"id":"6824763699","name":"นางสาวสุพัตรา สายอินทร์"},{"id":"6824763707","name":"นางสาวสุภัสสรา หวังสุข"},{"id":"6824763715","name":"นางสาวสุภาพร อัลท์แฮร์"},{"id":"6824763723","name":"นางสาวอภิชญา สมวะเวียง"},{"id":"6824763749","name":"นางสาวอรพิน น้อยฉวี"},{"id":"6824763756","name":"นางสาวอรรัมภา ราชเครือ"},{"id":"6824763764","name":"นายอาณกร สุขสำราญ"},{"id":"6824763772","name":"นางสาวอิษฎาอร ช่วยศรี"},{"id":"6824763798","name":"นางสาวจินดามณี ฟุ้งพิมาย"},{"id":"6824763806","name":"นางสาวจุฑาทิพย์ หาญทะเล"},{"id":"6824763814","name":"นางสาวชุติกาญจน์ ทองธานี"},{"id":"6824763822","name":"นายฐูปกร แสงโพธิ์"},{"id":"6824763830","name":"นายฐิติวัสส์ พยัมบุตร"},{"id":"6824763848","name":"นางสาวณัฏฐ์ภัสสร ธนาเพ็ญภาส"},{"id":"6824763855","name":"นางสาวนฤธร เชียงหลี"},{"id":"6824763863","name":"นางสาวนิชาพร พิมธรรมมา"},{"id":"6824763871","name":"นายบวรวิชญ์ ระหัส"},{"id":"6824763889","name":"นางสาวบัณฑิตา พรมสิงห์"},{"id":"6824763897","name":"นางสาวปัณณภัสสร์ มธุรอัมพิลานันต์"},{"id":"6824763905","name":"นายพิศณุพงศ์ สมศรี"},{"id":"6824763913","name":"นางสาวเพียงขวัญ สันตินันตรักษ์"},{"id":"6824763921","name":"นางสาวแพรวา นิ่มมา"},{"id":"6824763939","name":"นางสาวภูริชญา กุหลาบ"},{"id":"6824763947","name":"นางสาวมณฑกาญจน์ คชกูล"},{"id":"6824763954","name":"นางสาวมนัสชนก จันทร์วิภาค"},{"id":"6824763962","name":"นางสาวมัตติกา สุนทรวิทย์"},{"id":"6824763970","name":"นางสาวฤามเม ภัทรสิงหสิริกุล"},{"id":"6824763988","name":"นางสาววริศรา เทศนะ"},{"id":"6824763996","name":"นางสาววิรัชชยากร นพรัตน์ธนัย"},{"id":"6824764002","name":"นางสาววิลาสินี อุดมเวช"},{"id":"6824764010","name":"นางสาวศรัญภา ศรีแฉล้ม"},{"id":"6824764028","name":"นางสาวสุรภา คูหะสุวรรณ"},{"id":"6824764036","name":"นางสาวสุวพิชชา กุลน้อย"},{"id":"6824764044","name":"นายแอล สวนจันทร์"},{"id":"6824764051","name":"นางสาวกนกพรรณ ศรีอ่อน"},{"id":"6824764069","name":"นางสาวกุลณัฐ ชนะกุล"},{"id":"6824764077","name":"นางสาวขวัญชนก นาคสงวน"},{"id":"6824764085","name":"นายโฆษิต ชัยราษฎร์"},{"id":"6824764093","name":"นายชยพล แสงม่วง"},{"id":"6824764101","name":"นางสาวชลนิภา ขรัวทองเขียว"},{"id":"6824764119","name":"นางสาวชวัลนุช พฤกษจำรูญ"},{"id":"6824764127","name":"นางสาวชาลิสา พิพัฒน์ธนสกุล"},{"id":"6824764135","name":"นางสาวชาลิสา เทียนบูชา"},{"id":"6824764143","name":"นางสาวชีรีน ปาทาน"},{"id":"6824764150","name":"นางสาวณณัฐ ชนะกิจ"},{"id":"6824764168","name":"นายณนน อินทชาติ"},{"id":"6824764176","name":"นายธนบดี ไชยคำภา"},{"id":"6824764184","name":"นายธนพจน์ เฉลิมพันธ์"},{"id":"6824764192","name":"นางสาวธนินีกานต์ มณีเนตร"},{"id":"6824764200","name":"นางสาวธยานี รัตนศรี"},{"id":"6824764218","name":"นางสาวนิชาภา ธรรมานนท์"},{"id":"6824764226","name":"นางสาวบุญญาดา จันทรสิทธิ์"},{"id":"6824764234","name":"นางสาวเบญจรัตน์ นามวงค์"},{"id":"6824764242","name":"นางสาวปทิตตา ทานะมัย"},{"id":"6824764259","name":"นายปพนธีร์ ชัยมา"},{"id":"6824764267","name":"นางสาวปภาวรินทร์ ประทุมมาตย์"},{"id":"6824764275","name":"นางสาวปริยากร จารุประวิทย์"},{"id":"6824764283","name":"นางสาวปริยาภัทร เมิดไธสง"},{"id":"6824764291","name":"นางสาวปรียาพร ศรีอุดม"},{"id":"6824764309","name":"นางสาวปลายฟ้า บุปผาลุน"},{"id":"6824764317","name":"นายปวีณ ภัทรมงคลกุล"},{"id":"6824764325","name":"นางสาวปิยากร บัวผัด"},{"id":"6824764333","name":"นางสาวพรปวีณ์ ขุนพิทักษ์"},{"id":"6824764341","name":"นางสาวพิชญธิดา คงฤทธิ์"},{"id":"6824764358","name":"นางสาวพีรดา พุ่มขจร"},{"id":"6824764366","name":"นายภัทรดล คงนิล"},{"id":"6824764374","name":"นางสาวภัทรธิดา จงโปรย"},{"id":"6824764382","name":"นางสาวเมนี่ ไพศาลพนา"},{"id":"6824764390","name":"นางสาวรัจศุมณค์ เพชรพรศิริกุล"},{"id":"6824764408","name":"นางสาวรัตติกา รัตนมงคล"},{"id":"6824764416","name":"นางสาวรัตนาวดี บุตรน้อย"},{"id":"6824764424","name":"นายโรแมน คลีเมนท์"},{"id":"6824764432","name":"นางสาวลิเดีย ดวงปัญญา"},{"id":"6824764440","name":"นางสาววยากร ชยานุกูล"},{"id":"6824764457","name":"นายวรพิชญ์ มูลปา"},{"id":"6824764465","name":"นางสาววรรณวนัช กิจเอื้อวิริยะ"},{"id":"6824764473","name":"นายวรวุฒิ สุวรรณชัย"},{"id":"6824764481","name":"นางสาวสาริศา พรหมภักดี"},{"id":"6824764499","name":"นางสาวสิรภัทร บุตรสาทร"},{"id":"6824764507","name":"นางสาวสุทธิดา ไชยวรณ์"},{"id":"6824764515","name":"นางสาวสุธีรา สินาคมมาศ"},{"id":"6824764523","name":"นางสาวสุพิชฌา ช่วยนุกูล"},{"id":"6824764531","name":"นางสาวอนัญญา รัตนวิเชียร"},{"id":"6824764549","name":"นางสาวอัฐภิญญา เดชกุล"},{"id":"6824764556","name":"นางสาวอิศริญา ประดับศิลป"},{"id":"6824764564","name":"นายอุกฤษณ์ คำวิงวร"}];
+let roster=[];
+const LOGO_URL="data:image/webp;base64,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";
 let db;try{db=getFirestore(initializeApp(firebaseConfig))}catch(e){console.error(e)}
-
 const ADMIN_PASSWORD="4168";
 const SESSION_KEY="studystation_admin";
-const SESSION_HOURS=4;
-
-let currentTab="dashboard";
-let users=[],items=[],bookings=[];
-
-function init(){
-  try{
-    const s=localStorage.getItem(SESSION_KEY);
-    if(s){
-      const d=JSON.parse(s);
-      if(d.expires>Date.now()){renderAdmin();return}
-      localStorage.removeItem(SESSION_KEY);
-    }
-  }catch(e){}
-  renderLogin();
-}
-
-function toast(msg,type="success",dur=3000){
-  const c={success:"from-emerald-500 to-teal-500",error:"from-red-500 to-rose-500",info:"from-blue-500 to-indigo-500"};
-  const t=document.createElement("div");
-  t.className="toast glass-light rounded-2xl px-6 py-4 card-shadow flex items-center gap-3 animate-fade";
-  t.innerHTML=`<div class="w-2 h-10 rounded-full bg-gradient-to-b ${c[type]||c.info}"></div><span class="font-medium text-slate-100">${msg}</span>`;
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity 0.3s";setTimeout(()=>t.remove(),300)},dur);
-}
-
+const COLOR_PALETTE=[
+  {v:"from-slate-100 to-gray-200",n:"เทา"},{v:"from-yellow-200 to-amber-300",n:"เหลือง"},
+  {v:"from-amber-200 to-yellow-300",n:"อำพัน"},{v:"from-amber-300 to-orange-400",n:"ส้ม"},
+  {v:"from-sky-200 to-blue-300",n:"ฟ้า"},{v:"from-slate-200 to-gray-300",n:"เทาอ่อน"},
+  {v:"from-pink-200 to-rose-300",n:"ชมพู"},{v:"from-yellow-200 to-orange-300",n:"เหลืองส้ม"},
+  {v:"from-red-200 to-rose-300",n:"แดง"},{v:"from-blue-200 to-indigo-300",n:"น้ำเงิน"},
+  {v:"from-cyan-200 to-sky-300",n:"ครามใส"},{v:"from-teal-200 to-cyan-300",n:"เขียวน้ำทะเล"},
+  {v:"from-purple-200 to-violet-300",n:"ม่วง"},{v:"from-rose-200 to-pink-300",n:"ชมพูกุหลาบ"},
+  {v:"from-fuchsia-200 to-purple-300",n:"บานเย็น"},{v:"from-emerald-200 to-teal-300",n:"เขียว"}
+];
+const FALLBACK_ICON=`<svg viewBox="0 0 64 64"><rect x="14" y="14" width="36" height="36" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><text x="32" y="40" font-size="24" text-anchor="middle" fill="#64748b">?</text></svg>`;
+const TYPE_ICONS={
+  paper_a4:'📄',ruler_short:'📏',ruler_long:'📐',cutter:'🔪',pen_horse_blue:'🖊️',
+  liquid_water:'🧴',liquid_tape:'📼',stapler_refill:'📎',eraser:'🧽',pencil:'✏️',
+  pen_red:'🖊️',pen_blue:'🖊️',pen_black:'🖊️',tape_clear_l:'🎞️',tape_clear_m:'🎞️',
+  tape_clear_s:'🎞️',sharpener:'🔹',stapler:'📎',paper_clip:'📎',scissors:'✂️'
+};
+let session=null,items=[],bookings=[],users=[],currentTab="dashboard";
+function init(){try{const s=localStorage.getItem(SESSION_KEY);if(s){const p=JSON.parse(s);if(p?.ok){session=p;renderAdmin();return}}}catch(e){}renderLogin()}
+function toast(msg,type="success",dur=3000){const c={success:"from-emerald-500 to-teal-500",error:"from-red-500 to-rose-500",info:"from-blue-500 to-indigo-500",warn:"from-amber-500 to-orange-500"};const t=document.createElement("div");t.className="toast glass-dark rounded-2xl px-5 py-3 card-shadow flex items-center gap-3 animate-fade";t.innerHTML=`<div class="w-2 h-10 rounded-full bg-gradient-to-b ${c[type]||c.info}"></div><span class="font-medium text-slate-700">${msg}</span>`;document.body.appendChild(t);setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity 0.3s";setTimeout(()=>t.remove(),300)},dur)}
 function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function fmtDate(s){if(!s)return"-";const d=new Date(s);if(isNaN(d))return"-";const p=n=>String(n).padStart(2,"0");return `${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function fmtTs(t){if(!t)return"-";try{return fmtDate(new Date(t.seconds*1000).toISOString())}catch{return"-"}}
+function confirmDialog(title,msg,danger=false){return new Promise(r=>{const m=document.createElement("div");m.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-[100]";m.innerHTML=`<div class="glass-dark rounded-3xl card-shadow max-w-sm w-full p-6 animate-scale"><h3 class="text-lg font-bold text-slate-800 mb-2">${esc(title)}</h3><p class="text-sm text-slate-600 mb-5">${esc(msg)}</p><div class="flex gap-3"><button id="cdC" class="btn btn-secondary flex-1">ยกเลิก</button><button id="cdY" class="btn ${danger?'btn-danger':'btn-primary'} flex-1">ยืนยัน</button></div></div>`;document.body.appendChild(m);m.querySelector("#cdC").onclick=()=>{m.remove();r(false)};m.querySelector("#cdY").onclick=()=>{m.remove();r(true)};m.onclick=e=>{if(e.target===m){m.remove();r(false)}}})}
 
-function fmtDate(s){if(!s)return"-";const d=new Date(s);const p=n=>String(n).padStart(2,"0");return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`}
-function fmtTimestamp(t){if(!t)return"-";return fmtDate(new Date(t.seconds*1000).toISOString())}
-
-// ========== LOGIN ==========
 function renderLogin(){
-  document.getElementById("app").innerHTML=`
-  <div class="min-h-screen flex items-center justify-center p-4 animate-fade">
-    <div class="glass rounded-3xl card-shadow w-full max-w-md p-8 md:p-10 pulse-glow">
-      <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl gradient-btn mb-4 text-4xl">🔐</div>
-        <h1 class="text-3xl font-bold gradient-text">Admin Panel</h1>
-        <p class="text-slate-400 mt-2">Study Station Control Center</p>
-      </div>
-      <form id="adminLogin" class="space-y-5">
-        <div>
-          <label class="block text-sm font-semibold text-slate-300 mb-2">รหัสผ่านแอดมิน</label>
-          <input id="adminPw" type="password" autocomplete="off" inputmode="numeric" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white text-lg tracking-widest text-center" placeholder="• • • •" maxlength="20" />
-        </div>
-        <button type="submit" id="adminLoginBtn" class="w-full gradient-btn text-white font-bold py-3 rounded-xl text-lg">เข้าสู่ระบบแอดมิน</button>
-      </form>
-      <p class="text-center text-xs text-slate-500 mt-6">⚠ พื้นที่จำกัดเฉพาะผู้ดูแลระบบ</p>
-      <a href="index.html" class="block text-center mt-3 text-xs text-slate-500 hover:text-violet-400 transition">← กลับหน้าผู้ใช้</a>
-    </div>
-  </div>`;
-  document.getElementById("adminLogin").addEventListener("submit",handleLogin);
-  setTimeout(()=>document.getElementById("adminPw").focus(),100);
+  document.getElementById("app").innerHTML=`<div class="min-h-screen flex items-center justify-center p-4 animate-fade"><div class="glass rounded-3xl card-shadow w-full max-w-md p-8"><div class="text-center mb-7"><div class="inline-flex items-center justify-center w-28 h-28 rounded-3xl bg-white mb-4 shadow-xl overflow-hidden p-2 animate-fade" style="box-shadow:0 20px 40px -10px rgba(244,63,94,0.35)"><img src="${LOGO_URL}" alt="logo" class="w-full h-full object-contain" /></div><h1 class="text-3xl font-bold gradient-text">Admin Panel</h1><p class="text-slate-500 mt-2">Study Station CISTU</p></div><form id="lf" class="space-y-5" novalidate><div><label class="block text-sm font-semibold text-slate-700 mb-2">รหัสผ่าน</label><input id="pw" type="password" autocomplete="off" class="input" placeholder="••••••••••" /></div><button type="submit" class="btn btn-primary w-full py-3 text-lg">เข้าสู่ระบบ</button><a href="indexstudy.html" class="block text-center text-sm text-slate-500 hover:text-rose-500">← กลับหน้าผู้ใช้</a></form></div></div>`;
+  document.getElementById("lf").addEventListener("submit",handleLogin);
 }
+function handleLogin(e){e.preventDefault();const pw=document.getElementById("pw").value;if(pw!==ADMIN_PASSWORD)return toast("รหัสผ่านไม่ถูกต้อง","error");session={ok:true,at:Date.now()};localStorage.setItem(SESSION_KEY,JSON.stringify(session));toast("ยินดีต้อนรับเข้าสู่ระบบ");setTimeout(renderAdmin,300)}
+function logout(){localStorage.removeItem(SESSION_KEY);session=null;items=[];bookings=[];users=[];renderLogin();toast("ออกจากระบบ","info")}
 
-function handleLogin(e){
-  e.preventDefault();
-  const pw=document.getElementById("adminPw").value.trim();
-  const btn=document.getElementById("adminLoginBtn");
-  if(pw!==ADMIN_PASSWORD){
-    document.getElementById("adminPw").value="";
-    toast("รหัสผ่านไม่ถูกต้อง","error");
-    return;
-  }
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> <span class="ml-2">กำลังเข้าสู่ระบบ...</span>';
-  const session={loginAt:Date.now(),expires:Date.now()+SESSION_HOURS*3600*1000};
-  localStorage.setItem(SESSION_KEY,JSON.stringify(session));
-  toast("เข้าสู่ระบบสำเร็จ ✨","success");
-  setTimeout(()=>renderAdmin(),400);
-}
-
-function logout(){
-  if(!confirm("ออกจากระบบแอดมิน?"))return;
-  localStorage.removeItem(SESSION_KEY);
-  renderLogin();
-  toast("ออกจากระบบแล้ว","info");
-}
-
-// ========== ADMIN SHELL ==========
 async function renderAdmin(){
-  document.getElementById("app").innerHTML=`
-  <div class="min-h-screen flex flex-col lg:flex-row animate-fade">
-    <div id="sidebarOverlay" class="sidebar-overlay"></div>
-    <aside id="sidebar" class="lg:w-72 lg:min-h-screen p-4 lg:p-6 sidebar-mobile lg:!translate-x-0 lg:!static lg:!transform-none">
-      <div class="glass rounded-3xl card-shadow p-6 lg:sticky lg:top-6 flex flex-col" style="min-height:calc(100vh - 3rem)">
-        <div class="flex items-center gap-3 mb-8">
-          <div class="w-12 h-12 rounded-2xl gradient-btn flex items-center justify-center text-2xl shadow-lg">⚙</div>
-          <div><h2 class="font-bold text-lg gradient-text">Admin Panel</h2><p class="text-xs text-slate-400">Study Station</p></div>
+  document.getElementById("app").innerHTML=`<div class="min-h-screen animate-fade">
+    <header class="glass-dark sticky top-0 z-30 border-b border-white/40">
+      <div class="max-w-7xl mx-auto px-4 lg:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-white shadow-lg overflow-hidden p-0.5 flex-shrink-0"><img src="${LOGO_URL}" alt="logo" class="w-full h-full object-contain" /></div>
+          <div class="min-w-0"><h1 class="font-bold text-base sm:text-lg gradient-text truncate">Admin Panel</h1><p class="text-[11px] text-slate-500 truncate">Study Station CISTU</p></div>
         </div>
-        <nav class="space-y-2 flex-1">
-          <button data-tab="dashboard" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">📊</span><span>แดชบอร์ด</span></button>
-          <button data-tab="items" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">📦</span><span>จัดการอุปกรณ์</span></button>
-          <button data-tab="bookings" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">📋</span><span>การยืม</span></button>
-          <button data-tab="users" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">👥</span><span>ผู้ใช้</span></button>
-          <button data-tab="danger" class="nav-tab w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-300 hover:bg-white/5"><span class="text-lg">⚠</span><span>Danger Zone</span></button>
-        </nav>
-        <div class="mt-8 pt-6 border-t border-white/10">
-          <button id="logoutBtn" class="w-full px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-sm font-medium transition">🚪 ออกจากระบบ</button>
-          <a href="index.html" class="block text-center mt-3 text-xs text-slate-500 hover:text-violet-400 transition">← กลับหน้าผู้ใช้</a>
+        <div class="flex items-center gap-2">
+          <button id="refBtn" class="btn btn-secondary btn-xs"><span>รีเฟรช</span></button>
+          <button id="outBtn" class="btn btn-danger btn-xs"><span>ออกจากระบบ</span></button>
         </div>
       </div>
-    </aside>
-    <main id="mainContent" class="flex-1 p-4 lg:p-8 min-w-0"></main>
+      <nav class="max-w-7xl mx-auto px-2 lg:px-4 pb-2 overflow-x-auto">
+        <div class="flex gap-1.5 min-w-max">
+          ${[["dashboard","ภาพรวม"],["items","อุปกรณ์"],["bookings","การยืม"],["users","ผู้ใช้"],["roster","รายชื่อปี 1"],["danger","ขั้นสูง"]].map(([k,l])=>`<button data-tab="${k}" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm text-slate-600 hover:bg-white/50">${l}</button>`).join("")}
+        </div>
+      </nav>
+    </header>
+    <main class="max-w-7xl mx-auto p-4 lg:p-6" id="main"><div class="text-center py-12 text-slate-500"><span class="spinner mr-2"></span>กำลังโหลด...</div></main>
+    <footer class="text-center text-xs text-slate-400 py-6">© 2026 Study Station CIS Thammasat University</footer>
   </div>`;
-  document.getElementById("logoutBtn").addEventListener("click",logout);
-  document.querySelectorAll(".nav-tab").forEach(b=>b.addEventListener("click",()=>{navigate(b.dataset.tab);document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open")}));
-  document.getElementById("sidebarOverlay").addEventListener("click",()=>{document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open")});
-  await navigate(currentTab);
+  document.getElementById("outBtn").onclick=()=>confirmDialog("ออกจากระบบ","ยืนยันการออก?").then(ok=>ok&&logout());
+  document.getElementById("refBtn").onclick=async()=>{await loadAll();navigate(currentTab);toast("รีเฟรชแล้ว")};
+  document.querySelectorAll(".tab-btn").forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
+  await loadAll();navigate(currentTab);
 }
+async function loadAll(){if(!db){toast("Firebase ไม่พร้อม","error");return}try{const[a,b,c,r]=await Promise.all([getDocs(collection(db,"items")),getDocs(collection(db,"bookings")),getDocs(collection(db,"users")),getDocs(collection(db,"year1_roster"))]);items=a.docs.map(d=>({id:d.id,...d.data()}));bookings=b.docs.map(d=>({id:d.id,...d.data()}));bookings.sort((x,y)=>(y.createdAt?.seconds||0)-(x.createdAt?.seconds||0));users=c.docs.map(d=>({id:d.id,...d.data()}));roster=r.docs.map(d=>({id:d.id,...d.data()})).sort((x,y)=>(x.studentId||"").localeCompare(y.studentId||""))}catch(e){console.error(e);toast("โหลดข้อมูลไม่สำเร็จ","error")}}
+function navigate(tab){currentTab=tab;document.querySelectorAll(".tab-btn").forEach(b=>{if(b.dataset.tab===tab){b.classList.add("active");b.classList.remove("text-slate-600","hover:bg-white/50")}else{b.classList.remove("active");b.classList.add("text-slate-600","hover:bg-white/50")}});const m=document.getElementById("main");if(tab==="dashboard")renderDashboard(m);else if(tab==="items")renderItems(m);else if(tab==="bookings")renderBookings(m);else if(tab==="users")renderUsers(m);else if(tab==="roster")renderRoster(m);else if(tab==="danger")renderDanger(m)}
 
-async function navigate(tab){
-  currentTab=tab;
-  document.querySelectorAll(".nav-tab").forEach(b=>{
-    if(b.dataset.tab===tab){b.classList.add("active");b.classList.remove("text-slate-300","hover:bg-white/5")}
-    else{b.classList.remove("active");b.classList.add("text-slate-300","hover:bg-white/5")}
-  });
-  await loadAllData();
-  if(tab==="dashboard")renderDashboard();
-  else if(tab==="items")renderItems();
-  else if(tab==="bookings")renderBookings();
-  else if(tab==="users")renderUsers();
-  else if(tab==="danger")renderDanger();
-  injectMobileMenu();
-}
-
-function injectMobileMenu(){
-  const main=document.getElementById("mainContent");
-  if(!main||main.querySelector("#mobileMenuBtn"))return;
-  const btn=document.createElement("button");
-  btn.id="mobileMenuBtn";
-  btn.className="mobile-menu-btn glass rounded-xl p-3 mb-4 items-center gap-2 text-slate-200 font-semibold";
-  btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg> เมนู';
-  btn.addEventListener("click",()=>{document.getElementById("sidebar").classList.add("open");document.getElementById("sidebarOverlay").classList.add("open")});
-  main.insertBefore(btn,main.firstChild);
-}
-
-async function loadAllData(){
-  if(!db){toast("Firebase ไม่พร้อม","error");return}
-  try{
-    const [uS,iS,bS]=await Promise.all([getDocs(collection(db,"users")),getDocs(collection(db,"items")),getDocs(collection(db,"bookings"))]);
-    users=uS.docs.map(d=>({id:d.id,...d.data()}));
-    items=iS.docs.map(d=>({id:d.id,...d.data()}));
-    bookings=bS.docs.map(d=>({id:d.id,...d.data()}));
-    bookings.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  }catch(err){console.error(err);toast("โหลดข้อมูลไม่สำเร็จ: "+err.message,"error",5000)}
-}
-
-// ========== DASHBOARD ==========
-function renderDashboard(){
-  const totalUsers=users.length;
-  const totalItems=items.length;
-  const availItems=items.filter(i=>i.status==="Available").length;
-  const borrowedItems=items.filter(i=>i.status==="Borrowed").length;
-  const activeBookings=bookings.filter(b=>b.status==="Active").length;
-  const totalBookings=bookings.length;
-  const recentBookings=bookings.slice(0,5);
-  const typeStats={};
-  items.forEach(i=>{if(!typeStats[i.type])typeStats[i.type]={name:i.name,total:0,available:0};typeStats[i.type].total++;if(i.status==="Available")typeStats[i.type].available++});
-  const topBorrowed=Object.values(typeStats).sort((a,b)=>(b.total-b.available)-(a.total-a.available)).slice(0,5);
-
-  document.getElementById("mainContent").innerHTML=`
-    <div class="glass rounded-3xl card-shadow p-6 lg:p-8 mb-6 relative overflow-hidden">
-      <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 opacity-20 blur-3xl"></div>
-      <div class="relative">
-        <h1 class="text-2xl lg:text-4xl font-bold text-white">📊 แดชบอร์ดภาพรวม</h1>
-        <p class="text-slate-400 mt-2">สรุปข้อมูลและสถิติการใช้งานระบบทั้งหมด</p>
-      </div>
-    </div>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      ${statCard("👥","ผู้ใช้ทั้งหมด",totalUsers,"from-violet-500 to-purple-500")}
-      ${statCard("📦","อุปกรณ์ทั้งหมด",totalItems,"from-blue-500 to-cyan-500")}
-      ${statCard("✓","พร้อมใช้",availItems,"from-emerald-500 to-teal-500")}
-      ${statCard("🔒","ถูกยืม",borrowedItems,"from-rose-500 to-pink-500")}
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-      <div class="glass rounded-2xl card-shadow p-6">
-        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">📋 การยืมล่าสุด</h3>
-        ${recentBookings.length?recentBookings.map(b=>`
-          <div class="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
-            <div class="min-w-0 flex-1"><p class="text-sm font-semibold text-slate-200 truncate">${esc(b.itemName||'-')}</p><p class="text-xs text-slate-500">${esc(b.studentName||'-')} • ${esc(fmtTimestamp(b.createdAt))}</p></div>
-            <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${b.status==='Returned'?'bg-emerald-500/20 text-emerald-300':'bg-amber-500/20 text-amber-300'}">${b.status==='Returned'?'คืนแล้ว':'กำลังยืม'}</span>
-          </div>`).join(""):'<p class="text-center text-slate-500 py-8">ยังไม่มีรายการ</p>'}
-      </div>
-      <div class="glass rounded-2xl card-shadow p-6">
-        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">🔥 อุปกรณ์ยอดนิยม</h3>
-        ${topBorrowed.length?topBorrowed.map(t=>{const borrowed=t.total-t.available;const pct=t.total?Math.round((borrowed/t.total)*100):0;return `
-          <div class="py-3 border-b border-white/5 last:border-0">
-            <div class="flex justify-between mb-1.5"><span class="text-sm font-semibold text-slate-200">${esc(t.name)}</span><span class="text-xs text-slate-400">${borrowed}/${t.total}</span></div>
-            <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-violet-500 to-blue-500 rounded-full" style="width:${pct}%"></div></div>
-          </div>`}).join(""):'<p class="text-center text-slate-500 py-8">ยังไม่มีข้อมูล</p>'}
-      </div>
-    </div>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      ${statCard("📋","Bookings ทั้งหมด",totalBookings,"from-amber-500 to-orange-500")}
-      ${statCard("⏳","กำลังยืม",activeBookings,"from-yellow-500 to-amber-500")}
-      ${statCard("✓","คืนแล้ว",totalBookings-activeBookings,"from-green-500 to-emerald-500")}
-      ${statCard("📊","ใช้งานเฉลี่ย",totalUsers?(totalBookings/totalUsers).toFixed(1):"0","from-indigo-500 to-violet-500")}
-    </div>`;
-}
-
-function statCard(icon,label,value,gradient){
-  return `<div class="glass rounded-2xl p-5 card-shadow"><div class="flex items-center gap-4"><div class="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-2xl shadow-lg">${icon}</div><div class="min-w-0"><div class="text-2xl lg:text-3xl font-bold text-white">${value}</div><div class="text-xs text-slate-400">${label}</div></div></div></div>`;
-}
-
-// ========== ITEMS ==========
-function renderItems(){
-  document.getElementById("mainContent").innerHTML=`
-    <div class="glass rounded-3xl card-shadow p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div><h1 class="text-2xl lg:text-3xl font-bold text-white">📦 จัดการอุปกรณ์</h1><p class="text-slate-400 mt-1">ทั้งหมด ${items.length} ชิ้น</p></div>
-      <div class="flex gap-2"><input id="itemSearch" type="text" placeholder="ค้นหา..." class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" /><button id="addItemBtn" class="gradient-btn text-white font-bold px-5 py-2.5 rounded-xl whitespace-nowrap">+ เพิ่มอุปกรณ์</button></div>
-    </div>
-    <div class="glass rounded-2xl card-shadow overflow-hidden"><div class="overflow-x-auto"><table>
-      <thead><tr><th>ID</th><th>ชื่อ</th><th>ประเภท</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
-      <tbody id="itemsTbody"></tbody>
-    </table></div></div>`;
-  document.getElementById("addItemBtn").addEventListener("click",()=>openItemModal());
-  document.getElementById("itemSearch").addEventListener("input",e=>renderItemsRows(e.target.value));
-  renderItemsRows("");
-}
-
-function renderItemsRows(filter){
-  const f=filter.toLowerCase();
-  const filtered=items.filter(i=>!f||i.name?.toLowerCase().includes(f)||i.itemId?.toLowerCase().includes(f)||i.type?.toLowerCase().includes(f));
-  const tbody=document.getElementById("itemsTbody");
-  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="5" class="text-center py-8 text-slate-500">ไม่พบข้อมูล</td></tr>`;return}
-  tbody.innerHTML=filtered.map(i=>`
-    <tr>
-      <td class="font-mono text-xs text-slate-400">${esc(i.itemId)}</td>
-      <td class="font-semibold text-slate-200">${esc(i.name)}</td>
-      <td class="text-xs text-slate-400">${esc(i.type)}</td>
-      <td><span class="text-xs px-2.5 py-1 rounded-full font-semibold ${i.status==='Available'?'bg-emerald-500/20 text-emerald-300':'bg-rose-500/20 text-rose-300'}">${i.status==='Available'?'พร้อมใช้':'ถูกยืม'}</span></td>
-      <td><div class="flex gap-2"><button data-edit="${esc(i.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30">แก้ไข</button>${i.status==='Borrowed'?`<button data-free="${esc(i.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30">ปลดล็อก</button>`:''}<button data-del="${esc(i.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30">ลบ</button></div></td>
-    </tr>`).join("");
-  tbody.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>openItemModal(items.find(x=>x.id===b.dataset.edit))));
-  tbody.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>deleteItem(b.dataset.del)));
-  tbody.querySelectorAll("[data-free]").forEach(b=>b.addEventListener("click",()=>freeItem(b.dataset.free)));
-}
-
-function openItemModal(item){
-  const isEdit=!!item;
-  const modal=document.createElement("div");
-  modal.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-50";
-  modal.innerHTML=`<div class="glass-light rounded-3xl card-shadow max-w-md w-full p-8 animate-scale">
-    <h3 class="text-xl font-bold text-white mb-6">${isEdit?'✏ แก้ไขอุปกรณ์':'+ เพิ่มอุปกรณ์ใหม่'}</h3>
-    <form id="itemForm" class="space-y-4">
-      <div><label class="block text-sm font-semibold text-slate-300 mb-2">รหัส (ID)</label><input id="f_id" type="text" required ${isEdit?'readonly':''} value="${isEdit?esc(item.itemId):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 ${isEdit?'opacity-60':''}" placeholder="เช่น pencil_006" /></div>
-      <div><label class="block text-sm font-semibold text-slate-300 mb-2">ชื่ออุปกรณ์</label><input id="f_name" type="text" required value="${isEdit?esc(item.name):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500" /></div>
-      <div><label class="block text-sm font-semibold text-slate-300 mb-2">ประเภท (type)</label><input id="f_type" type="text" required value="${isEdit?esc(item.type):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="เช่น pencil" /></div>
-      <div><label class="block text-sm font-semibold text-slate-300 mb-2">URL รูปภาพ (เลือกใส่)</label><input id="f_image" type="text" value="${isEdit?esc(item.imageUrl||''):''}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="https://..." /></div>
-      <div><label class="block text-sm font-semibold text-slate-300 mb-2">สถานะ</label><select id="f_status" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500"><option value="Available" ${isEdit&&item.status==='Available'?'selected':''}>พร้อมใช้</option><option value="Borrowed" ${isEdit&&item.status==='Borrowed'?'selected':''}>ถูกยืม</option></select></div>
-      <div class="flex gap-3 pt-2"><button type="button" id="cancelBtn" class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-semibold">ยกเลิก</button><button type="submit" class="flex-1 gradient-btn text-white font-bold py-3 rounded-xl">${isEdit?'บันทึก':'เพิ่ม'}</button></div>
-    </form>
+function renderDashboard(el){
+  const reusable=items.filter(i=>!i.consumable);
+  const avail=reusable.filter(i=>i.status==="Available").length;
+  const borrowed=reusable.filter(i=>i.status==="Borrowed").length;
+  const consumables=items.filter(i=>i.consumable);
+  const stockLow=consumables.filter(i=>(i.stock||0)<=(i.initialStock||0)*0.2).length;
+  const active=bookings.filter(b=>b.status==="Active").length;
+  const total=bookings.length;
+  const today=new Date().toDateString();
+  const todayCount=bookings.filter(b=>b.createdAt&&new Date(b.createdAt.seconds*1000).toDateString()===today).length;
+  el.innerHTML=`<div class="mb-6"><h2 class="section-title">ภาพรวมระบบ</h2><p class="text-sm text-slate-500 mt-1">ข้อมูลสรุปทั้งหมด ณ ขณะนี้</p></div>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
+    ${statCard("ยืม-คืน",reusable.length,"อุปกรณ์ยืม-คืน","from-blue-400 to-cyan-400")}
+    ${statCard("ว่าง",avail,"พร้อมใช้","from-emerald-400 to-teal-400")}
+    ${statCard("ถูกยืม",borrowed,"ถูกยืม","from-rose-400 to-pink-400")}
+    ${statCard("สิ้นเปลือง",consumables.length,"วัสดุสิ้นเปลือง","from-orange-400 to-amber-400")}
+    ${statCard("สต็อกต่ำ",stockLow,"สต็อกใกล้หมด","from-red-400 to-rose-500")}
+    ${statCard("ยืม",active,"กำลังยืม","from-amber-400 to-yellow-400")}
+    ${statCard("ผู้ใช้",users.length,"ผู้ใช้","from-purple-400 to-fuchsia-400")}
+    ${statCard("วันนี้",todayCount,"ยืมวันนี้","from-sky-400 to-indigo-400")}
+  </div>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="glass rounded-2xl p-5 card-shadow"><h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">กิจกรรมล่าสุด</h3><div class="space-y-2 max-h-80 overflow-y-auto">${bookings.slice(0,8).map(b=>`<div class="flex items-center gap-3 p-2 rounded-lg bg-white/40"><div class="text-lg">${b.consumable?"📝":"📦"}</div><div class="flex-1 min-w-0"><p class="text-sm font-semibold text-slate-700 truncate">${esc(b.itemName||"-")}</p><p class="text-xs text-slate-500 truncate">${esc(b.studentName||"-")} • ${fmtTs(b.createdAt)}</p></div><span class="chip ${b.status==="Active"?"bg-amber-100 text-amber-700":b.status==="Consumed"?"bg-orange-100 text-orange-700":"bg-emerald-100 text-emerald-700"}">${b.status==="Active"?"กำลังยืม":b.status==="Consumed"?"เบิกแล้ว":"คืนแล้ว"}</span></div>`).join("")||'<p class="text-sm text-slate-500 text-center py-6">ยังไม่มีกิจกรรม</p>'}</div></div>
+    <div class="glass rounded-2xl p-5 card-shadow"><h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">สต็อกวัสดุสิ้นเปลือง</h3><div class="space-y-2 max-h-80 overflow-y-auto">${consumables.length?consumables.map(i=>{const init=i.initialStock||1;const pct=Math.round(((i.stock||0)/init)*100);const low=pct<=20;return `<div class="p-3 rounded-lg bg-white/50"><div class="flex justify-between items-center mb-1"><span class="text-sm font-semibold text-slate-700">${esc(i.name)}</span><span class="text-xs font-bold ${low?'text-red-600':'text-slate-600'}">${i.stock||0}/${init}</span></div><div class="h-2 bg-slate-200 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r ${low?'from-red-400 to-rose-400':'from-orange-400 to-amber-400'}" style="width:${pct}%"></div></div></div>`}).join(""):'<p class="text-sm text-slate-500 text-center py-6">ไม่มีวัสดุสิ้นเปลือง</p>'}</div></div>
   </div>`;
-  document.body.appendChild(modal);
-  const close=()=>modal.remove();
-  document.getElementById("cancelBtn").addEventListener("click",close);
-  modal.addEventListener("click",e=>{if(e.target===modal)close()});
-  document.getElementById("itemForm").addEventListener("submit",async e=>{
-    e.preventDefault();
-    const data={itemId:document.getElementById("f_id").value.trim(),name:document.getElementById("f_name").value.trim(),type:document.getElementById("f_type").value.trim(),imageUrl:document.getElementById("f_image").value.trim(),status:document.getElementById("f_status").value};
-    if(!data.itemId||!data.name||!data.type)return toast("กรุณากรอกข้อมูลให้ครบ","error");
-    try{
-      if(isEdit){await updateDoc(doc(db,"items",item.id),data);toast("แก้ไขสำเร็จ ✓")}
-      else{await setDoc(doc(db,"items",data.itemId),{...data,number:1,createdAt:serverTimestamp()});toast("เพิ่มสำเร็จ ✓")}
-      close();await loadAllData();renderItems();
-    }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-  });
 }
+function statCard(ic,val,lbl,grad){return `<div class="glass rounded-2xl p-4 card-shadow"><div class="flex items-center gap-3"><div class="w-11 h-11 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center text-[10px] font-bold text-white shadow flex-shrink-0 px-1 text-center leading-tight">${ic}</div><div class="min-w-0"><div class="text-2xl font-bold text-slate-800">${val}</div><div class="text-xs text-slate-500 truncate">${lbl}</div></div></div></div>`}
 
-async function deleteItem(id){
-  if(!confirm("ยืนยันลบอุปกรณ์นี้? การกระทำนี้ไม่สามารถย้อนกลับได้"))return;
-  try{await deleteDoc(doc(db,"items",id));toast("ลบสำเร็จ");await loadAllData();renderItems()}
-  catch(err){toast("ลบไม่สำเร็จ: "+err.message,"error",5000)}
+function renderItems(el){
+  el.innerHTML=`<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5"><div><h2 class="section-title">จัดการอุปกรณ์</h2><p class="text-sm text-slate-500 mt-1">ทั้งหมด ${items.length} รายการ</p></div><div class="flex gap-2 flex-wrap"><button id="addItem" class="btn btn-primary">เพิ่มอุปกรณ์</button><button id="bulkAdd" class="btn btn-secondary">เพิ่มเป็นชุด</button></div></div>
+  <div class="glass rounded-2xl p-3 mb-4 card-shadow flex flex-col sm:flex-row gap-2"><input id="itSearch" class="input flex-1" placeholder="ค้นหาชื่อ / ID / ประเภท..." /><select id="itFilter" class="input sm:w-48"><option value="">ทุกประเภท</option><option value="reusable">ยืม-คืน</option><option value="consumable">วัสดุสิ้นเปลือง</option><option value="available">ว่าง</option><option value="borrowed">ถูกยืม</option><option value="lowstock">สต็อกต่ำ</option></select></div>
+  <div class="glass rounded-2xl overflow-hidden card-shadow"><div class="overflow-x-auto"><table class="tbl"><thead><tr><th>ID</th><th>ชื่อ</th><th>ประเภท</th><th>สถานะ/สต็อก</th><th>การกระทำ</th></tr></thead><tbody id="itBody"></tbody></table></div></div>`;
+  document.getElementById("addItem").onclick=()=>openItemEditor(null);
+  document.getElementById("bulkAdd").onclick=openBulkAdd;
+  const redraw=()=>drawItems(document.getElementById("itSearch").value,document.getElementById("itFilter").value);
+  document.getElementById("itSearch").oninput=redraw;document.getElementById("itFilter").onchange=redraw;redraw();
 }
-
-async function freeItem(id){
-  if(!confirm("ปลดล็อกอุปกรณ์นี้ให้กลับมาพร้อมใช้?"))return;
-  try{await updateDoc(doc(db,"items",id),{status:"Available"});toast("ปลดล็อกสำเร็จ");await loadAllData();renderItems()}
-  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-}
-
-// ========== BOOKINGS ==========
-function renderBookings(){
-  document.getElementById("mainContent").innerHTML=`
-    <div class="glass rounded-3xl card-shadow p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div><h1 class="text-2xl lg:text-3xl font-bold text-white">📋 การยืมทั้งหมด</h1><p class="text-slate-400 mt-1">ทั้งหมด ${bookings.length} รายการ</p></div>
-      <div class="flex gap-2"><select id="bFilter" class="px-4 py-2.5 rounded-xl bg-slate-800 border border-white/10 text-white text-sm"><option value="all">ทั้งหมด</option><option value="Active">กำลังยืม</option><option value="Returned">คืนแล้ว</option></select><input id="bSearch" type="text" placeholder="ค้นหา..." class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" /></div>
-    </div>
-    <div class="glass rounded-2xl card-shadow overflow-hidden"><div class="overflow-x-auto"><table>
-      <thead><tr><th>วันที่</th><th>อุปกรณ์</th><th>ผู้ยืม</th><th>ระยะเวลา</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
-      <tbody id="bTbody"></tbody>
-    </table></div></div>`;
-  const update=()=>renderBookingRows(document.getElementById("bSearch").value,document.getElementById("bFilter").value);
-  document.getElementById("bSearch").addEventListener("input",update);
-  document.getElementById("bFilter").addEventListener("change",update);
-  renderBookingRows("","all");
-}
-
-function renderBookingRows(search,filter){
-  const s=search.toLowerCase();
-  const list=bookings.filter(b=>(filter==="all"||b.status===filter)&&(!s||b.itemName?.toLowerCase().includes(s)||b.studentName?.toLowerCase().includes(s)||b.studentId?.toLowerCase().includes(s)));
-  const tbody=document.getElementById("bTbody");
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="6" class="text-center py-8 text-slate-500">ไม่พบข้อมูล</td></tr>`;return}
-  tbody.innerHTML=list.map(b=>`
-    <tr>
-      <td class="text-xs text-slate-400">${esc(fmtTimestamp(b.createdAt))}</td>
-      <td><p class="font-semibold text-slate-200">${esc(b.itemName||'-')}</p><p class="text-xs text-slate-500 font-mono">${esc(b.itemId||'-')}</p></td>
-      <td><p class="text-slate-200">${esc(b.studentName||'-')}</p><p class="text-xs text-slate-500">${esc(b.studentId||'-')} • ปี ${esc(b.yearOfStudy||'-')}</p></td>
-      <td class="text-xs text-slate-400">${esc(b.duration||0)} ชม.</td>
-      <td><span class="text-xs px-2.5 py-1 rounded-full font-semibold ${b.status==='Returned'?'bg-emerald-500/20 text-emerald-300':'bg-amber-500/20 text-amber-300'}">${b.status==='Returned'?'คืนแล้ว':'กำลังยืม'}</span></td>
-      <td><div class="flex gap-2">${b.status==='Active'?`<button data-return="${esc(b.id)}" data-iid="${esc(b.itemId)}" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30">บังคับคืน</button>`:''}<button data-delb="${esc(b.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30">ลบ</button></div></td>
-    </tr>`).join("");
-  tbody.querySelectorAll("[data-return]").forEach(b=>b.addEventListener("click",()=>forceReturn(b.dataset.return,b.dataset.iid)));
-  tbody.querySelectorAll("[data-delb]").forEach(b=>b.addEventListener("click",()=>deleteBooking(b.dataset.delb)));
-}
-
-async function forceReturn(bid,iid){
-  if(!confirm("บังคับคืนอุปกรณ์นี้?"))return;
-  try{
-    await updateDoc(doc(db,"bookings",bid),{status:"Returned",returnedAt:serverTimestamp(),returnedByAdmin:true});
-    const it=items.find(i=>i.itemId===iid);
-    if(it)await updateDoc(doc(db,"items",it.id),{status:"Available"});
-    toast("คืนสำเร็จ ✓");await loadAllData();renderBookings();
-  }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-}
-
-async function deleteBooking(id){
-  if(!confirm("ลบรายการยืมนี้? (ไม่จะคืนสถานะอุปกรณ์อัตโนมัติ)"))return;
-  try{await deleteDoc(doc(db,"bookings",id));toast("ลบสำเร็จ");await loadAllData();renderBookings()}
-  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-}
-
-// ========== USERS ==========
-function renderUsers(){
-  document.getElementById("mainContent").innerHTML=`
-    <div class="glass rounded-3xl card-shadow p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div><h1 class="text-2xl lg:text-3xl font-bold text-white">👥 จัดการผู้ใช้</h1><p class="text-slate-400 mt-1">ทั้งหมด ${users.length} คน</p></div>
-      <input id="uSearch" type="text" placeholder="ค้นหา..." class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
-    </div>
-    <div class="glass rounded-2xl card-shadow overflow-hidden"><div class="overflow-x-auto"><table>
-      <thead><tr><th>รหัส</th><th>ชื่อ</th><th>ชั้นปี</th><th>ยืมทั้งหมด</th><th>กำลังยืม</th><th>ลงทะเบียน</th><th>จัดการ</th></tr></thead>
-      <tbody id="uTbody"></tbody>
-    </table></div></div>`;
-  document.getElementById("uSearch").addEventListener("input",e=>renderUserRows(e.target.value));
-  renderUserRows("");
-}
-
-function renderUserRows(search){
-  const s=search.toLowerCase();
-  const list=users.filter(u=>!s||u.fullName?.toLowerCase().includes(s)||u.studentId?.toLowerCase().includes(s));
-  const tbody=document.getElementById("uTbody");
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="7" class="text-center py-8 text-slate-500">ไม่พบข้อมูล</td></tr>`;return}
-  tbody.innerHTML=list.map(u=>{
-    const userBookings=bookings.filter(b=>b.studentId===u.studentId);
-    const active=userBookings.filter(b=>b.status==="Active").length;
+function drawItems(s,f){
+  const q=(s||"").toLowerCase();
+  let list=items.filter(i=>!q||[i.itemId,i.name,i.type].some(x=>(x||"").toLowerCase().includes(q)));
+  if(f==="reusable")list=list.filter(i=>!i.consumable);
+  else if(f==="consumable")list=list.filter(i=>i.consumable);
+  else if(f==="available")list=list.filter(i=>!i.consumable&&i.status==="Available");
+  else if(f==="borrowed")list=list.filter(i=>!i.consumable&&i.status==="Borrowed");
+  else if(f==="lowstock")list=list.filter(i=>i.consumable&&(i.stock||0)<=(i.initialStock||1)*0.2);
+  list.sort((a,b)=>(a.type||"").localeCompare(b.type||"")||(a.number||0)-(b.number||0));
+  const body=document.getElementById("itBody");
+  if(!list.length){body.innerHTML=`<tr><td colspan="5" class="text-center text-slate-400 py-8">ไม่พบข้อมูล</td></tr>`;return}
+  body.innerHTML=list.map(i=>{
+    const ic=TYPE_ICONS[i.type]||"❓";
+    const statusCell=i.consumable?`<span class="chip ${(i.stock||0)<=0?'bg-red-100 text-red-700':(i.stock||0)<=(i.initialStock||1)*0.2?'bg-amber-100 text-amber-700':'bg-orange-100 text-orange-700'}">📝 ${i.stock||0}/${i.initialStock||0}</span>`:`<span class="chip ${i.status==="Available"?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${i.status==="Available"?"ว่าง":"ถูกยืม"}</span>`;
     return `<tr>
-      <td class="font-mono text-xs text-slate-400">${esc(u.studentId)}</td>
-      <td class="font-semibold text-slate-200">${esc(u.fullName)}</td>
-      <td class="text-slate-400">ปี ${esc(u.yearOfStudy)}</td>
-      <td class="text-slate-300">${userBookings.length}</td>
-      <td>${active>0?`<span class="text-amber-300 font-semibold">${active}</span>`:'<span class="text-slate-500">0</span>'}</td>
-      <td class="text-xs text-slate-500">${esc(u.createdAt?fmtDate(u.createdAt):'-')}</td>
-      <td><button data-delu="${esc(u.id)}" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30">ลบ</button></td>
-    </tr>`}).join("");
-  tbody.querySelectorAll("[data-delu]").forEach(b=>b.addEventListener("click",()=>deleteUser(b.dataset.delu)));
+      <td data-label="ID"><span class="font-mono text-xs">${esc(i.itemId||i.id)}</span></td>
+      <td data-label="ชื่อ"><span class="text-lg mr-2">${ic}</span>${esc(i.name||"-")}</td>
+      <td data-label="ประเภท"><span class="chip bg-slate-100 text-slate-700">${esc(i.type||"-")}</span></td>
+      <td data-label="สถานะ">${statusCell}</td>
+      <td data-label="การกระทำ"><div class="flex gap-1 flex-wrap justify-end">
+        ${i.consumable?`<button class="btn btn-secondary btn-xs" data-act="stock" data-id="${i.id}">สต็อก</button>`:(i.status==="Borrowed"?`<button class="btn btn-success btn-xs" data-act="free" data-id="${i.id}">ปลดล็อก</button>`:"")}
+        <button class="btn btn-primary btn-xs" data-act="edit" data-id="${i.id}">แก้ไข</button>
+        <button class="btn btn-danger btn-xs" data-act="del" data-id="${i.id}">ลบ</button>
+      </div></td>
+    </tr>`;
+  }).join("");
+  body.querySelectorAll("button[data-act]").forEach(b=>b.onclick=()=>itemAction(b.dataset.act,b.dataset.id));
+}
+async function itemAction(act,id){
+  const it=items.find(x=>x.id===id);if(!it)return;
+  if(act==="edit")openItemEditor(it);
+  else if(act==="stock")openStockEditor(it);
+  else if(act==="free"){if(!await confirmDialog("ปลดล็อกอุปกรณ์","บังคับตั้งสถานะเป็น 'ว่าง' ?"))return;try{await updateDoc(doc(db,"items",id),{status:"Available"});await loadAll();navigate("items");toast("ปลดล็อกสำเร็จ")}catch(e){toast("ผิดพลาด: "+e.message,"error")}}
+  else if(act==="del"){if(!await confirmDialog("ลบอุปกรณ์",`ลบ "${it.name}" ถาวร?`,true))return;try{await deleteDoc(doc(db,"items",id));await loadAll();navigate("items");toast("ลบแล้ว")}catch(e){toast("ผิดพลาด: "+e.message,"error")}}
+}
+function openItemEditor(it){
+  const isNew=!it;const d=it||{itemId:"",name:"",type:"",color:"from-slate-100 to-gray-200",consumable:false,status:"Available",stock:10,initialStock:10,number:1};
+  const m=document.createElement("div");m.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-50";
+  m.innerHTML=`<div class="glass-dark rounded-3xl card-shadow max-w-lg w-full p-6 animate-scale max-h-[90vh] overflow-y-auto"><h3 class="text-xl font-bold text-slate-800 mb-5">${isNew?"เพิ่มอุปกรณ์ใหม่":"แก้ไขอุปกรณ์"}</h3><form id="itF" class="space-y-4" novalidate>
+    <div class="grid grid-cols-2 gap-3"><div><label class="block text-sm font-semibold mb-1">ID อุปกรณ์</label><input id="f_id" class="input font-mono" value="${esc(d.itemId)}" ${isNew?"":"readonly"} placeholder="เช่น pencil_001" /></div><div><label class="block text-sm font-semibold mb-1">ประเภท (type)</label><input id="f_type" class="input font-mono" value="${esc(d.type)}" placeholder="เช่น pencil" /></div></div>
+    <div><label class="block text-sm font-semibold mb-1">ชื่อแสดงผล</label><input id="f_name" class="input" value="${esc(d.name)}" placeholder="เช่น ดินสอ 2B" /></div>
+    <div><label class="block text-sm font-semibold mb-1">สีพื้นหลัง</label><select id="f_color" class="input">${COLOR_PALETTE.map(c=>`<option value="${c.v}" ${c.v===d.color?"selected":""}>${c.n}</option>`).join("")}</select><div id="f_preview" class="mt-2 h-12 rounded-xl bg-gradient-to-br ${d.color}"></div></div>
+    <div class="glass rounded-xl p-3"><label class="flex items-center gap-3 cursor-pointer"><input id="f_cons" type="checkbox" class="w-5 h-5" ${d.consumable?"checked":""} /><div><div class="font-semibold text-sm">วัสดุสิ้นเปลือง (เบิก ไม่ต้องคืน)</div><div class="text-xs text-slate-500">เช่น กระดาษ, ไส้แม็ก (เบิก ไม่ต้องคืน)</div></div></label></div>
+    <div id="f_consFields" class="${d.consumable?"":"hidden"} grid grid-cols-2 gap-3"><div><label class="block text-sm font-semibold mb-1">สต็อกปัจจุบัน</label><input id="f_stock" type="number" min="0" class="input" value="${d.stock||0}" /></div><div><label class="block text-sm font-semibold mb-1">สต็อกตั้งต้น</label><input id="f_init" type="number" min="1" class="input" value="${d.initialStock||d.stock||10}" /></div></div>
+    <div id="f_reusFields" class="${d.consumable?"hidden":""} grid grid-cols-2 gap-3"><div><label class="block text-sm font-semibold mb-1">สถานะ</label><select id="f_status" class="input"><option value="Available" ${d.status==="Available"?"selected":""}>ว่าง</option><option value="Borrowed" ${d.status==="Borrowed"?"selected":""}>ถูกยืม</option></select></div><div><label class="block text-sm font-semibold mb-1">หมายเลข</label><input id="f_num" type="number" min="1" class="input" value="${d.number||1}" /></div></div>
+    <div class="flex gap-2 pt-2"><button type="button" id="cX" class="btn btn-secondary flex-1">ยกเลิก</button><button type="submit" id="cS" class="btn btn-primary flex-1">${isNew?"เพิ่ม":"บันทึก"}</button></div>
+  </form></div>`;
+  document.body.appendChild(m);
+  const close=()=>m.remove();
+  m.onclick=e=>{if(e.target===m)close()};
+  m.querySelector("#cX").onclick=close;
+  m.querySelector("#f_color").onchange=e=>{m.querySelector("#f_preview").className=`mt-2 h-12 rounded-xl bg-gradient-to-br ${e.target.value}`};
+  m.querySelector("#f_cons").onchange=e=>{m.querySelector("#f_consFields").classList.toggle("hidden",!e.target.checked);m.querySelector("#f_reusFields").classList.toggle("hidden",e.target.checked)};
+  m.querySelector("#itF").onsubmit=async e=>{
+    e.preventDefault();const btn=m.querySelector("#cS");btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
+    try{
+      const id=m.querySelector("#f_id").value.trim();const name=m.querySelector("#f_name").value.trim();const type=m.querySelector("#f_type").value.trim();
+      if(!id||!name||!type){toast("กรอกข้อมูลให้ครบ","error");btn.disabled=false;btn.innerHTML=isNew?"เพิ่ม":"บันทึก";return}
+      const isC=m.querySelector("#f_cons").checked;
+      const data={itemId:id,name,type,color:m.querySelector("#f_color").value};
+      if(isC){data.consumable=true;data.stock=Math.max(0,parseInt(m.querySelector("#f_stock").value)||0);data.initialStock=Math.max(1,parseInt(m.querySelector("#f_init").value)||10)}
+      else{data.consumable=false;data.status=m.querySelector("#f_status").value;data.number=Math.max(1,parseInt(m.querySelector("#f_num").value)||1)}
+      if(isNew){const ex=await getDoc(doc(db,"items",id));if(ex.exists()){toast("ID ซ้ำ","error");btn.disabled=false;btn.innerHTML="เพิ่ม";return}await setDoc(doc(db,"items",id),data)}
+      else{await updateDoc(doc(db,"items",it.id),data)}
+      await loadAll();navigate("items");close();toast(isNew?"เพิ่มสำเร็จ":"บันทึกสำเร็จ")
+    }catch(e){console.error(e);toast("ผิดพลาด: "+e.message,"error");btn.disabled=false;btn.innerHTML=isNew?"เพิ่ม":"บันทึก"}
+  };
+}
+function openStockEditor(it){
+  const m=document.createElement("div");m.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-50";
+  m.innerHTML=`<div class="glass-dark rounded-3xl card-shadow max-w-sm w-full p-6 animate-scale"><h3 class="text-xl font-bold text-slate-800 mb-1">จัดการสต็อก</h3><p class="text-sm text-slate-500 mb-4">${esc(it.name)}</p><div class="glass rounded-xl p-4 mb-4 text-center"><div class="text-4xl font-bold gradient-text">${it.stock||0}</div><div class="text-xs text-slate-500">/ ${it.initialStock||0} ชิ้น</div></div><div class="grid grid-cols-4 gap-2 mb-3">${[1,5,10,50].map(n=>`<button data-add="${n}" class="btn btn-success btn-xs">+${n}</button>`).join("")}</div><div class="grid grid-cols-4 gap-2 mb-4">${[1,5,10,50].map(n=>`<button data-add="-${n}" class="btn btn-danger btn-xs">-${n}</button>`).join("")}</div><div class="space-y-2 mb-4"><label class="block text-sm font-semibold">ตั้งสต็อกเป็น</label><div class="flex gap-2"><input id="setVal" type="number" min="0" class="input" value="${it.stock||0}" /><button id="setBtn" class="btn btn-primary">ตั้ง</button></div></div><div class="space-y-2 mb-4"><label class="block text-sm font-semibold">ตั้งสต็อกเริ่มต้น</label><div class="flex gap-2"><input id="initVal" type="number" min="1" class="input" value="${it.initialStock||0}" /><button id="initBtn" class="btn btn-secondary">อัปเดต</button></div></div><button id="clX" class="btn btn-secondary w-full">ปิด</button></div>`;
+  document.body.appendChild(m);const close=()=>m.remove();m.onclick=e=>{if(e.target===m)close()};m.querySelector("#clX").onclick=close;
+  const update=async(patch,msg)=>{try{await updateDoc(doc(db,"items",it.id),patch);Object.assign(it,patch);await loadAll();navigate("items");close();toast(msg)}catch(e){toast("ผิดพลาด: "+e.message,"error")}};
+  m.querySelectorAll("button[data-add]").forEach(b=>b.onclick=async()=>{const n=parseInt(b.dataset.add);const newVal=Math.max(0,(it.stock||0)+n);try{await updateDoc(doc(db,"items",it.id),{stock:increment(n)});it.stock=newVal;await loadAll();navigate("items");close();toast(`${n>0?"+":""}${n} ชิ้น`)}catch(e){toast("ผิดพลาด: "+e.message,"error")}});
+  m.querySelector("#setBtn").onclick=()=>{const v=Math.max(0,parseInt(m.querySelector("#setVal").value)||0);update({stock:v},`ตั้งสต็อก ${v}`)};
+  m.querySelector("#initBtn").onclick=()=>{const v=Math.max(1,parseInt(m.querySelector("#initVal").value)||1);update({initialStock:v},`ตั้งสต็อกเริ่มต้น ${v}`)};
+}
+function openBulkAdd(){
+  const m=document.createElement("div");m.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-50";
+  m.innerHTML=`<div class="glass-dark rounded-3xl card-shadow max-w-md w-full p-6 animate-scale"><h3 class="text-xl font-bold mb-1">เพิ่มเป็นชุด</h3><p class="text-xs text-slate-500 mb-4">เพิ่มอุปกรณ์ยืม-คืนหลายชิ้นพร้อมกัน (type เดียว เลขต่อกัน)</p><form id="bF" class="space-y-3"><div><label class="block text-sm font-semibold mb-1">Type</label><input id="bt" class="input font-mono" placeholder="pencil" required /></div><div><label class="block text-sm font-semibold mb-1">ชื่อ</label><input id="bn" class="input" placeholder="ดินสอ 2B" required /></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-sm font-semibold mb-1">จำนวน</label><input id="bq" type="number" min="1" max="100" value="5" class="input" /></div><div><label class="block text-sm font-semibold mb-1">เริ่มที่เลข</label><input id="bs" type="number" min="1" value="1" class="input" /></div></div><div><label class="block text-sm font-semibold mb-1">สีพื้นหลัง</label><select id="bc" class="input">${COLOR_PALETTE.map(c=>`<option value="${c.v}">${c.n}</option>`).join("")}</select></div><div class="flex gap-2 pt-2"><button type="button" id="bX" class="btn btn-secondary flex-1">ยกเลิก</button><button type="submit" id="bS" class="btn btn-primary flex-1">เพิ่มทั้งหมด</button></div></form></div>`;
+  document.body.appendChild(m);const close=()=>m.remove();m.onclick=e=>{if(e.target===m)close()};m.querySelector("#bX").onclick=close;
+  m.querySelector("#bF").onsubmit=async e=>{e.preventDefault();const btn=m.querySelector("#bS");btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
+    try{const t=m.querySelector("#bt").value.trim();const n=m.querySelector("#bn").value.trim();const q=Math.min(100,Math.max(1,parseInt(m.querySelector("#bq").value)||1));const s=Math.max(1,parseInt(m.querySelector("#bs").value)||1);const c=m.querySelector("#bc").value;
+      if(!t||!n)throw new Error("กรอกให้ครบ");
+      const b=writeBatch(db);for(let i=0;i<q;i++){const num=s+i;const id=`${t}_${String(num).padStart(3,"0")}`;b.set(doc(db,"items",id),{itemId:id,type:t,name:n,color:c,status:"Available",number:num,consumable:false})}
+      await b.commit();await loadAll();navigate("items");close();toast(`เพิ่ม ${q} ชิ้นสำเร็จ`)
+    }catch(e){toast("ผิดพลาด: "+e.message,"error");btn.disabled=false;btn.innerHTML="เพิ่มทั้งหมด"}};
 }
 
-async function deleteUser(id){
-  if(!confirm("ยืนยันลบผู้ใช้นี้? (ประวัติการยืมจะไม่ถูกลบ)"))return;
-  try{await deleteDoc(doc(db,"users",id));toast("ลบสำเร็จ");await loadAllData();renderUsers()}
-  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
+function renderBookings(el){
+  el.innerHTML=`<div class="mb-5"><h2 class="section-title">การยืม / เบิก</h2><p class="text-sm text-slate-500 mt-1">ทั้งหมด ${bookings.length} รายการ</p></div>
+  <div class="glass rounded-2xl p-3 mb-4 card-shadow flex flex-col sm:flex-row gap-2"><input id="bkSearch" class="input flex-1" placeholder="ค้นหา ชื่อ / รหัสนักศึกษา / อุปกรณ์..." /><select id="bkFilter" class="input sm:w-48"><option value="">ทุกสถานะ</option><option value="Active">กำลังยืม</option><option value="Returned">คืนแล้ว</option><option value="Consumed">เบิกแล้ว</option></select></div>
+  <div class="glass rounded-2xl overflow-hidden card-shadow"><div class="overflow-x-auto"><table class="tbl"><thead><tr><th>อุปกรณ์</th><th>ผู้ยืม</th><th>เวลา/จำนวน</th><th>สถานะ</th><th></th></tr></thead><tbody id="bkBody"></tbody></table></div></div>`;
+  const r=()=>drawBookings(document.getElementById("bkSearch").value,document.getElementById("bkFilter").value);
+  document.getElementById("bkSearch").oninput=r;document.getElementById("bkFilter").onchange=r;r();
+}
+function drawBookings(s,f){
+  const q=(s||"").toLowerCase();
+  let list=bookings.filter(b=>!q||[b.itemName,b.studentName,b.studentId,b.itemId].some(x=>(x||"").toLowerCase().includes(q)));
+  if(f)list=list.filter(b=>b.status===f);
+  const body=document.getElementById("bkBody");
+  if(!list.length){body.innerHTML=`<tr><td colspan="5" class="text-center text-slate-400 py-8">ไม่พบข้อมูล</td></tr>`;return}
+  body.innerHTML=list.map(b=>{
+    const isC=b.status==="Consumed"||b.consumable;
+    const stat=b.status==="Active"?'<span class="chip bg-amber-100 text-amber-700">กำลังยืม</span>':b.status==="Returned"?'<span class="chip bg-emerald-100 text-emerald-700">คืนแล้ว</span>':'<span class="chip bg-orange-100 text-orange-700">เบิกแล้ว</span>';
+    const timeCell=isC?`<span class="font-semibold text-orange-600">×${b.quantity||1} ชิ้น</span><br><span class="text-xs text-slate-500">${fmtTs(b.createdAt)}</span>`:`${fmtDate(b.startTime)} → ${fmtDate(b.endTime)}`;
+    return `<tr>
+      <td data-label="อุปกรณ์"><div class="font-semibold">${esc(b.itemName||"-")}</div><div class="text-xs text-slate-500 font-mono">${esc(b.itemId||"-")}</div></td>
+      <td data-label="ผู้ยืม"><div class="font-semibold">${esc(b.studentName||"-")}</div><div class="text-xs text-slate-500">${esc(b.studentId||"-")} • ปี ${esc(b.yearOfStudy||"-")}</div></td>
+      <td data-label="เวลา">${timeCell}</td>
+      <td data-label="สถานะ">${stat}</td>
+      <td data-label="การกระทำ"><div class="flex gap-1 justify-end flex-wrap">${b.status==="Active"?`<button class="btn btn-success btn-xs" data-act="ret" data-bid="${b.id}" data-iid="${b.itemId}">บังคับคืน</button>`:""}<button class="btn btn-danger btn-xs" data-act="del" data-bid="${b.id}">ลบ</button></div></td>
+    </tr>`;
+  }).join("");
+  body.querySelectorAll("button[data-act]").forEach(btn=>btn.onclick=()=>bkAction(btn.dataset.act,btn.dataset.bid,btn.dataset.iid));
+}
+async function bkAction(act,bid,iid){
+  if(act==="ret"){if(!await confirmDialog("บังคับคืน","ตั้งสถานะเป็นคืนแล้ว?"))return;try{await updateDoc(doc(db,"bookings",bid),{status:"Returned",returnedAt:serverTimestamp()});const it=items.find(x=>x.itemId===iid);if(it)await updateDoc(doc(db,"items",it.id),{status:"Available"});await loadAll();navigate("bookings");toast("คืนแล้ว")}catch(e){toast("ผิดพลาด: "+e.message,"error")}}
+  else if(act==="del"){if(!await confirmDialog("ลบรายการ","ลบรายการนี้ถาวร?",true))return;try{await deleteDoc(doc(db,"bookings",bid));await loadAll();navigate("bookings");toast("ลบแล้ว")}catch(e){toast("ผิดพลาด: "+e.message,"error")}}
 }
 
-// ========== DANGER ZONE ==========
-function renderDanger(){
-  document.getElementById("mainContent").innerHTML=`
-    <div class="glass rounded-3xl card-shadow p-6 mb-6">
-      <h1 class="text-2xl lg:text-3xl font-bold text-white">⚠ Danger Zone</h1>
-      <p class="text-slate-400 mt-1">การกระทำในนี้ไม่สามารถย้อนกลับได้ โปรดใช้ความระมัดระวัง</p>
-    </div>
-    <div class="space-y-4">
-      <div class="glass rounded-2xl p-6 border-2 border-rose-500/30">
-        <h3 class="text-lg font-bold text-rose-300 mb-2">🔄 Reset อุปกรณ์ทั้งหมด</h3>
-        <p class="text-sm text-slate-400 mb-4">ตั้งสถานะอุปกรณ์ทุกชิ้นเป็น "พร้อมใช้" และตั้งทุก booking เป็น "คืนแล้ว"</p>
-        <button id="resetItemsBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">Reset อุปกรณ์</button>
-      </div>
-      <div class="glass rounded-2xl p-6 border-2 border-rose-500/30">
-        <h3 class="text-lg font-bold text-rose-300 mb-2">🗑 ลบประวัติการยืมทั้งหมด</h3>
-        <p class="text-sm text-slate-400 mb-4">ลบ collection bookings ทั้งหมด (ผู้ใช้และอุปกรณ์ไม่ถูกแตะ)</p>
-        <button id="clearBookingsBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">ลบ Bookings ทั้งหมด</button>
-      </div>
-      <div class="glass rounded-2xl p-6 border-2 border-rose-500/30">
-        <h3 class="text-lg font-bold text-rose-300 mb-2">👥 ลบผู้ใช้ทั้งหมด</h3>
-        <p class="text-sm text-slate-400 mb-4">ลบ collection users ทั้งหมด</p>
-        <button id="clearUsersBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">ลบ Users ทั้งหมด</button>
-      </div>
-      <div class="glass rounded-2xl p-6 border-2 border-rose-500/50 bg-rose-500/5">
-        <h3 class="text-lg font-bold text-rose-300 mb-2">💀 NUCLEAR — ล้างข้อมูลทั้งระบบ</h3>
-        <p class="text-sm text-slate-400 mb-4">ลบทุกอย่าง: items, bookings, users — กลับสู่สภาพเริ่มต้น</p>
-        <button id="nukeBtn" class="danger-btn text-white font-bold px-5 py-2.5 rounded-xl">💀 ล้างทั้งระบบ</button>
-      </div>
-    </div>`;
-  document.getElementById("resetItemsBtn").addEventListener("click",resetItems);
-  document.getElementById("clearBookingsBtn").addEventListener("click",clearBookings);
-  document.getElementById("clearUsersBtn").addEventListener("click",clearUsers);
-  document.getElementById("nukeBtn").addEventListener("click",nuke);
+function renderUsers(el){
+  el.innerHTML=`<div class="mb-5"><h2 class="section-title">ผู้ใช้งาน</h2><p class="text-sm text-slate-500 mt-1">ทั้งหมด ${users.length} คน</p></div>
+  <div class="glass rounded-2xl p-3 mb-4 card-shadow"><input id="uSearch" class="input" placeholder="ค้นหา รหัส / ชื่อ..." /></div>
+  <div class="glass rounded-2xl overflow-hidden card-shadow"><div class="overflow-x-auto"><table class="tbl"><thead><tr><th>รหัสนักศึกษา</th><th>ชื่อ - นามสกุล</th><th>ชั้นปี</th><th>ประวัติยืม</th><th></th></tr></thead><tbody id="uBody"></tbody></table></div></div>`;
+  const r=()=>drawUsers(document.getElementById("uSearch").value);document.getElementById("uSearch").oninput=r;r();
+}
+function drawUsers(s){
+  const q=(s||"").toLowerCase();
+  const list=users.filter(u=>!q||[u.studentId,u.fullName].some(x=>(x||"").toLowerCase().includes(q)));
+  const body=document.getElementById("uBody");
+  if(!list.length){body.innerHTML=`<tr><td colspan="5" class="text-center text-slate-400 py-8">ไม่พบผู้ใช้</td></tr>`;return}
+  body.innerHTML=list.map(u=>{const cnt=bookings.filter(b=>b.studentId===u.studentId).length;return `<tr>
+    <td data-label="รหัส"><span class="font-mono font-semibold">${esc(u.studentId)}</span></td>
+    <td data-label="ชื่อ">${esc(u.fullName)}</td>
+    <td data-label="ปี"><span class="chip bg-blue-100 text-blue-700">ปี ${esc(u.yearOfStudy||"-")}</span></td>
+    <td data-label="ประวัติ">${cnt} ครั้ง</td>
+    <td data-label=""><button class="btn btn-danger btn-xs" data-del="${u.id}">ลบ</button></td>
+  </tr>`}).join("");
+  body.querySelectorAll("button[data-del]").forEach(b=>b.onclick=async()=>{if(!await confirmDialog("ลบผู้ใช้","ลบผู้ใช้นี้?",true))return;try{await deleteDoc(doc(db,"users",b.dataset.del));await loadAll();navigate("users");toast("ลบแล้ว")}catch(e){toast("ผิดพลาด: "+e.message,"error")}});
 }
 
-async function batchDelete(coll){
-  const snap=await getDocs(collection(db,coll));
-  const b=writeBatch(db);
-  snap.docs.forEach(d=>b.delete(d.ref));
-  await b.commit();
-  return snap.size;
+function renderRoster(el){
+  el.innerHTML=`<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5"><div><h2 class="section-title">รายชื่อนักศึกษาปี 1</h2><p class="text-sm text-slate-500 mt-1">ฐานข้อมูล ${roster.length} คน (ใช้สำหรับ login ปี 1)</p></div><div class="flex gap-2 flex-wrap"><button id="rAdd" class="btn btn-primary">เพิ่มรายชื่อ</button><button id="rSeed" class="btn btn-secondary">เติมจากรายชื่อตั้งต้น</button></div></div>
+  <div class="glass rounded-2xl p-3 mb-4 card-shadow"><input id="rSearch" class="input" placeholder="ค้นหา รหัส / ชื่อ..." /></div>
+  <div class="glass rounded-2xl overflow-hidden card-shadow"><div class="overflow-x-auto"><table class="tbl"><thead><tr><th>รหัสนักศึกษา</th><th>ชื่อ - นามสกุล</th><th></th></tr></thead><tbody id="rBody"></tbody></table></div></div>`;
+  const draw=()=>{const q=(document.getElementById("rSearch").value||"").toLowerCase();const list=roster.filter(u=>!q||[u.studentId,u.fullName].some(x=>(x||"").toLowerCase().includes(q)));const body=document.getElementById("rBody");if(!list.length){body.innerHTML=`<tr><td colspan="3" class="text-center text-slate-400 py-8">ไม่พบรายชื่อ</td></tr>`;return}body.innerHTML=list.map(u=>`<tr><td data-label="รหัส"><span class="font-mono font-semibold">${esc(u.studentId)}</span></td><td data-label="ชื่อ">${esc(u.fullName)}</td><td data-label=""><div class="flex gap-1 justify-end"><button class="btn btn-primary btn-xs" data-edit="${u.id}">แก้ไข</button><button class="btn btn-danger btn-xs" data-del="${u.id}">ลบ</button></div></td></tr>`).join("");body.querySelectorAll("button[data-edit]").forEach(b=>b.onclick=()=>openRosterEditor(roster.find(x=>x.id===b.dataset.edit)));body.querySelectorAll("button[data-del]").forEach(b=>b.onclick=async()=>{if(!await confirmDialog("ลบรายชื่อ","ลบรายชื่อนี้จากฐานข้อมูล?",true))return;try{await deleteDoc(doc(db,"year1_roster",b.dataset.del));await loadAll();navigate("roster");toast("ลบแล้ว")}catch(e){toast("ผิดพลาด: "+e.message,"error")}})};
+  document.getElementById("rSearch").oninput=draw;
+  document.getElementById("rAdd").onclick=()=>openRosterEditor(null);
+  document.getElementById("rSeed").onclick=async()=>{if(!await confirmDialog("เติมรายชื่อตั้งต้น","เพิ่มรายชื่อ "+YEAR1_ROSTER_SEED.length+" คนจาก list เริ่มต้น? (รายชื่อเดิมจะไม่ถูกทับ)"))return;try{const b=writeBatch(db);let added=0;for(const r of YEAR1_ROSTER_SEED){const ex=roster.find(x=>x.studentId===r.id);if(!ex){b.set(doc(db,"year1_roster",r.id),{studentId:r.id,fullName:r.name});added++}}if(!added){toast("รายชื่อครบอยู่แล้ว","info");return}await b.commit();await loadAll();navigate("roster");toast("เพิ่ม "+added+" รายชื่อ")}catch(e){toast("ผิดพลาด: "+e.message,"error")}};
+  draw();
+}
+function openRosterEditor(r){
+  const isNew=!r;const d=r||{studentId:"",fullName:""};
+  const m=document.createElement("div");m.className="fixed inset-0 modal-bg flex items-center justify-center p-4 z-50";
+  m.innerHTML=`<div class="glass-dark rounded-3xl card-shadow max-w-md w-full p-6 animate-scale"><h3 class="text-xl font-bold mb-4">${isNew?"เพิ่มรายชื่อนักศึกษาปี 1":"แก้ไขรายชื่อ"}</h3><form id="rF" class="space-y-4" novalidate><div><label class="block text-sm font-semibold mb-1">รหัสนักศึกษา (10 หลัก)</label><input id="rS" inputmode="numeric" maxlength="10" class="input font-mono" value="${esc(d.studentId)}" ${isNew?"":"readonly"} placeholder="เช่น 6824763012" /></div><div><label class="block text-sm font-semibold mb-1">ชื่อ - นามสกุล (พร้อมคำนำหน้า)</label><input id="rN" class="input" value="${esc(d.fullName)}" placeholder="เช่น นางสาวกชพรรณ แก้วมา" /></div><div class="flex gap-2 pt-2"><button type="button" id="rX" class="btn btn-secondary flex-1">ยกเลิก</button><button type="submit" id="rY" class="btn btn-primary flex-1">${isNew?"เพิ่ม":"บันทึก"}</button></div></form></div>`;
+  document.body.appendChild(m);const close=()=>m.remove();m.onclick=e=>{if(e.target===m)close()};m.querySelector("#rX").onclick=close;
+  m.querySelector("#rF").onsubmit=async e=>{e.preventDefault();const sid=m.querySelector("#rS").value.trim();const fn=m.querySelector("#rN").value.trim();if(!/^\d{10}$/.test(sid))return toast("รหัสต้องเป็นตัวเลข 10 หลัก","error");if(fn.length<3)return toast("ชื่อสั้นเกินไป","error");const btn=m.querySelector("#rY");btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';try{if(isNew){const ex=await getDoc(doc(db,"year1_roster",sid));if(ex.exists()){toast("รหัสนี้มีอยู่แล้ว","error");btn.disabled=false;btn.innerHTML="เพิ่ม";return}}await setDoc(doc(db,"year1_roster",sid),{studentId:sid,fullName:fn});await loadAll();navigate("roster");close();toast(isNew?"เพิ่มสำเร็จ":"บันทึกสำเร็จ")}catch(er){toast("ผิดพลาด: "+er.message,"error");btn.disabled=false;btn.innerHTML=isNew?"เพิ่ม":"บันทึก"}};
+}
+function renderDanger(el){
+  el.innerHTML=`<div class="mb-5"><h2 class="section-title">ฟังก์ชันขั้นสูง</h2><p class="text-sm text-red-500 mt-1">การกระทำในหน้านี้ไม่สามารถย้อนกลับได้ โปรดใช้ด้วยความระมัดระวัง</p></div>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="glass rounded-2xl p-5 card-shadow border-2 border-amber-200"><h3 class="font-bold text-amber-700 mb-2">รีเซ็ตสถานะอุปกรณ์</h3><p class="text-sm text-slate-600 mb-3">คืนสถานะอุปกรณ์ยืม-คืนทั้งหมดเป็น "ว่าง" และเติมสต็อกวัสดุสิ้นเปลืองกลับเต็ม</p><button id="dR" class="btn btn-primary w-full">รีเซ็ตสถานะ</button></div>
+    <div class="glass rounded-2xl p-5 card-shadow border-2 border-orange-200"><h3 class="font-bold text-orange-700 mb-2">ลบการยืมทั้งหมด</h3><p class="text-sm text-slate-600 mb-3">ลบประวัติการยืม/เบิกทุกรายการ (อุปกรณ์จะไม่ถูกแตะ)</p><button id="dB" class="btn btn-danger w-full">ลบประวัติ</button></div>
+    <div class="glass rounded-2xl p-5 card-shadow border-2 border-red-200"><h3 class="font-bold text-red-700 mb-2">ลบผู้ใช้ทั้งหมด</h3><p class="text-sm text-slate-600 mb-3">ลบข้อมูลผู้ใช้ทั้งหมดออกจากระบบ</p><button id="dU" class="btn btn-danger w-full">ลบผู้ใช้</button></div>
+    <div class="glass rounded-2xl p-5 card-shadow border-2 border-red-300"><h3 class="font-bold text-red-800 mb-2">ลบอุปกรณ์ทั้งหมด</h3><p class="text-sm text-slate-600 mb-3">ลบรายการอุปกรณ์ทุกชิ้น (หน้าผู้ใช้จะ seed ใหม่อัตโนมัติเมื่อเข้า)</p><button id="dI" class="btn btn-danger w-full">ลบอุปกรณ์</button></div>
+  </div>`;
+  document.getElementById("dR").onclick=async()=>{if(!await confirmDialog("รีเซ็ตสถานะ","ยืนยันการรีเซ็ต?",true))return;try{const b=writeBatch(db);items.forEach(i=>{if(i.consumable)b.update(doc(db,"items",i.id),{stock:i.initialStock||0});else b.update(doc(db,"items",i.id),{status:"Available"})});await b.commit();await loadAll();navigate("danger");toast("รีเซ็ตเรียบร้อย")}catch(e){toast("ผิดพลาด: "+e.message,"error")}};
+  document.getElementById("dB").onclick=()=>batchDel("bookings","ประวัติการยืม");
+  document.getElementById("dU").onclick=()=>batchDel("users","ข้อมูลผู้ใช้");
+  document.getElementById("dI").onclick=()=>batchDel("items","อุปกรณ์");
+}
+async function batchDel(coll,label){
+  if(!await confirmDialog(`ลบ${label}`,`ลบ${label}ทั้งหมด? ไม่สามารถย้อนกลับได้`,true))return;
+  try{const snap=await getDocs(collection(db,coll));const b=writeBatch(db);snap.docs.forEach(d=>b.delete(d.ref));await b.commit();await loadAll();navigate("danger");toast(`ลบ${label}เรียบร้อย`)}catch(e){toast("ผิดพลาด: "+e.message,"error")}
 }
 
-async function resetItems(){
-  if(!confirm("Reset อุปกรณ์ทั้งหมดเป็น Available? และตั้ง bookings ที่ active เป็น Returned"))return;
-  try{
-    const b=writeBatch(db);
-    items.forEach(i=>b.update(doc(db,"items",i.id),{status:"Available"}));
-    bookings.filter(x=>x.status==="Active").forEach(x=>b.update(doc(db,"bookings",x.id),{status:"Returned",returnedAt:serverTimestamp(),returnedByAdmin:true}));
-    await b.commit();
-    toast("Reset สำเร็จ ✓");await loadAllData();renderDanger();
-  }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-}
-
-async function clearBookings(){
-  const c=prompt('พิมพ์ "DELETE" เพื่อยืนยันลบ bookings ทั้งหมด');
-  if(c!=="DELETE")return;
-  try{const n=await batchDelete("bookings");toast(`ลบ ${n} รายการสำเร็จ`);await loadAllData();renderDanger()}
-  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-}
-
-async function clearUsers(){
-  const c=prompt('พิมพ์ "DELETE" เพื่อยืนยันลบ users ทั้งหมด');
-  if(c!=="DELETE")return;
-  try{const n=await batchDelete("users");toast(`ลบ ${n} ผู้ใช้สำเร็จ`);await loadAllData();renderDanger()}
-  catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-}
-
-async function nuke(){
-  const c=prompt('💀 พิมพ์ "NUKE" เพื่อล้างระบบทั้งหมด (items + bookings + users)');
-  if(c!=="NUKE")return;
-  try{
-    const [a,b2,c2]=await Promise.all([batchDelete("items"),batchDelete("bookings"),batchDelete("users")]);
-    toast(`ล้างสำเร็จ: ${a} items, ${b2} bookings, ${c2} users`,"success",5000);
-    await loadAllData();renderDanger();
-  }catch(err){toast("ผิดพลาด: "+err.message,"error",5000)}
-}
-
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);
-else init();
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 </script>
 </body>
 </html>
